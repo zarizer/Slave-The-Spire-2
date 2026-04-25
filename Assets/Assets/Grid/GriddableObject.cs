@@ -5,9 +5,10 @@ using UnityEngine;
 public class GriddableObject : MonoBehaviour
 {
     [SerializeField]
-    protected GriddableObjectType GType_;
+    public GriddableObjectType GType_;
 
-    public GridField Field_;
+    public GridField field_;
+    public GridCell cell_;
 
     void Start()
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GridCharacter : GriddableObject
 {
- 
+    public bool player_;
     void Start()
     {
         
