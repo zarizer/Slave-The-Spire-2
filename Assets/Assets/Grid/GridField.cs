@@ -9,6 +9,9 @@ public class GridField : MonoBehaviour
     public GameObject CellObject;
     public GameObject RockObject;
     public GameObject DebugCharacter;
+    public int DebugCharacterId;
+    public int DebugCharacterPosX;
+    public int DebugCharacterPosY;
 
     public CameraController Camera;
 
@@ -77,7 +80,9 @@ public class GridField : MonoBehaviour
 
         if (GetGridObject(5, 5) == null)
         {
-            AddGridObject(5, 5, Instantiate(DebugCharacter, transform));
+            var character = Instantiate(DebugCharacter, transform);
+            character.GetComponent<GridCharacter>().ReplaceCharacter(DebugCharacterId);
+            AddGridObject(DebugCharacterPosX, DebugCharacterPosY, character);
         }
 
     }

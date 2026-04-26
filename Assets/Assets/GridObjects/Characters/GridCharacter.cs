@@ -54,7 +54,10 @@ public class GridCharacter : GriddableObject
         }
     }
 
-
+    public void ReplaceCharacter(int id)
+    {
+        character_ = GetCharacterByID(id);
+    }
     CharacterBase GetCharacterByID(int id)
     {
         CharacterBase ret_character;
