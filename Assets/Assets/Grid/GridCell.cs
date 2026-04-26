@@ -27,7 +27,14 @@ public class GridCell : MonoBehaviour
     public void SnapObject()
     {
         if (object_ == null) return;
-        object_.transform.position = transform.position + Vector3.up * 0.45f;
+        if (object_.GType_ == GriddableObject.GriddableObjectType.Obstacle)
+        {
+            object_.transform.position = transform.position + Vector3.up * 0.45f;
+        }
+        if (object_.GType_ == GriddableObject.GriddableObjectType.Character)
+        {
+            object_.transform.position = transform.position - Vector3.up * 0.5f;
+        }
     }
 
     

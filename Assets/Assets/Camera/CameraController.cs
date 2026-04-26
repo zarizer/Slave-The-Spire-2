@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CameraController : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class CameraController : MonoBehaviour
     public Transform CameraDestination;
     public Transform Target;
     public Transform CameraBack;
+    public Transform DeffaultTarget;
     public bool IsTargeted;
     public float XMovement;
     public float ZMovement;
@@ -28,11 +30,12 @@ public class CameraController : MonoBehaviour
         ZMovement = Input.GetAxis("Mouse ScrollWheel") * CameraSensativity;
         
         CameraReposition();
+        GetTarget();
     }
 
     void CameraReposition()
     {
-        transform.position = Vector3.Lerp(transform.position, Target.position, CameraSpeed);
+        transform.position = Vector3.Lerp(transform.position, Target.position, CameraSpeed*0.2f);
         DestinationReposition();
         DestinationRepositionZ();
         Camera.position = Vector3.Lerp(Camera.position, CameraDestination.position, CameraSpeed);
@@ -60,4 +63,23 @@ public class CameraController : MonoBehaviour
             Debug.Log("out");
         }
     }
+
+    void GetTarget()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
+                Debug.Log("Hit: " + hit.transform.name);
+                if (hit.transform.GetComponent<GriddableObject>() != null)
+                {
+                    GriddableObject obj = hit.transform.GetComponent<GriddableObject>();
+                    Target = obj.transform;
+                }
+            }
+        }
+    }
+
+
 }

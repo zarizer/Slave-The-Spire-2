@@ -9446,6 +9446,7 @@ MonoBehaviour:
   CameraDestination: {fileID: 46914294}
   Target: {fileID: 1199501575}
   CameraBack: {fileID: 1904543097}
+  DeffaultTarget: {fileID: 1199501575}
   IsTargeted: 0
   XMovement: 0
   ZMovement: 0
@@ -25468,21 +25469,25 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &963194228
-Transform:
+--- !u!224 &963194228
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.53941256, y: -0, z: -0, w: 0.8420416}
-  m_LocalPosition: {x: 0, y: 9.37, z: -5.55}
+  m_LocalRotation: {x: 0.36662677, y: -0, z: -0, w: 0.9303681}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 378864342}
-  m_LocalEulerAnglesHint: {x: 65.287, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 43.015, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 8}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &965971122
 GameObject:
   m_ObjectHideFlags: 0
@@ -33045,6 +33050,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CellObject: {fileID: 3955325084726692281, guid: bfbecbd312fe04c468571e92181385ed, type: 3}
   RockObject: {fileID: 5902112976088767501, guid: 043c6b5b74e63bd40968a7ff4ff49a91, type: 3}
+  DebugCharacter: {fileID: 7903500308385000291, guid: 3c53ee1864acb3046a62177e846003de, type: 3}
+  Camera: {fileID: 378864341}
   SizeX_: 10
   SizeY_: 10
 --- !u!1 &1206568899
@@ -52364,7 +52371,7 @@ Transform:
   m_GameObject: {fileID: 1904543096}
   serializedVersion: 2
   m_LocalRotation: {x: 0.53941256, y: -0, z: -0, w: 0.8420416}
-  m_LocalPosition: {x: 0, y: 20, z: -11.905}
+  m_LocalPosition: {x: 0, y: 16, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

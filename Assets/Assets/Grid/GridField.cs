@@ -8,6 +8,9 @@ public class GridField : MonoBehaviour
     public List<List<GridCell>> Cells_ = new List<List<GridCell>>();
     public GameObject CellObject;
     public GameObject RockObject;
+    public GameObject DebugCharacter;
+
+    public CameraController Camera;
 
     [SerializeField] private int SizeX_;
     [SerializeField] private int SizeY_;
@@ -68,6 +71,16 @@ public class GridField : MonoBehaviour
             }
         }
     }
+    [ContextMenu("CreateDebugCharacter")]
+    public void CreateDebugCharacter()
+    {
+
+        if (GetGridObject(5, 5) == null)
+        {
+            AddGridObject(5, 5, Instantiate(DebugCharacter, transform));
+        }
+
+    }
 
 
 
@@ -97,14 +110,19 @@ public class GridField : MonoBehaviour
     {
 
         List<GridCell> cells = new List<GridCell>();
-        CheckWaysPlayer(x, y, moves, cells);
+        List<GridCell> nonstopcells = new List<GridCell>();
+        CheckWaysPlayer(x, y, moves, cells, nonstopcells);
         foreach (GridCell cell in cells)
         {
             cell.ColorCell(GridCell.ColorType.Green);
         }
+        foreach (GridCell cell in nonstopcells)
+        {
+            cell.ColorCell(GridCell.ColorType.Yellow);
+        }
     }
 
-    void CheckWaysPlayer(int x, int y, int moves, List<GridCell> cells)
+    void CheckWaysPlayer(int x, int y, int moves, List<GridCell> cells, List<GridCell> nonstopcells)
     {
         Queue<GridCell> queue = new Queue<GridCell>();
         queue.Enqueue(GetGridCell(x, y));
@@ -125,6 +143,9 @@ public class GridField : MonoBehaviour
                 {
                     cells.Add(up);
                 }
+                else {
+                    nonstopcells.Add(up);
+                }
                 up.visited = true;
                 queue.Enqueue(up);
             }
@@ -133,6 +154,10 @@ public class GridField : MonoBehaviour
                 if (down.IsStoppable())
                 {
                     cells.Add(down);
+                }
+                else
+                {
+                    nonstopcells.Add(down);
                 }
                 down.visited = true;
                 queue.Enqueue(down);
@@ -143,6 +168,10 @@ public class GridField : MonoBehaviour
                 {
                     cells.Add(left);
                 }
+                else
+                {
+                    nonstopcells.Add(left);
+                }
                 left.visited = true;
                 queue.Enqueue(left);
             }
@@ -151,6 +180,10 @@ public class GridField : MonoBehaviour
                 if (right.IsStoppable())
                 {
                     cells.Add(right);
+                }
+                else
+                {
+                    nonstopcells.Add(right);
                 }
                 right.visited = true;
                 queue.Enqueue(right);
@@ -192,6 +225,7 @@ public class GridField : MonoBehaviour
             Debug.Log("Adding object on top of anather object: " + x + " " + y);
             return;
         }
+        obj.cell_ = GetGridCell(x, y);
         obj.field_ = this;
         Cells_[x][y].object_ = obj;
         Cells_[x][y].SnapObject();
@@ -199,20 +233,7 @@ public class GridField : MonoBehaviour
 
     void AddGridObject(int x, int y, GameObject obj)
     {
-        if (obj.GetComponent<GriddableObject>() == null) return;
-        if (x > SizeX_ - 1 || y > SizeY_ - 1)
-        {
-            Debug.Log("Adding out of grid: " + x + " " + y);
-            return;
-        }
-        if (GetGridObject(x, y) != null)
-        {
-            Debug.Log("Adding object on top of anather object: " + x + " " + y);
-            return;
-        }
-        obj.GetComponent<GriddableObject>().field_ = this;
-        Cells_[x][y].object_ = obj.GetComponent<GriddableObject>();
-        Cells_[x][y].SnapObject();
+        AddGridObject(x, y, obj.GetComponent<GriddableObject>());
     }
 
     void DeVisitCells()
