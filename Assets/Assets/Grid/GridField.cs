@@ -236,7 +236,7 @@ public class GridField : MonoBehaviour
         AddGridObject(x, y, obj.GetComponent<GriddableObject>());
     }
 
-    void DeVisitCells()
+    public void DeVisitCells()
     {
         foreach (var row in Cells_)
         {
@@ -246,6 +246,12 @@ public class GridField : MonoBehaviour
                 cell.GetComponent<GridCell>().moves = 0;
             }
         }
+    }
+
+    public void CellsNullify()
+    {
+        DeColor();
+        DeVisitCells();
     }
 }
 

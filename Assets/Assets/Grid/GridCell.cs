@@ -13,6 +13,7 @@ public class GridCell : MonoBehaviour
     public List<Material> materials;
     public bool visited = false;
     public int moves = 0;
+    public ColorType color_type = ColorType.None;
 
     void Start()
     {
@@ -41,6 +42,7 @@ public class GridCell : MonoBehaviour
 
     public void ColorCell(ColorType type)
     {
+        color_type = type;
         if (type == ColorType.None)
         {
             foreach (var obj in coloring_objects)

@@ -159,6 +159,8 @@ MonoBehaviour:
   cell_: {fileID: 0}
   player_: 1
   TexturePlane: {fileID: 9222514808385476471}
+  CharacterId_: -1
+  TryingToMove: 0
 --- !u!65 &8503215599278561149
 BoxCollider:
   m_ObjectHideFlags: 0
