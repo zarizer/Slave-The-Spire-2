@@ -71,11 +71,17 @@ public class CameraController : MonoBehaviour
             Ray ray = Camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                Debug.Log("Hit: " + hit.transform.name);
                 if (hit.transform.GetComponent<GriddableObject>() != null)
                 {
                     GriddableObject obj = hit.transform.GetComponent<GriddableObject>();
                     Target = obj.transform;
+                }
+                else
+                {
+                    if (hit.transform.tag != "UI")
+                    {
+                        Target = DeffaultTarget;
+                    }
                 }
             }
         }
