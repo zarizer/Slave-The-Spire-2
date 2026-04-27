@@ -5,6 +5,13 @@ TagManager:
   serializedVersion: 2
   tags:
   - cell
+  - UI
+  - NOTUI
+  - MOVEBUTTON
+  - ATTACK1
+  - ATTACK2
+  - ATTACK3
+  - ATTACK4
   layers:
   - Default
   - TransparentFX

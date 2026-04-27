@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CameraController : MonoBehaviour
@@ -12,6 +13,7 @@ public class CameraController : MonoBehaviour
     public Transform CameraBack;
     public Transform DeffaultTarget;
     public GridField field_;
+    public UIController UIController;
     public bool IsTargeted;
     public float XMovement;
     public float ZMovement;
@@ -68,49 +70,96 @@ public class CameraController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Ray ray = Camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-            
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            PointerEventData eventData = new PointerEventData(EventSystem.current);
+            eventData.position = Input.mousePosition;
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, results);
+
+            if (GetLastUI(results) != null)
             {
-                Debug.Log("Hitted: " + hit.transform.tag);
-                
-                if (hit.transform.GetComponent<GriddableObject>() != null)
+                var UIElem = GetLastUI(results).GetComponent<UIElement>();
+                if (UIElem.UIType == "move")
                 {
-                    GriddableObject obj = hit.transform.GetComponent<GriddableObject>();
-                    Target = obj.transform;
-                    if (obj.GType_ == GriddableObject.GriddableObjectType.Character)
+                    var obj = Target.GetComponent<GridCharacter>();
+                    if (obj.CanMove())
                     {
-                        ((GridCharacter)obj).TryingToMove = true;
-                        obj.field_.FindWaysPlayer(obj.cell_.x_, obj.cell_.y_, ((GridCharacter)obj).character_.moves);
-                    }
-                    else
-                    {
-                        field_.CellsNullify();
+                        obj.TryingToMove = true;
+                        obj.field_.FindWaysPlayer(obj.cell_.x_, obj.cell_.y_, (obj).character_.moves);
                     }
                 }
-                else if (hit.transform.tag == "cell")
+            }
+            else
+            {
+                Ray ray = Camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+
+                if (Physics.Raycast(ray, out RaycastHit hit))
                 {
-                    if (Target.GetComponent<GridCharacter>() != null)
+                    Debug.Log("Hitted: " + hit.transform.tag);
+                    Debug.Log("Hitted: " + hit.transform.name);
+
+                    if (hit.transform.GetComponent<GriddableObject>() != null)
                     {
-                        var character = Target.GetComponent<GridCharacter>();
-                        if (character.player_ && character.TryingToMove)
+                        GriddableObject obj = hit.transform.GetComponent<GriddableObject>();
+                        Target = obj.transform;
+                        if (obj.GType_ == GriddableObject.GriddableObjectType.Character)
                         {
-                            character.MoveToCell(hit.transform.GetComponent<GridCell>());
+                            UIController.character_tab_controller.RequestedUpdate(true);
+                            
+                        }
+                        else
+                        {
+
+                            UIController.character_tab_controller.RequestedUpdate(false);
                             field_.CellsNullify();
                         }
-
                     }
+                    else if (hit.transform.tag == "cell")
+                    {
+                        if (Target.GetComponent<GridCharacter>() != null)
+                        {
+                            var character = Target.GetComponent<GridCharacter>();
+                            if (character.player_ && character.TryingToMove)
+                            {
+                                character.MoveToCell(hit.transform.GetComponent<GridCell>());
+                                field_.CellsNullify();
+                                UIController.character_tab_controller.RequestedUpdate(true);
+                            }
+                            else
+                            {
+                                Target = DeffaultTarget;
+                                UIController.character_tab_controller.RequestedUpdate(false);
+                            }
+
+                        }
+                        else
+                        {
+                            Target = DeffaultTarget;
+                            UIController.character_tab_controller.RequestedUpdate(false);
+                        }
+                    }
+                    else if (hit.transform.tag != "UI")
+                    {
+                        Target = DeffaultTarget;
+                        UIController.character_tab_controller.RequestedUpdate(false);
+                        field_.CellsNullify();
+                    }
+
+
                 }
-                else if (hit.transform.tag != "UI")
-                {
-                    Target = DeffaultTarget;
-                    field_.CellsNullify();
-                }
-                
-                
             }
         }
     }
 
-
+    GameObject GetLastUI(List<RaycastResult> Hits)
+    {
+        GameObject obj = null;
+        foreach (var hit in Hits)
+        {
+            if (hit.gameObject.tag == "UI")
+            {
+                obj = hit.gameObject;
+            }
+        }
+        return obj;
+    }
 }

@@ -51,6 +51,8 @@ public class GridCharacter : GriddableObject
             cell_.object_ = null;
             cell.object_ = this;
             cell_ = cell;
+            TryingToMove = false;
+            character_.cur_moves = 0;
         }
     }
 
@@ -69,7 +71,11 @@ public class GridCharacter : GriddableObject
         return ret_character;
     }
 
-
+    public bool CanMove()
+    {
+        if (character_.cur_moves>0) return true;
+        return false;
+    } 
 }
 
 

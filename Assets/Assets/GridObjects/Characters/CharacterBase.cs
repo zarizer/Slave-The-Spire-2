@@ -11,6 +11,16 @@ public class CharacterBase
     public int speed_dif;
     public float base_dmg;
     public int moves;
+    public int energy;
+    public string name;
+
+    public int cur_hp;
+    public int cur_def;
+    public int cur_speed;
+    public int cur_speed_dif;
+    public float cur_base_dmg;
+    public int cur_moves;
+    public int cur_energy;
 
     public PlayerSkill Skill1;
     public PlayerSkill Skill2;
@@ -22,7 +32,11 @@ public class CharacterBase
     public int skill_id3;
     public int skill_id4;
 
-    public virtual void Init() { }
+    public virtual void Init() 
+    {
+        InitSkills();
+        InitCurStats();
+    }
 
     public PlayerSkill GetSkillByID(int id)
     {
@@ -41,6 +55,17 @@ public class CharacterBase
         Skill2 = GetSkillByID(skill_id2);
         Skill3 = GetSkillByID(skill_id3);
         Skill4 = GetSkillByID(skill_id4);
+    }
+
+    protected void InitCurStats()
+    {
+        cur_hp = hp;
+        cur_def = def;
+        cur_speed = speed;
+        cur_speed_dif = speed_dif;
+        cur_moves = moves;
+        cur_base_dmg = base_dmg;
+        cur_energy = energy;
     }
 }
 
