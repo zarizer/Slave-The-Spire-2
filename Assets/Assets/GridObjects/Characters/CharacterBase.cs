@@ -13,6 +13,7 @@ public class CharacterBase
     public int moves;
     public int energy;
     public string name;
+    public string description;
 
     public int cur_hp;
     public int cur_def;

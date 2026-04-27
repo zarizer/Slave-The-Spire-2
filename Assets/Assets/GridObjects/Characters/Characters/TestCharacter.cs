@@ -6,7 +6,6 @@ public class TestCharacter : CharacterBase
 {
     public override void Init() 
     {
-
         hp = 100;
         def = 10;
         speed = 10;
@@ -14,7 +13,8 @@ public class TestCharacter : CharacterBase
         base_dmg = 1;
         moves = 8;
         energy = 20;
-        name = "TestCharacter";
+        name = "Райан Гослинг Тестовый";
+        description = "ЕМУ ПОЕБАТЬ\nshjbsbcsbchchjsbhcbhjjsdbhfsbhdbvhdbdhcbghxdvghcghdbchbdhcbhdbchjjbhdcbshebchbsdhcbshdbcbsdcbhjsdbchjsbdcbsdbschsghdc-hsbghfcbsghbghbghbzhgbhsbhjsdbhsd";
         skill_id1 = -1;
         skill_id2 = -2;
         skill_id3 = -1;
