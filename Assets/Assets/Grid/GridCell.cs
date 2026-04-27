@@ -27,6 +27,7 @@ public class GridCell : MonoBehaviour
 
     public void SnapObject()
     {
+        Debug.Log("snapping:" + object_.name);
         if (object_ == null) return;
         if (object_.GType_ == GriddableObject.GriddableObjectType.Obstacle)
         {
@@ -34,7 +35,7 @@ public class GridCell : MonoBehaviour
         }
         if (object_.GType_ == GriddableObject.GriddableObjectType.Character)
         {
-            object_.transform.position = transform.position - Vector3.up * 0.5f;
+            object_.GetComponent<GridCharacter>().DestinationPosition = transform.position - Vector3.up * 0.5f;
         }
     }
 

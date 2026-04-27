@@ -12,6 +12,11 @@ public class TestCharacter : CharacterBase
         speed_dif = 2;
         base_dmg = 1;
         moves = 8;
+        skill_id1 = -1;
+        skill_id2 = -2;
+        skill_id3 = -1;
+        skill_id4 = -2;
+        InitSkills();
     }
 
     public int GetMoves() { return moves; }

@@ -47,7 +47,6 @@ public class CameraController : MonoBehaviour
     {
         CameraDestination.RotateAround(Center.position, Vector3.up, XMovement);
         CameraBack.RotateAround(Center.position, Vector3.up, XMovement);
-        //CameraDestination.position = new Vector3(CameraDestination.position.x, CameraY, CameraDestination.position.z);
         CameraDestination.LookAt(Center);
     }
 
@@ -93,7 +92,6 @@ public class CameraController : MonoBehaviour
                 {
                     if (Target.GetComponent<GridCharacter>() != null)
                     {
-                        Debug.Log(1);
                         var character = Target.GetComponent<GridCharacter>();
                         if (character.player_ && character.TryingToMove)
                         {

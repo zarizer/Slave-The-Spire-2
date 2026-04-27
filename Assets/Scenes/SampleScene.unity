@@ -18592,7 +18592,7 @@ Transform:
   m_GameObject: {fileID: 705507993}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: 14.12, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -33100,6 +33100,9 @@ MonoBehaviour:
   CellObject: {fileID: 3955325084726692281, guid: bfbecbd312fe04c468571e92181385ed, type: 3}
   RockObject: {fileID: 5902112976088767501, guid: 043c6b5b74e63bd40968a7ff4ff49a91, type: 3}
   DebugCharacter: {fileID: 7903500308385000291, guid: 3c53ee1864acb3046a62177e846003de, type: 3}
+  DebugCharacterId: -1
+  DebugCharacterPosX: 3
+  DebugCharacterPosY: 2
   Camera: {fileID: 378864341}
   SizeX_: 10
   SizeY_: 10

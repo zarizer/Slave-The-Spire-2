@@ -61,15 +61,15 @@ public class GridCharacter : GriddableObject
     CharacterBase GetCharacterByID(int id)
     {
         CharacterBase ret_character;
-        ret_character = new TestCharacter();
 
-        /*
-         ÏĞÎÂÅĞÊÈ ÑŞÄÀ
-        */
+        ret_character = DataDicts.CharacterSet[id];
+        if (ret_character == null) ret_character = new TestCharacter();
 
         ret_character.Init();
         return ret_character;
     }
+
+
 }
 
 

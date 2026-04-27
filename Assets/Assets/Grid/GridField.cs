@@ -78,11 +78,12 @@ public class GridField : MonoBehaviour
     public void CreateDebugCharacter()
     {
 
-        if (GetGridObject(5, 5) == null)
+        if (GetGridObject(DebugCharacterPosX, DebugCharacterPosY) == null)
         {
             var character = Instantiate(DebugCharacter, transform);
             character.GetComponent<GridCharacter>().ReplaceCharacter(DebugCharacterId);
             AddGridObject(DebugCharacterPosX, DebugCharacterPosY, character);
+            GetGridCell(DebugCharacterPosX, DebugCharacterPosY).SnapObject();
         }
 
     }
