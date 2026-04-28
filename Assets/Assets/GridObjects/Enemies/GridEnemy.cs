@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class GridEnemy : GriddableObject
 {
-    public Vector3 DestinationPosition;
 
     public GameObject TexturePlane;
     public EnemyBase enemy_;
@@ -40,19 +39,6 @@ public class GridEnemy : GriddableObject
     void MoveToDestination()
     {
         transform.position = Vector3.Lerp(transform.position, DestinationPosition, 0.1f);
-    }
-
-    public void MoveToCell(GridCell cell)
-    {
-        if (cell.color_type == GridCell.ColorType.Green)
-        {
-            DestinationPosition = new Vector3(cell.transform.position.x, cell.transform.position.y - 0.5f, cell.transform.position.z);
-            cell_.object_ = null;
-            cell.object_ = this;
-            cell_ = cell;
-            TryingToMove = false;
-            enemy_.cur_moves = 0;
-        }
     }
 
     public void ReplaceEnemy(int id)

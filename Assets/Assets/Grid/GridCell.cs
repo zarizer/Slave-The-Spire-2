@@ -14,6 +14,7 @@ public class GridCell : MonoBehaviour
     public bool visited = false;
     public int moves = 0;
     public ColorType color_type = ColorType.None;
+    public GridCell ParentCell = null;
 
     void Start()
     {

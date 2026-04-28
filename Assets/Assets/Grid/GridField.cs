@@ -168,6 +168,7 @@ public class GridField : MonoBehaviour
                 else {
                     nonstopcells.Add(up);
                 }
+                up.ParentCell = cell;
                 up.visited = true;
                 queue.Enqueue(up);
             }
@@ -181,6 +182,7 @@ public class GridField : MonoBehaviour
                 {
                     nonstopcells.Add(down);
                 }
+                down.ParentCell = cell;
                 down.visited = true;
                 queue.Enqueue(down);
             }
@@ -194,6 +196,7 @@ public class GridField : MonoBehaviour
                 {
                     nonstopcells.Add(left);
                 }
+                left.ParentCell = cell;
                 left.visited = true;
                 queue.Enqueue(left);
             }
@@ -207,6 +210,7 @@ public class GridField : MonoBehaviour
                 {
                     nonstopcells.Add(right);
                 }
+                right.ParentCell = cell;
                 right.visited = true;
                 queue.Enqueue(right);
             }
@@ -266,6 +270,7 @@ public class GridField : MonoBehaviour
             {
                 cell.GetComponent<GridCell>().visited = false;
                 cell.GetComponent<GridCell>().moves = 0;
+                cell.GetComponent<GridCell>().ParentCell = null;
             }
         }
     }
