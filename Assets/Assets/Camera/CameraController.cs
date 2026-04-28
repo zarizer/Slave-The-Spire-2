@@ -10,6 +10,7 @@ public class CameraController : MonoBehaviour
     public Transform Center;
     public Transform CameraDestination;
     public Transform Target;
+    public Transform PrevTarget;
     public Transform CameraBack;
     public Transform DeffaultTarget;
     public GridField field_;
@@ -98,7 +99,13 @@ public class CameraController : MonoBehaviour
                     if (hit.transform.GetComponent<GriddableObject>() != null)
                     {
                         GriddableObject obj = hit.transform.GetComponent<GriddableObject>();
+                        PrevTarget = Target;
                         Target = obj.transform;
+                        if (Target!=PrevTarget)
+                        {
+                            field_.CellsNullify();
+                            field_.GridObjectsActionNullify();
+                        }
                         if (obj.GType_ == GriddableObject.GriddableObjectType.Character)
                         {
                             UIController.UpdateTabCharacter(true);
@@ -116,6 +123,7 @@ public class CameraController : MonoBehaviour
 
                             UIController.CloseAllObjectTabs();
                             field_.CellsNullify();
+                            field_.GridObjectsActionNullify();
                         }
                     }
                     else if (hit.transform.tag == "cell")
@@ -127,6 +135,7 @@ public class CameraController : MonoBehaviour
                             {
                                 character.MoveToCell(hit.transform.GetComponent<GridCell>());
                                 field_.CellsNullify();
+                                field_.GridObjectsActionNullify();
                                 UIController.UpdateTabCharacter(true);
                             }
                             else
@@ -134,21 +143,26 @@ public class CameraController : MonoBehaviour
                                 Target = DeffaultTarget;
                                 UIController.CloseAllObjectTabs();
                                 field_.CellsNullify();
+                                field_.GridObjectsActionNullify();
                             }
 
                         }
                         else
                         {
+                            PrevTarget = Target;
                             Target = DeffaultTarget;
                             UIController.CloseAllObjectTabs();
                             field_.CellsNullify();
+                            field_.GridObjectsActionNullify();
                         }
                     }
                     else if (hit.transform.tag != "UI")
                     {
+                        PrevTarget = Target;
                         Target = DeffaultTarget;
                         UIController.CloseAllObjectTabs();
                         field_.CellsNullify();
+                        field_.GridObjectsActionNullify();
                     }
 
 

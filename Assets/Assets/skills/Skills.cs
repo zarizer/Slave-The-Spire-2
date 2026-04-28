@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TestSkill1 : PlayerSkill
 {
-    public override void Init()
+    public override PlayerSkill Init()
     {
         id = -1;
         name = "TestSkill1";
@@ -14,12 +14,13 @@ public class TestSkill1 : PlayerSkill
         rollDist = RollDist.StLine;
         rollRadius = RollRadius.Single;
         energy = 10;
+        return this;
     }
 }
 
 public class TestSkill2 : PlayerSkill
 {
-    public override void Init()
+    public override PlayerSkill Init()
     {
         id = -2;
         name = "TestSkill2";
@@ -29,5 +30,6 @@ public class TestSkill2 : PlayerSkill
         rollDist = RollDist.Raridus;
         rollRadius = RollRadius.TargetRadius;
         energy = -10;
+        return this;
     }
 }

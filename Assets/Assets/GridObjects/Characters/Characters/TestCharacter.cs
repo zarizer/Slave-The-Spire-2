@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TestCharacter : CharacterBase
 {
-    public override void Init() 
+    public override CharacterBase Init() 
     {
         id = -1;
         hp = 100;
@@ -21,6 +21,7 @@ public class TestCharacter : CharacterBase
         skill_id3 = -1;
         skill_id4 = -2;
         base.Init();
+        return this;
     }
 
     public int GetMoves() { return moves; }

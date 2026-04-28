@@ -11,7 +11,7 @@ public class GridCharacter : GriddableObject
     public int CharacterId_ = -1;
     
 
-    public bool TryingToMove = false;
+
     void Start()
     {
         character_ = GetCharacterByID(CharacterId_);
@@ -49,9 +49,10 @@ public class GridCharacter : GriddableObject
     }
     CharacterBase GetCharacterByID(int id)
     {
-        CharacterBase ret_character;
+        CharacterBase ret_character = null;
 
-        ret_character = DataDicts.CharacterSet[id];
+        ret_character = DataDicts.CharacterSet[id].Clone();
+        Debug.Log(ret_character.name + " "+ id);
         if (ret_character == null) ret_character = new TestCharacter();
 
         ret_character.Init();

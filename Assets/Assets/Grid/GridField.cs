@@ -20,6 +20,8 @@ public class GridField : MonoBehaviour
 
     public CameraController Camera;
 
+    public List<GriddableObject> GridObjects;
+
     [SerializeField] private int SizeX_;
     [SerializeField] private int SizeY_;
     void Start()
@@ -255,6 +257,7 @@ public class GridField : MonoBehaviour
         obj.field_ = this;
         Cells_[x][y].object_ = obj;
         Cells_[x][y].SnapObject();
+        GridObjects.Add(obj);
     }
 
     void AddGridObject(int x, int y, GameObject obj)
@@ -275,6 +278,13 @@ public class GridField : MonoBehaviour
         }
     }
 
+    public void GridObjectsActionNullify()
+    {
+        foreach(var obj in GridObjects)
+        {
+            obj.TryingToMove = false;
+        }
+    }
     public void CellsNullify()
     {
         DeColor();

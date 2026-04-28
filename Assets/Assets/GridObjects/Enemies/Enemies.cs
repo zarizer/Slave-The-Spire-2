@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TestEnemy : EnemyBase
 {
-    public override void Init()
+    public override CharacterBase Init()
     {
         id = -1;
         hp = 100;
@@ -18,5 +18,7 @@ public class TestEnemy : EnemyBase
         description = "YOU SHOULD DELETE WINDOWS. NOW!!!";
 
         base.Init();
+        return this;
     }
+
 }

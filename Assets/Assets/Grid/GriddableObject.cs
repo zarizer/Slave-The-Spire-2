@@ -12,6 +12,7 @@ public class GriddableObject : MonoBehaviour
 
     public GridField field_;
     public GridCell cell_;
+    public bool TryingToMove = false;
 
     void Start()
     {

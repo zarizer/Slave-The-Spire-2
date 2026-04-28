@@ -8,9 +8,6 @@ public class GridEnemy : GriddableObject
     public GameObject TexturePlane;
     public EnemyBase enemy_;
     public int EnemyId_ = -1;
-
-
-    public bool TryingToMove = false;
     void Start()
     {
         enemy_ = GetEnemyByID(EnemyId_);
@@ -49,7 +46,7 @@ public class GridEnemy : GriddableObject
     {
         EnemyBase ret_character;
 
-        ret_character = DataDicts.EnemySet[id];
+        ret_character = DataDicts.EnemySet[id].Clone();
         if (ret_character == null) ret_character = new TestEnemy();
 
         ret_character.Init();

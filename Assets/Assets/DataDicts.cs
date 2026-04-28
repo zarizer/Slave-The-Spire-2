@@ -7,17 +7,17 @@ public static class DataDicts
 
     public static Dictionary<int, PlayerSkill> SkillSet = new Dictionary<int, PlayerSkill>()
     {
-        { -1, new TestSkill1() },
-        { -2, new TestSkill2() },
+        { -1, new TestSkill1().Init() },
+        { -2, new TestSkill2().Init() },
     };
 
     public static Dictionary<int, CharacterBase> CharacterSet = new Dictionary<int, CharacterBase>()
     {
-        { -1, new TestCharacter() },
+        { -1, new TestCharacter().Init() },
     };
 
     public static Dictionary<int, EnemyBase> EnemySet = new Dictionary<int, EnemyBase>()
     {
-        { -1, new TestEnemy() },
+        { -1, (EnemyBase)new TestEnemy().Init() },
     };
 }

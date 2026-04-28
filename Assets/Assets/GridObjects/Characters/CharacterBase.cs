@@ -34,10 +34,11 @@ public class CharacterBase
     public int skill_id3;
     public int skill_id4;
 
-    public virtual void Init() 
+    public virtual CharacterBase Init() 
     {
         InitSkills();
         InitCurStats();
+        return this;
     }
 
     public PlayerSkill GetSkillByID(int id)
@@ -68,6 +69,48 @@ public class CharacterBase
         cur_moves = moves;
         cur_base_dmg = base_dmg;
         cur_energy = energy;
+    }
+
+    public CharacterBase()
+    {
+
+    }
+
+    public CharacterBase(CharacterBase other)
+    {
+        id = other.id;
+        hp = other.hp;
+        def = other.def;
+        speed = other.speed;
+        speed_dif = other.speed_dif;
+        base_dmg = other.base_dmg;
+        moves = other.moves;
+        energy = other.energy;
+        name = other.name;
+        description = other.description;
+
+        cur_hp = other.cur_hp;
+        cur_def = other.cur_def;
+        cur_speed = other.cur_speed;
+        cur_speed_dif = other.cur_speed_dif;
+        cur_base_dmg = other.cur_base_dmg;
+        cur_moves = other.cur_moves;
+        cur_energy = other.cur_energy;
+
+        Skill1 = other.Skill1;
+        Skill2 = other.Skill2;
+        Skill3 = other.Skill3;
+        Skill4 = other.Skill4;
+
+        skill_id1 = other.skill_id1;
+        skill_id2 = other.skill_id2;
+        skill_id3 = other.skill_id3;
+        skill_id4 = other.skill_id4;
+    }
+
+    public virtual CharacterBase Clone()
+    {
+        return new CharacterBase(this);
     }
 }
 

@@ -26,7 +26,25 @@ public class PlayerSkill
         return Random.Range(minRoll + min_plus, maxRoll + max_plus); 
     }
 
-    public virtual void Init() { }
+    public PlayerSkill()
+    {
+
+    }
+
+    public PlayerSkill(PlayerSkill other)
+    {
+        id = other.id;
+        name = other.name;
+        minRoll = other.minRoll;
+        maxRoll = other.maxRoll;
+        rollType = other.rollType;
+        rollDist = other.rollDist;
+        rollRadius = other.rollRadius;
+        character = other.character;
+        energy = other.energy;
+    }
+
+    public virtual PlayerSkill Init() { return this; }
 }
 
 public enum RollType
