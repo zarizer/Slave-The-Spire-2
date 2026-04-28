@@ -37,6 +37,10 @@ public class GridCell : MonoBehaviour
         {
             object_.GetComponent<GridCharacter>().DestinationPosition = transform.position - Vector3.up * 0.5f;
         }
+        if (object_.GType_ == GriddableObject.GriddableObjectType.Enemy)
+        {
+            object_.GetComponent<GridEnemy>().DestinationPosition = transform.position - Vector3.up * 0.5f;
+        }
     }
 
     

@@ -13,6 +13,11 @@ public class GridField : MonoBehaviour
     public int DebugCharacterPosX;
     public int DebugCharacterPosY;
 
+    public GameObject DebugEnemy;
+    public int DebugEnemyId;
+    public int DebugEnemyPosX;
+    public int DebugEnemyPosY;
+
     public CameraController Camera;
 
     [SerializeField] private int SizeX_;
@@ -74,10 +79,10 @@ public class GridField : MonoBehaviour
             }
         }
     }
+
     [ContextMenu("CreateDebugCharacter")]
     public void CreateDebugCharacter()
     {
-
         if (GetGridObject(DebugCharacterPosX, DebugCharacterPosY) == null)
         {
             var character = Instantiate(DebugCharacter, transform);
@@ -85,7 +90,18 @@ public class GridField : MonoBehaviour
             AddGridObject(DebugCharacterPosX, DebugCharacterPosY, character);
             GetGridCell(DebugCharacterPosX, DebugCharacterPosY).SnapObject();
         }
+    }
 
+    [ContextMenu("CreateDebugEnemy")]
+    public void CreateDebugEnemy()
+    {
+        if (GetGridObject(DebugEnemyPosX, DebugEnemyPosY) == null)
+        {
+            var character = Instantiate(DebugEnemy, transform);
+            character.GetComponent<GridEnemy>().ReplaceEnemy(DebugEnemyId);
+            AddGridObject(DebugEnemyPosX, DebugEnemyPosY, character);
+            GetGridCell(DebugEnemyPosX, DebugEnemyPosY).SnapObject();
+        }
     }
 
 

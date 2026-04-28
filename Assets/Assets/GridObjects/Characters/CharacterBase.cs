@@ -5,6 +5,7 @@ using UnityEngine.UIElements;
 
 public class CharacterBase
 {
+    public int id;
     public int hp;
     public int def;
     public int speed;

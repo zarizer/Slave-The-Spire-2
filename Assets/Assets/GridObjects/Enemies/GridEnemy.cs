@@ -2,20 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridCharacter : GriddableObject
+public class GridEnemy : GriddableObject
 {
     public Vector3 DestinationPosition;
 
     public GameObject TexturePlane;
-    public CharacterBase character_;
-    public int CharacterId_ = -1;
-    
+    public EnemyBase enemy_;
+    public int EnemyId_ = -1;
+
 
     public bool TryingToMove = false;
     void Start()
     {
-        character_ = GetCharacterByID(CharacterId_);
-        player_ = true;
+        enemy_ = GetEnemyByID(EnemyId_);
+        player_ = false;
     }
 
     void Update()
@@ -26,7 +26,7 @@ public class GridCharacter : GriddableObject
 
     private void OnEnable()
     {
-        GType_ = GriddableObjectType.Character;
+        GType_ = GriddableObjectType.Enemy;
     }
 
     void LookAtCamera()
@@ -51,20 +51,20 @@ public class GridCharacter : GriddableObject
             cell.object_ = this;
             cell_ = cell;
             TryingToMove = false;
-            character_.cur_moves = 0;
+            enemy_.cur_moves = 0;
         }
     }
 
-    public void ReplaceCharacter(int id)
+    public void ReplaceEnemy(int id)
     {
-        character_ = GetCharacterByID(id);
+        enemy_ = GetEnemyByID(id);
     }
-    CharacterBase GetCharacterByID(int id)
+    EnemyBase GetEnemyByID(int id)
     {
-        CharacterBase ret_character;
+        EnemyBase ret_character;
 
-        ret_character = DataDicts.CharacterSet[id];
-        if (ret_character == null) ret_character = new TestCharacter();
+        ret_character = DataDicts.EnemySet[id];
+        if (ret_character == null) ret_character = new TestEnemy();
 
         ret_character.Init();
         return ret_character;
@@ -72,13 +72,9 @@ public class GridCharacter : GriddableObject
 
     public bool CanMove()
     {
-        if (character_.cur_moves>0) return true;
+        if (enemy_.cur_moves > 0) return true;
         return false;
-    } 
+    }
+
+
 }
-
-
-
-
-
-

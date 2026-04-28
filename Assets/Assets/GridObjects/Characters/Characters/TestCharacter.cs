@@ -6,6 +6,7 @@ public class TestCharacter : CharacterBase
 {
     public override void Init() 
     {
+        id = -1;
         hp = 100;
         def = 10;
         speed = 10;

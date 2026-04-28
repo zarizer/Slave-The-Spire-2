@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 710ce2206ca72f34a9195140a9afd99b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -116,10 +116,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2481593620087641788}
-  - component: {fileID: 4718569247299793797}
+  - component: {fileID: -8007137783566499895}
   - component: {fileID: 8503215599278561149}
   m_Layer: 0
-  m_Name: PrefabCharacter
+  m_Name: PrefabEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -142,7 +142,7 @@ Transform:
   - {fileID: 7497997890488404299}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4718569247299793797
+--- !u!114 &-8007137783566499895
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -151,16 +151,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 7903500308385000291}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2957efb9122e4043975d151fa14bbf9, type: 3}
+  m_Script: {fileID: 11500000, guid: ef36f90d17c68f645a1bbbed7c5aa393, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player_: 1
-  GType_: 1
+  player_: 0
+  GType_: 0
   field_: {fileID: 0}
   cell_: {fileID: 0}
   DestinationPosition: {x: 0, y: 0, z: 0}
   TexturePlane: {fileID: 9222514808385476471}
-  CharacterId_: -1
+  EnemyId_: -1
   TryingToMove: 0
 --- !u!65 &8503215599278561149
 BoxCollider:
@@ -245,7 +245,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6a4731d203b5599469b6accb24cdc0fb, type: 2}
+  - {fileID: 2100000, guid: dd18dec2fcc325348b82e75d25e5519d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

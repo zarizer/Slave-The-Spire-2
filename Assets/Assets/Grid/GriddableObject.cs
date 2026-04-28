@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GriddableObject : MonoBehaviour
 {
+    public bool player_;
     [SerializeField]
     public GriddableObjectType GType_;
 
@@ -22,6 +23,7 @@ public class GriddableObject : MonoBehaviour
 
     public enum GriddableObjectType
     {
+        Enemy,
         Character,
         Obstacle,
         Breakable

@@ -47,8 +47,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e63c0ed66e139594db9d1616b7df07f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player_: 0
   GType_: 1
-  Field_: {fileID: 0}
+  field_: {fileID: 0}
+  cell_: {fileID: 0}
 --- !u!33 &4942425026789154699
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -165,5 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e63c0ed66e139594db9d1616b7df07f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GType_: 1
-  Field_: {fileID: 0}
+  player_: 0
+  GType_: 2
+  field_: {fileID: 0}
+  cell_: {fileID: 0}

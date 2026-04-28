@@ -15,4 +15,9 @@ public static class DataDicts
     {
         { -1, new TestCharacter() },
     };
+
+    public static Dictionary<int, EnemyBase> EnemySet = new Dictionary<int, EnemyBase>()
+    {
+        { -1, new TestEnemy() },
+    };
 }

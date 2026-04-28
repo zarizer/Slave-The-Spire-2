@@ -57,12 +57,10 @@ public class CameraController : MonoBehaviour
         if (ZMovement < 0 && Vector3.Distance(CameraDestination.position, Center.position) > MinDist)
         {
             CameraDestination.position = Vector3.Lerp(CameraDestination.position, Center.position, CameraSpeed*0.1f);
-            Debug.Log("in");
         }
         if (ZMovement > 0)
         {
             CameraDestination.position = Vector3.Lerp(CameraDestination.position, CameraBack.position, CameraSpeed*0.1f);
-            Debug.Log("out");
         }
     }
 
@@ -84,7 +82,7 @@ public class CameraController : MonoBehaviour
                     if (obj.CanMove())
                     {
                         obj.TryingToMove = true;
-                        obj.field_.FindWaysPlayer(obj.cell_.x_, obj.cell_.y_, (obj).character_.moves);
+                        obj.field_.FindWaysPlayer(obj.cell_.x_, obj.cell_.y_, (obj).character_.cur_moves);
                     }
                 }
             }
@@ -103,13 +101,20 @@ public class CameraController : MonoBehaviour
                         Target = obj.transform;
                         if (obj.GType_ == GriddableObject.GriddableObjectType.Character)
                         {
-                            UIController.character_tab_controller.RequestedUpdate(true);
+                            UIController.UpdateTabCharacter(true);
                             
+                        }
+                        else if (obj.GType_ == GriddableObject.GriddableObjectType.Enemy)
+                        {
+                            GridEnemy obj_enemy = hit.transform.GetComponent<GridEnemy>();
+                            UIController.UpdateTabEnemy(true);
+                            obj.field_.FindWaysPlayer(obj.cell_.x_, obj.cell_.y_, obj_enemy.enemy_.cur_moves);
+
                         }
                         else
                         {
 
-                            UIController.character_tab_controller.RequestedUpdate(false);
+                            UIController.CloseAllObjectTabs();
                             field_.CellsNullify();
                         }
                     }
@@ -122,25 +127,27 @@ public class CameraController : MonoBehaviour
                             {
                                 character.MoveToCell(hit.transform.GetComponent<GridCell>());
                                 field_.CellsNullify();
-                                UIController.character_tab_controller.RequestedUpdate(true);
+                                UIController.UpdateTabCharacter(true);
                             }
                             else
                             {
                                 Target = DeffaultTarget;
-                                UIController.character_tab_controller.RequestedUpdate(false);
+                                UIController.CloseAllObjectTabs();
+                                field_.CellsNullify();
                             }
 
                         }
                         else
                         {
                             Target = DeffaultTarget;
-                            UIController.character_tab_controller.RequestedUpdate(false);
+                            UIController.CloseAllObjectTabs();
+                            field_.CellsNullify();
                         }
                     }
                     else if (hit.transform.tag != "UI")
                     {
                         Target = DeffaultTarget;
-                        UIController.character_tab_controller.RequestedUpdate(false);
+                        UIController.CloseAllObjectTabs();
                         field_.CellsNullify();
                     }
 
