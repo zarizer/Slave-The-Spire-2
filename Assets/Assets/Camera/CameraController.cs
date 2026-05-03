@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class CameraController : MonoBehaviour
@@ -223,35 +224,46 @@ public class CameraController : MonoBehaviour
                     if (hit.collider.gameObject.tag == "cell")
                     {
                         var cell = hit.collider.GetComponent<GridCell>();
-                        if (!cell.IsMainTarget && (cell.GetColor() == GridCell.ColorType.Red || cell.GetColor() == GridCell.ColorType.Yellow))
-                        {
-                            prev_cell.IsMainTarget = false;
-                            prev_cell = cell;
-                            cell.IsMainTarget = true;
-                            
-                           
-                            if (cur_skill == 1)
-                            {
-                                field_.ShowDamagePlayer(cell.x_, cell.y_, character.character_.Skill1, character.cell_.x_, character.cell_.y_);
-                                Debug.Log(9999);
-                            }
-                            if (cur_skill == 2)
-                            {
-                                field_.ShowDamagePlayer(cell.x_, cell.y_, character.character_.Skill2, character.cell_.x_, character.cell_.y_);
-                            }
-                            if (cur_skill == 3)
-                            {
-                                field_.ShowDamagePlayer(cell.x_, cell.y_, character.character_.Skill3, character.cell_.x_, character.cell_.y_);
-                            }
-                            if (cur_skill == 4)
-                            {
-                                field_.ShowDamagePlayer(cell.x_, cell.y_, character.character_.Skill4, character.cell_.x_, character.cell_.y_);
-                            }
-                        }
+                        ProcessCell(cell, character);
+                    }
+                    else if (hit.collider.gameObject.GetComponent<GriddableObject>() != null)
+                    {
+                        var cell = hit.collider.gameObject.GetComponent<GriddableObject>().cell_;
+                        ProcessCell(cell, character);
                     }
                 }
             }
         }
+
+        void ProcessCell(GridCell cell, GridCharacter character)
+        {
+            if (!cell.IsMainTarget && (cell.GetColor() == GridCell.ColorType.Red || cell.GetColor() == GridCell.ColorType.Yellow))
+            {
+                prev_cell.IsMainTarget = false;
+                prev_cell = cell;
+                cell.IsMainTarget = true;
+
+
+                if (cur_skill == 1)
+                {
+                    field_.ShowDamagePlayer(cell.x_, cell.y_, character.character_.Skill1, character.cell_.x_, character.cell_.y_);
+                    Debug.Log(9999);
+                }
+                if (cur_skill == 2)
+                {
+                    field_.ShowDamagePlayer(cell.x_, cell.y_, character.character_.Skill2, character.cell_.x_, character.cell_.y_);
+                }
+                if (cur_skill == 3)
+                {
+                    field_.ShowDamagePlayer(cell.x_, cell.y_, character.character_.Skill3, character.cell_.x_, character.cell_.y_);
+                }
+                if (cur_skill == 4)
+                {
+                    field_.ShowDamagePlayer(cell.x_, cell.y_, character.character_.Skill4, character.cell_.x_, character.cell_.y_);
+                }
+            }
+        }
+
     }
 
     GameObject GetLastUI(List<RaycastResult> Hits)
