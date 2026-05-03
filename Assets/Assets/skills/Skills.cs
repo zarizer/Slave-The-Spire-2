@@ -8,12 +8,18 @@ public class TestSkill1 : PlayerSkill
     {
         id = -1;
         name = "TestSkill1";
-        minRoll = 3;
-        maxRoll = 8;
-        rollType = RollType.Atk;
-        rollDist = RollDist.StLine;
-        rollRadius = RollRadius.Single;
-        energy = 10;
+        rollDist = RollDist.Radius;
+        dist = 2;
+        rolls.Add(new Roll(
+        4,
+        8,
+        RollType.Atk,
+        RollRadius.Single,
+        1,
+        Element.fire));
+        energy = -10;
+        MakeAttackPositions();
+        base.Init();
         return this;
     }
 }
@@ -24,12 +30,18 @@ public class TestSkill2 : PlayerSkill
     {
         id = -2;
         name = "TestSkill2";
-        minRoll = 5;
-        maxRoll = 10;
-        rollType = RollType.Atk;
-        rollDist = RollDist.Raridus;
-        rollRadius = RollRadius.TargetRadius;
+        dist = 3;
+        rollDist = RollDist.DgLine;
+        rolls.Add(new Roll(
+        5,
+        10,
+        RollType.Atk,
+        RollRadius.DgLine,
+        5,
+        Element.None));
         energy = -10;
+        MakeAttackPositions();
+        base.Init();
         return this;
     }
 }

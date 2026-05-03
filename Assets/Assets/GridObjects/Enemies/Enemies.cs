@@ -16,8 +16,6 @@ public class TestEnemy : EnemyBase
         energy = 20;
         name = "Линус Торвальдс";
         description = "YOU SHOULD DELETE WINDOWS. NOW!!!";
-
-        base.Init();
         return this;
     }
 

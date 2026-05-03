@@ -13,8 +13,12 @@ public class GridCell : MonoBehaviour
     public List<Material> materials;
     public bool visited = false;
     public int moves = 0;
+    public int color_id = 0;
     public ColorType color_type = ColorType.None;
     public GridCell ParentCell = null;
+    public ColorType PrevColor = ColorType.None;
+    public bool IsTargeted = false;
+    public bool IsMainTarget = false;
 
     void Start()
     {
@@ -48,6 +52,10 @@ public class GridCell : MonoBehaviour
 
     public void ColorCell(ColorType type)
     {
+        if (PrevColor != type)
+        {
+            PrevColor = GetColor();
+        } 
         color_type = type;
         if (type == ColorType.None)
         {
@@ -59,6 +67,8 @@ public class GridCell : MonoBehaviour
             {
                 obj.GetComponent<Renderer>().material = materials[1];
             }
+            color_id = 0;
+            
         }
         if (type == ColorType.Red)
         {
@@ -70,6 +80,7 @@ public class GridCell : MonoBehaviour
             {
                 obj.GetComponent<Renderer>().material = materials[3];
             }
+            color_id = 1;
         }
         if (type == ColorType.Yellow)
         {
@@ -81,6 +92,7 @@ public class GridCell : MonoBehaviour
             {
                 obj.GetComponent<Renderer>().material = materials[5];
             }
+            color_id = 2;
         }
         if (type == ColorType.Green)
         {
@@ -92,6 +104,7 @@ public class GridCell : MonoBehaviour
             {
                 obj.GetComponent<Renderer>().material = materials[7];
             }
+            color_id = 3;
         }
         if (type == ColorType.Blue)
         {
@@ -103,6 +116,75 @@ public class GridCell : MonoBehaviour
             {
                 obj.GetComponent<Renderer>().material = materials[9];
             }
+            color_id = 4;   
+        }
+    }
+
+    public void ColorCell(int color_id)
+    {
+        if (PrevColor != GetColorById(color_id))
+        {
+            PrevColor = GetColor();
+        }
+        if (color_id == 0)
+        {
+            foreach (var obj in coloring_objects)
+            {
+                obj.GetComponent<Renderer>().material = materials[0];
+            }
+            foreach (var obj in coloring_objects_trans)
+            {
+                obj.GetComponent<Renderer>().material = materials[1];
+            }
+            color_id = 0;
+        }
+        if (color_id == 1)
+        {
+            foreach (var obj in coloring_objects)
+            {
+                obj.GetComponent<Renderer>().material = materials[2];
+            }
+            foreach (var obj in coloring_objects_trans)
+            {
+                obj.GetComponent<Renderer>().material = materials[3];
+            }
+            color_id = 1;
+        }
+        if (color_id == 2)
+        {
+            foreach (var obj in coloring_objects)
+            {
+                obj.GetComponent<Renderer>().material = materials[4];
+            }
+            foreach (var obj in coloring_objects_trans)
+            {
+                obj.GetComponent<Renderer>().material = materials[5];
+            }
+            color_id = 2;
+        }
+        if (color_id == 3)
+        {
+            foreach (var obj in coloring_objects)
+            {
+                obj.GetComponent<Renderer>().material = materials[6];
+            }
+            foreach (var obj in coloring_objects_trans)
+            {
+                obj.GetComponent<Renderer>().material = materials[7];
+            }
+            color_id = 3;
+        }
+        if (color_id == 4)
+        {
+            foreach (var obj in coloring_objects)
+            {
+                obj.GetComponent<Renderer>().material = materials[8];
+            }
+            foreach (var obj in coloring_objects_trans)
+            {
+                obj.GetComponent<Renderer>().material = materials[9];
+            }
+            color_id = 4;
         }
     }
 
@@ -120,6 +202,18 @@ public class GridCell : MonoBehaviour
         return false;
     }
 
+    public void UpdateTargeting()
+    {
+        if (IsTargeted)
+        {
+            ColorCell(ColorType.Red);
+        }
+        else
+        {
+            ColorCell(color_id);
+        }
+    }
+
     public enum ColorType
     {
         None,
@@ -127,6 +221,26 @@ public class GridCell : MonoBehaviour
         Yellow,
         Green,
         Blue
+    }
+
+    public ColorType GetColor()
+    {
+        if (color_id == 0) return ColorType.None;
+        if (color_id == 3) return ColorType.Green;
+        if (color_id == 1) return ColorType.Red;
+        if (color_id == 2) return ColorType.Yellow;
+        if (color_id == 4) return ColorType.Blue;
+        return ColorType.None;
+    }
+
+    public ColorType GetColorById(int color_id_)
+    {
+        if (color_id_ == 0) return ColorType.None;
+        if (color_id_ == 3) return ColorType.Green;
+        if (color_id_ == 1) return ColorType.Red;
+        if (color_id_ == 2) return ColorType.Yellow;
+        if (color_id_ == 4) return ColorType.Blue;
+        return ColorType.None;
     }
 }
 

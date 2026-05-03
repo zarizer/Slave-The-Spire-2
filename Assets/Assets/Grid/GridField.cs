@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting.Dependencies.Sqlite;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class GridField : MonoBehaviour
 {
@@ -65,6 +66,7 @@ public class GridField : MonoBehaviour
             }
             Cells_.Add(list);
         }
+        Camera.prev_cell = Cells_[SizeX_ - 1][SizeY_-1].GetComponent<GridCell>();
     }
 
     [ContextMenu("CreateRocks")]
@@ -220,6 +222,179 @@ public class GridField : MonoBehaviour
         
     }
 
+    public void FindAttacksPlayer(int x, int y, PlayerSkill skill)
+    {
+        if (skill.energy > Camera.Target.gameObject.GetComponent<GridCharacter>().character_.energy) return;
+        if (skill.rollDist == RollDist.Any)
+        {
+            for (int i = 0; i<SizeX_; i++)
+            {
+                for (int j = 0; j<SizeY_; j++)
+                {
+                    GetGridCell(i, j).ColorCell(GridCell.ColorType.Yellow);
+                }
+            }
+        }
+        foreach (var pos in skill.AttackPositions)
+        {
+            if (GetGridCell(x + pos.Item1, y + pos.Item2) != null)
+            {
+                GetGridCell(x + pos.Item1, y + pos.Item2).ColorCell(GridCell.ColorType.Yellow);
+            }
+        }
+    }
+    public void ShowDamagePlayer(int x, int y, PlayerSkill skill, int px = 0, int py = 0)
+    {
+        if (skill.energy > Camera.Target.gameObject.GetComponent<GridCharacter>().character_.energy) return;
+        (int, int) p_pos = (Camera.Target.gameObject.GetComponent<GridCharacter>().cell_.x_,
+                            Camera.Target.gameObject.GetComponent<GridCharacter>().cell_.y_);
+        List<(int, int)> damage_cells = new List<(int, int)>();
+
+        Direction dir = Direction.up;
+        if (p_pos.Item1 == x && p_pos.Item2 > y) dir = Direction.down;
+        else if (p_pos.Item1 == x && p_pos.Item2 < y) dir = Direction.up;
+        else if (p_pos.Item1 > x && p_pos.Item2 == y) dir = Direction.left;
+        else if (p_pos.Item1 < x && p_pos.Item2 == y) dir = Direction.right;
+        else if (p_pos.Item1 > x && p_pos.Item2 > y) dir = Direction.dg_l_d;
+        else if (p_pos.Item1 > x && p_pos.Item2 < y) dir = Direction.dg_l_u;
+        else if (p_pos.Item1 < x && p_pos.Item2 > y) dir = Direction.dg_r_d;
+        else if (p_pos.Item1 <= x && p_pos.Item2 <= y) dir = Direction.dg_r_u;
+
+
+        foreach (var roll in skill.rolls)
+        {
+            foreach (var pos in roll.DamagePositions)
+            {
+                Debug.Log(pos);
+            }
+            Debug.Log(dir);
+            foreach(var cell in GetDamageCellsByRoll(x, y, roll, dir))
+            {
+                if (!damage_cells.Contains(cell)) damage_cells.Add(cell);
+            }
+        }
+        CellsRestoreColor();
+        foreach (var cell_pos in damage_cells)
+        {
+            if (skill.rolls[0].rollRadius != RollRadius.PlayerRadius &&
+                skill.rolls[0].rollRadius != RollRadius.DgLine &&
+                skill.rolls[0].rollRadius != RollRadius.StLine)
+            {
+                if (GetGridCell(cell_pos.Item1 + x, cell_pos.Item2 + y) != null)
+                {
+                    var cell = GetGridCell(cell_pos.Item1 + x, cell_pos.Item2 + y);
+                    cell.IsTargeted = true;
+                }
+            }
+            else
+            {
+                Debug.Log(GetGridCell(cell_pos.Item1 + px, cell_pos.Item2 + py) + "!!!");
+                if (GetGridCell(cell_pos.Item1 + px, cell_pos.Item2 + py) != null)
+                {
+                    var cell = GetGridCell(cell_pos.Item1 + px, cell_pos.Item2 + py);
+                    cell.IsTargeted = true;
+                }
+            }
+        }
+
+        
+        UpdateDamageVisibilityCells();
+        
+    }
+
+    List<(int, int)> GetDamageCellsByRoll(int x, int y, Roll roll, Direction dir)
+    {
+        List<(int, int)> cells = new List<(int, int)> ();
+
+        if (roll.rollRadius == RollRadius.Field)
+        {
+            for (int i = 0; i < SizeX_; i++)
+            {
+                for (int j = 0; j < SizeY_; j++)
+                {
+                    cells.Add((i, j));
+                }
+            }
+        }
+        else if (roll.rollRadius == RollRadius.Single)
+        {
+            cells.Add((0,0));
+        }
+        else if (roll.rollRadius == RollRadius.PlayerRadius || roll.rollRadius == RollRadius.TargetRadius)
+        {
+            foreach (var pos in roll.DamagePositions)
+            {
+                cells.Add(pos);
+            }
+        }
+        else if (roll.rollRadius == RollRadius.DgLine)
+        {
+            if (dir == Direction.dg_r_u)
+            {
+                foreach (var pos in roll.DamagePositions)
+                {
+                    if (pos.Item1 > 0 && pos.Item2 > 0) cells.Add(pos);
+                }
+            }
+            if (dir == Direction.dg_r_d)
+            {
+                foreach (var pos in roll.DamagePositions)
+                {
+                    if (pos.Item1 > 0 && pos.Item2 < 0) cells.Add(pos);
+                }
+            }
+            if (dir == Direction.dg_l_u)
+            {
+                foreach (var pos in roll.DamagePositions)
+                {
+                    if (pos.Item1 < 0 && pos.Item2 > 0) cells.Add(pos);
+                }
+            }
+            if (dir == Direction.dg_l_d)
+            {
+                foreach (var pos in roll.DamagePositions)
+                {
+                    if (pos.Item1 < 0 && pos.Item2 < 0) cells.Add(pos);
+                }
+            }
+
+        }
+        else if (roll.rollRadius == RollRadius.StLine)
+        {
+            if (dir == Direction.up)
+            {
+                foreach (var pos in roll.DamagePositions)
+                {
+                    if (pos.Item2 > 0) cells.Add(pos);
+                }
+            }
+            if (dir == Direction.down)
+            {
+                foreach (var pos in roll.DamagePositions)
+                {
+                    if (pos.Item2 < 0) cells.Add(pos);
+                }
+            }
+            if (dir == Direction.right)
+            {
+                foreach (var pos in roll.DamagePositions)
+                {
+                    if (pos.Item1 > 0) cells.Add(pos);
+                }
+            }
+            if (dir == Direction.left)
+            {
+                foreach (var pos in roll.DamagePositions)
+                {
+                    if (pos.Item1 < 0) cells.Add(pos);
+                }
+            }
+        }
+            
+        return cells;
+    }
+
+
     [ContextMenu("DeColor")]
     public void DeColor()
     {
@@ -227,7 +402,9 @@ public class GridField : MonoBehaviour
         {
             foreach (var cell in row)
             {
+                cell.PrevColor = GridCell.ColorType.None;
                 cell.GetComponent<GridCell>().ColorCell(GridCell.ColorType.None);
+                cell.IsTargeted = false;
             }
         }
     }
@@ -290,5 +467,42 @@ public class GridField : MonoBehaviour
         DeColor();
         DeVisitCells();
     }
+
+    public void UpdateDamageVisibilityCells()
+    {
+        foreach (var row in Cells_)
+        {
+            foreach (var cell in row)
+            {
+                cell.GetComponent<GridCell>().UpdateTargeting();
+            }
+        }
+    }
+
+    public void CellsRestoreColor()
+    {
+        foreach (var row in Cells_)
+        {
+            foreach (var cell in row)
+            {
+                if (cell.GetComponent<GridCell>().IsTargeted)
+                {
+                    cell.GetComponent<GridCell>().ColorCell(cell.GetComponent<GridCell>().PrevColor);
+                    cell.GetComponent<GridCell>().IsTargeted = false;
+                }
+            }
+        }
+    }
 }
 
+enum Direction
+{
+    up,
+    down,
+    left,
+    right,
+    dg_r_u,
+    dg_r_d,
+    dg_l_u,
+    dg_l_d,
+}

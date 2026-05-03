@@ -20,7 +20,6 @@ public class TestCharacter : CharacterBase
         skill_id2 = -2;
         skill_id3 = -1;
         skill_id4 = -2;
-        base.Init();
         return this;
     }
 
