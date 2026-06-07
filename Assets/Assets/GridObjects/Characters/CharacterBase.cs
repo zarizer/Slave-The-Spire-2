@@ -34,6 +34,8 @@ public class CharacterBase
     public int skill_id3;
     public int skill_id4;
 
+
+
     public virtual CharacterBase Init() 
     {
         InitSkills();

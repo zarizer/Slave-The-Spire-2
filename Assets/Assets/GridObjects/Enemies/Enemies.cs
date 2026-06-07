@@ -16,6 +16,10 @@ public class TestEnemy : EnemyBase
         energy = 20;
         name = "Линус Торвальдс";
         description = "YOU SHOULD DELETE WINDOWS. NOW!!!";
+        SkillsPerTurn = new List<List<PlayerSkill>> {
+            new List<PlayerSkill>() { DataDicts.SkillSet[-3], DataDicts.SkillSet[-4] },
+            new List<PlayerSkill>() { DataDicts.SkillSet[-5] }
+        };
         return this;
     }
 
