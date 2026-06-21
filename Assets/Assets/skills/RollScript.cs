@@ -80,7 +80,6 @@ public class RollScript : MonoBehaviour
             }
         }
 
-        Debug.Log(color);
         return color;
     }
 }

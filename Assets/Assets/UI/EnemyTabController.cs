@@ -64,7 +64,6 @@ public class EnemyTabController : TabController
         for (int i = 0; i < MenuUIRolls.childCount; i++)
         {
             Destroy(MenuUIRolls.GetChild(0).gameObject);
-            Debug.Log("deleted roll: " + i);
         }
     }
 }

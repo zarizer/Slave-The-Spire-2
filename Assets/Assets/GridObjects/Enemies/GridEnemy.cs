@@ -23,6 +23,8 @@ public class GridEnemy : GriddableObject
         MoveToDestination();
     }
 
+
+
     private void OnEnable()
     {
         GType_ = GriddableObjectType.Enemy;
@@ -41,7 +43,7 @@ public class GridEnemy : GriddableObject
         transform.position = Vector3.Lerp(transform.position, DestinationPosition, 0.1f);
     }
 
-    public void ReplaceEnemy(int id)
+    public override void ReplaceObject(int id)
     {
         enemy_ = GetEnemyByID(id);
     }
@@ -65,7 +67,7 @@ public class GridEnemy : GriddableObject
     [ContextMenu("CreateSkills")]
     public void CreateSkills()
     {
-        enemy_.CreateSkills();
+        enemy_.CreateSkills(0);
     }
 
     [ContextMenu("UseFirstInQueueSkill")]

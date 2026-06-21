@@ -81,7 +81,6 @@ public class CameraController : MonoBehaviour
 
             if (GetLastUI(results) != null) 
             {
-                Debug.Log(GetLastUI(results));
                 var UIElem = GetLastUI(results).GetComponent<UIElement>();
                 if (UIElem.UIType == "move")
                 {
@@ -132,15 +131,15 @@ public class CameraController : MonoBehaviour
 
                 if (Physics.Raycast(ray, out RaycastHit hit))
                 {
-                    Debug.Log("Hitted: " + hit.transform.tag);
-                    Debug.Log("Hitted: " + hit.transform.name);
+                    //Debug.Log("Hitted: " + hit.transform.tag);
+                    //Debug.Log("Hitted: " + hit.transform.name);
 
                     if (hit.transform.GetComponent<GriddableObject>() != null)
                     {
                         GriddableObject obj = hit.transform.GetComponent<GriddableObject>();
                         PrevTarget = Target;
                         Target = obj.transform;
-                        Debug.Log("Hitted griddable object");
+                        //Debug.Log("Hitted griddable object");
                         if (Target != PrevTarget)
                         {
                             field_.CellsNullify();
@@ -148,7 +147,7 @@ public class CameraController : MonoBehaviour
                         }
                         if (obj.GType_ == GriddableObject.GriddableObjectType.Character)
                         {
-                            Debug.Log("Hitted character");
+                            //Debug.Log("Hitted character");
                             UIController.UpdateTabCharacter(true);
 
                         }
@@ -249,7 +248,6 @@ public class CameraController : MonoBehaviour
                 if (cur_skill == 1)
                 {
                     field_.ShowDamagePlayer(cell.x_, cell.y_, character.character_.Skill1, character.cell_.x_, character.cell_.y_);
-                    Debug.Log(9999);
                 }
                 if (cur_skill == 2)
                 {

@@ -17,6 +17,7 @@ public class CharacterTabController : TabController
     public TextMeshProUGUI energy_text;
     public TextMeshProUGUI atk_text;
     public bool IsVisible;
+    public bool IsLocked = false;
     void Start()
     {
         
@@ -28,7 +29,7 @@ public class CharacterTabController : TabController
 
     public override void RequestedUpdate(bool is_visible)
     {
-        Debug.Log(is_visible);
+        if (IsLocked) return;
         IsVisible = is_visible;
         
         if (!IsVisible)

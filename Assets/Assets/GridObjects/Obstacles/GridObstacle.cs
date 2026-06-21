@@ -17,4 +17,9 @@ public class GridObstacle : GriddableObject
     {
         GType_ = GriddableObjectType.Obstacle;
     }
+
+    public override void ReplaceObject(int ID)
+    {
+        // —ƒ≈À¿“‹ –≈¿À»«¿÷»ﬁ
+    } 
 }

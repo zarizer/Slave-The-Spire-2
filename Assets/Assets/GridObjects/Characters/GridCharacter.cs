@@ -24,6 +24,8 @@ public class GridCharacter : GriddableObject
         MoveToDestination();
     }
 
+
+
     private void OnEnable()
     {
         GType_ = GriddableObjectType.Character;
@@ -43,7 +45,7 @@ public class GridCharacter : GriddableObject
     }
 
 
-    public void ReplaceCharacter(int id)
+    public override void ReplaceObject(int id)
     {
         character_ = GetCharacterByID(id);
     }
@@ -54,7 +56,7 @@ public class GridCharacter : GriddableObject
 
         ret_character = DataDicts.CharacterSet[id].Clone();
         
-        Debug.Log(ret_character.name + " "+ id);
+        Debug.Log("Got Character: " + ret_character.name + " id: "+ id);
         
         if (ret_character == null) ret_character = new TestCharacter();
         

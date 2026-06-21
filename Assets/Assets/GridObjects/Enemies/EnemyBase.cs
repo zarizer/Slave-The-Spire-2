@@ -16,7 +16,7 @@ public class EnemyBase : CharacterBase
     public override CharacterBase Init()
     {
         InitCurStats();
-        CreateSkills();
+        CreateSkills(0);
         
         return this;
     }
@@ -49,12 +49,11 @@ public class EnemyBase : CharacterBase
     }
 
    
-    public void CreateSkills()
+    public void CreateSkills(int cur_turn)
     {
-        int turn = DebugTurn;
+        int turn = cur_turn;
 
         SkillQueue.Clear();
-        Debug.Log("skill count:" + SkillsPerTurn.Count);
         foreach (PlayerSkill skill in SkillsPerTurn[turn % SkillsPerTurn.Count])
         {
             SkillQueue.Add(skill);
@@ -62,13 +61,14 @@ public class EnemyBase : CharacterBase
     }
 
 
-    public void CreateNextRolls()
+    public bool CreateNextRolls()
     {
-        if (SkillQueue.Count == 0) { Debug.Log("No more enemy skills on:" + name); return; }
+        if (SkillQueue.Count == 0) { Debug.Log("No more enemy skills on:" + name); return false; }
         foreach (Roll roll in SkillQueue[0].rolls) {
             CurrentRolls.Add(new Roll(roll));
         }
         SkillQueue.RemoveAt(0);
+        return true;
     }
 
 

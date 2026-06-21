@@ -25,6 +25,7 @@ public class GriddableObject : MonoBehaviour
         
     }
 
+    public virtual void ReplaceObject(int ID) { }
     public void MoveToCell(GridCell cell)
     {
         GridCharacter obj_character = null;

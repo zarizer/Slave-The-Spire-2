@@ -25,16 +25,29 @@ public class GridField : MonoBehaviour
 
     [SerializeField] private int SizeX_;
     [SerializeField] private int SizeY_;
+
+    public List<GridEnemy> GridEnemies;
+    public List<GridCharacter> GridCharacters;
+    public List<GridObstacle> GridObstacles;
+
+    public GridCharacter BaseCharacter;
+    public GridEnemy BaseEnemy;
+    public GridObstacle BaseObstacle;
     void Start()
     {
-        List<List<GridCell>> Cells_ = new List<List<GridCell>>();
-        CreateField();
-        var enemy = CreateDebugEnemy();
+        
     }
 
     void Update()
     {
         
+    }
+
+    public void StartField()
+    {
+        List<List<GridCell>> Cells_ = new List<List<GridCell>>();
+        CreateField();
+        CreateDebugEnemy();
     }
 
     [ContextMenu("CreateField")]
@@ -88,29 +101,47 @@ public class GridField : MonoBehaviour
     [ContextMenu("CreateDebugCharacter")]
     public void CreateDebugCharacter()
     {
-        if (GetGridObject(DebugCharacterPosX, DebugCharacterPosY) == null)
-        {
-            var character = Instantiate(DebugCharacter, transform);
-            character.GetComponent<GridCharacter>().ReplaceCharacter(DebugCharacterId);
-            AddGridObject(DebugCharacterPosX, DebugCharacterPosY, character);
-            GetGridCell(DebugCharacterPosX, DebugCharacterPosY).SnapObject();
-        }
+        CreateGridObject(GriddableObject.GriddableObjectType.Character, DebugCharacterId, DebugCharacterPosX, DebugCharacterPosY);
     }
 
     [ContextMenu("CreateDebugEnemy")]
-    public GridEnemy CreateDebugEnemy()
+    public void CreateDebugEnemy()
     {
-        if (GetGridObject(DebugEnemyPosX, DebugEnemyPosY) == null)
-        {
-            var character = Instantiate(DebugEnemy, transform);
-            character.GetComponent<GridEnemy>().ReplaceEnemy(DebugEnemyId);
-            AddGridObject(DebugEnemyPosX, DebugEnemyPosY, character);
-            GetGridCell(DebugEnemyPosX, DebugEnemyPosY).SnapObject();
-            return character.GetComponent<GridEnemy>();
-        }
-        return null;
+        CreateGridObject(GriddableObject.GriddableObjectType.Enemy, DebugEnemyId, DebugEnemyPosX, DebugEnemyPosY);
     }
 
+    public GriddableObject CreateGridObject(GriddableObject.GriddableObjectType type, int ID, int X, int Y)
+    {
+        if (GetGridCell(X, Y) == null)
+        {
+            Debug.Log("ERROR: CREATING OBJECT IN INVALID POSITION");
+            return null;
+        }
+        GriddableObject cur_object = null;
+        if (type == GriddableObject.GriddableObjectType.Character)
+        {
+            var obj = Instantiate(BaseCharacter, transform);
+            cur_object = obj.GetComponent<GriddableObject>();
+            GridCharacters.Add(cur_object.GetComponent<GridCharacter>());
+        }
+        else if (type == GriddableObject.GriddableObjectType.Enemy)
+        {
+            var obj = Instantiate(BaseEnemy, transform);
+            cur_object = obj.GetComponent<GriddableObject>();
+            GridEnemies.Add(cur_object.GetComponent<GridEnemy>());
+        }
+        else if (type == GriddableObject.GriddableObjectType.Obstacle)
+        {
+            var obj = Instantiate(BaseObstacle, transform);
+            cur_object = obj.GetComponent<GriddableObject>();
+            GridObstacles.Add(cur_object.GetComponent<GridObstacle>());
+        }
+        //ÑÄÅËÀÒÜ ÐÅÀËÈÇÀÖÈÞ ÄËß GRIDBREAKABLE
+        cur_object.ReplaceObject(ID);
+        AddGridObject(X, Y, cur_object);
+        GetGridCell(X, Y).SnapObject();
+        return cur_object;
+    }
 
 
     GriddableObject GetGridObject(int x, int y)
@@ -264,11 +295,6 @@ public class GridField : MonoBehaviour
 
         foreach (var roll in skill.rolls)
         {
-            foreach (var pos in roll.DamagePositions)
-            {
-                Debug.Log(pos);
-            }
-            Debug.Log(dir);
             foreach(var cell in GetDamageCellsByRoll(x, y, roll, dir))
             {
                 if (!damage_cells.Contains(cell)) damage_cells.Add(cell);
@@ -289,7 +315,6 @@ public class GridField : MonoBehaviour
             }
             else
             {
-                Debug.Log(GetGridCell(cell_pos.Item1 + px, cell_pos.Item2 + py) + "!!!");
                 if (GetGridCell(cell_pos.Item1 + px, cell_pos.Item2 + py) != null)
                 {
                     var cell = GetGridCell(cell_pos.Item1 + px, cell_pos.Item2 + py);
@@ -423,12 +448,12 @@ public class GridField : MonoBehaviour
     {
         if (x > SizeX_ - 1 || y > SizeY_ - 1)
         {
-            Debug.Log("Adding out of grid: " + x + " " + y);
+            //Debug.Log("Adding out of grid: " + x + " " + y);
             return;
         }
         if (GetGridObject(x, y) != null) 
         {
-            Debug.Log("Adding object on top of anather object: " + x + " " + y);
+            //Debug.Log("Adding object on top of anather object: " + x + " " + y);
             return;
         }
         obj.cell_ = GetGridCell(x, y);

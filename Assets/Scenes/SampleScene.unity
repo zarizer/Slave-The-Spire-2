@@ -21800,6 +21800,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 736426276}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &747052781
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 747052783}
+  - component: {fileID: 747052782}
+  m_Layer: 0
+  m_Name: BattleMain
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &747052782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 747052781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8d6d39c5f2e2754381374e08336c3bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsInBattle: 1
+  PlayerCanAttack: 0
+  turn: 0
+  current_field: {fileID: 1206160824}
+--- !u!4 &747052783
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 747052781}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 922.22296, y: 988.71576, z: -841.5683}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &751801388
 GameObject:
   m_ObjectHideFlags: 0
@@ -37473,6 +37521,12 @@ MonoBehaviour:
   GridObjects: []
   SizeX_: 10
   SizeY_: 10
+  GridEnemies: []
+  GridCharacters: []
+  GridObstacles: []
+  BaseCharacter: {fileID: 4718569247299793797, guid: 3c53ee1864acb3046a62177e846003de, type: 3}
+  BaseEnemy: {fileID: -8007137783566499895, guid: e2268ce31e36a6441b27f9e40a14e29b, type: 3}
+  BaseObstacle: {fileID: 0}
 --- !u!1 &1206568899
 GameObject:
   m_ObjectHideFlags: 0
@@ -52834,6 +52888,7 @@ MonoBehaviour:
   energy_text: {fileID: 1628306931}
   atk_text: {fileID: 1397299486}
   IsVisible: 0
+  IsLocked: 0
 --- !u!1 &1703220192
 GameObject:
   m_ObjectHideFlags: 0
@@ -63346,6 +63401,8 @@ MonoBehaviour:
   def_icon: {fileID: 2800000, guid: 3ed22eda97d58784caef65d1234d11ae, type: 3}
   evade_icon: {fileID: 2800000, guid: 4556741f320f0e340a98895f181c0b54, type: 3}
   UICanvas: {fileID: 477032611}
+  battle_main: {fileID: 747052781}
+  character_tab: {fileID: 1701435802}
 --- !u!4 &2053559236
 Transform:
   m_ObjectHideFlags: 0
@@ -66803,3 +66860,4 @@ SceneRoots:
   - {fileID: 1650208289}
   - {fileID: 934710931}
   - {fileID: 2053559236}
+  - {fileID: 747052783}

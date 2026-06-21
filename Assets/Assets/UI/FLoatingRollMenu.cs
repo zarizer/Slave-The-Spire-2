@@ -25,7 +25,6 @@ public class FloatingRollMenu : FloatingInfoMenu
     {
         roll = ParantObj.GetComponent<RollScript>().roll;
         var skill = roll.skill;
-        Debug.Log(skill);
 
         if (roll.element == Element.None) ElementImage.texture = ResoursesDict.TextureSet["NoneElement"];
         else if (roll.element == Element.fire) ElementImage.texture = ResoursesDict.TextureSet["FireElement"];

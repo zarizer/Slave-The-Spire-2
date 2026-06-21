@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ResoursesDict : MonoBehaviour
@@ -29,8 +30,9 @@ public class ResoursesDict : MonoBehaviour
     public Texture evade_icon;
 
     public GameObject UICanvas;
-
-    void Start()
+    public GameObject battle_main;
+    public GameObject character_tab;
+    public void Awake()
     {
         TextureSet["atk_icon"] = atk_icon;
         TextureSet["def_icon"] = def_icon;
@@ -54,6 +56,8 @@ public class ResoursesDict : MonoBehaviour
         TextureSet["player_radius"] = player_radius;
 
         ObjectSet["UICanvas"] = UICanvas;
+        ObjectSet["BattleMain"] = battle_main;
+        ObjectSet["CharacterTab"] = character_tab;
     }
 
 
