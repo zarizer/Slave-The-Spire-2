@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,8 @@ public class GridEnemy : GriddableObject
 
     public GameObject TexturePlane;
     public EnemyBase enemy_;
+    public Transform RollsUI;
+    public GameObject RollUIPrefab;
     public int EnemyId_ = -1;
     void Start()
     {
@@ -59,5 +62,44 @@ public class GridEnemy : GriddableObject
         return false;
     }
 
+    [ContextMenu("CreateSkills")]
+    public void CreateSkills()
+    {
+        enemy_.CreateSkills();
+    }
 
+    [ContextMenu("UseFirstInQueueSkill")]
+    public void UseNextSkill()
+    {
+        enemy_.CreateNextRolls();
+        UpdateRollsUI();
+    }
+
+    public void UpdateRollsUI()
+    {
+        StaticFuncs.DestroyChildren(RollsUI);
+        List<GameObject> rolls_list = new List<GameObject>();
+        foreach (Roll roll in enemy_.CurrentRolls)
+        {
+            GameObject menu_roll = Instantiate(RollUIPrefab, RollsUI);
+            menu_roll.GetComponent<RollScript>().UpdateRollStats(roll);
+            menu_roll.transform.localScale = (Vector3.one) / 250;
+            menu_roll.transform.Rotate(Vector3.up, 180);
+            rolls_list.Add(menu_roll);
+        }
+        if (rolls_list.Count > 6)
+        {
+            for (int i = 0; i < rolls_list.Count; i++)
+            {
+                rolls_list[i].transform.localPosition = new Vector3(0.225f * ((float)-Math.Pow(-1f, i)), 0.2f + 0.45f * (i % 2), 0);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < rolls_list.Count; i++)
+            {
+                rolls_list[i].transform.localPosition = new Vector3(0, 0.2f + 0.45f * i, 0);
+            }
+        }
+    }
 }

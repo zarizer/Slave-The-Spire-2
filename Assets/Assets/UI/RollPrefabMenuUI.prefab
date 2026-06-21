@@ -216,6 +216,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1926619620090528195}
   - component: {fileID: 4812294066700044468}
+  - component: {fileID: 7061289946933727814}
   m_Layer: 0
   m_Name: RollPrefabMenuUI
   m_TagString: Untagged
@@ -256,6 +257,21 @@ MonoBehaviour:
   is_local: 1
   speed: 0.2
   DestinationPos: {x: 0, y: 0, z: 0}
+--- !u!114 &7061289946933727814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5077785896994590603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c16f6de7c06377a4682a17884e2ab0dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rollMenuUI: {fileID: 0}
+  MinMaxText: {fileID: 2842861749491030447}
+  RollImage: {fileID: 8617591014552911163}
 --- !u!1 &8135558172180362328
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,9 +281,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2229755741537909242}
+  - component: {fileID: 1084510825789847802}
   - component: {fileID: 3788809421118212134}
   - component: {fileID: 2377312009508391841}
   - component: {fileID: 5147661755230039399}
+  - component: {fileID: 7737509571807527015}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -296,6 +314,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1084510825789847802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8135558172180362328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b42d114c8bd0420419531339db795d4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  menu: {fileID: 305184632086804705, guid: 8677fc39fccc31f4784a50e3779d0e3b, type: 3}
+  ParantObj: {fileID: 5077785896994590603}
+  visible: 0
+  position: {x: 800, y: 0, z: 0}
 --- !u!223 &3788809421118212134
 Canvas:
   m_ObjectHideFlags: 0
@@ -359,3 +393,19 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &7737509571807527015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8135558172180362328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b42d114c8bd0420419531339db795d4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  menu: {fileID: 0}
+  ParantObj: {fileID: 0}
+  visible: 1
+  position: {x: 0, y: 0, z: 0}

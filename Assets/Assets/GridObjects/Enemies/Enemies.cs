@@ -20,7 +20,8 @@ public class TestEnemy : EnemyBase
             new List<PlayerSkill>() { DataDicts.SkillSet[-3], DataDicts.SkillSet[-4] },
             new List<PlayerSkill>() { DataDicts.SkillSet[-5] }
         };
+        Debug.Log("skill count:" + SkillsPerTurn.Count);
+        
         return this;
     }
-
 }

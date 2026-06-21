@@ -1,5 +1,49 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2186736604628556225
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 819188207265203195}
+  - component: {fileID: 8908067948488057179}
+  m_Layer: 0
+  m_Name: RollsUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &819188207265203195
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2186736604628556225}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.8, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2481593620087641788}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8908067948488057179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2186736604628556225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a772b1412523ff4dbc1196cfd0ec806, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6346171154349574722
 GameObject:
   m_ObjectHideFlags: 0
@@ -140,6 +184,7 @@ Transform:
   m_Children:
   - {fileID: 467396669528126298}
   - {fileID: 7497997890488404299}
+  - {fileID: 819188207265203195}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-8007137783566499895
@@ -155,13 +200,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player_: 0
+  DestinationPosition: {x: 0, y: 0, z: 0}
   GType_: 0
   field_: {fileID: 0}
   cell_: {fileID: 0}
-  DestinationPosition: {x: 0, y: 0, z: 0}
-  TexturePlane: {fileID: 9222514808385476471}
-  EnemyId_: -1
   TryingToMove: 0
+  TRyingToAttack: 0
+  TexturePlane: {fileID: 9222514808385476471}
+  RollsUI: {fileID: 819188207265203195}
+  RollUIPrefab: {fileID: 5077785896994590603, guid: 27a9d0141ef6fbb41a509caa7b089f63, type: 3}
+  EnemyId_: -1
 --- !u!65 &8503215599278561149
 BoxCollider:
   m_ObjectHideFlags: 0

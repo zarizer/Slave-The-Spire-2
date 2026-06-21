@@ -63,6 +63,13 @@ public class TestEnemySkill1 : PlayerSkill
         RollRadius.Single,
         5,
         Element.None));
+        rolls.Add(new Roll(
+        5,
+        14,
+        RollType.Atk,
+        RollRadius.PlayerRadius,
+        20,
+        Element.dendro));
         energy = -10;
         MakeAttackPositions();
         base.Init();
@@ -79,12 +86,12 @@ public class TestEnemySkill2 : PlayerSkill
         dist = 3;
         rollDist = RollDist.StLine;
         rolls.Add(new Roll(
-        5,
-        10,
+        6,
+        12,
         RollType.Atk,
         RollRadius.Single,
         5,
-        Element.None));
+        Element.water));
         energy = -10;
         MakeAttackPositions();
         base.Init();

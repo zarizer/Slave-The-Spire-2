@@ -6,8 +6,8 @@ public class UIController : MonoBehaviour
 {
     public CharacterTabController character_tab_controller;
     public EnemyTabController enemy_tab_controller;
+
     public Transform EnemyRollsUI;
-    public GameObject RollPrefab;
 
     public List<TabController> ObjectTabs;
     void Start()
@@ -27,10 +27,11 @@ public class UIController : MonoBehaviour
         enemy_tab_controller.RequestedUpdate(false);
     }
 
-    public void UpdateTabEnemy(bool is_visible)
+    public void UpdateTabEnemy(bool is_visible, EnemyBase enemy = null)
     {
         CloseAllTabs(ObjectTabs);
         enemy_tab_controller.RequestedUpdate(is_visible);
+        
     }
     public void UpdateTabCharacter(bool is_visible)
     {
@@ -58,4 +59,5 @@ public class UIController : MonoBehaviour
     {
 
     }
+
 }

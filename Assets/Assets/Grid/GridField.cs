@@ -29,6 +29,7 @@ public class GridField : MonoBehaviour
     {
         List<List<GridCell>> Cells_ = new List<List<GridCell>>();
         CreateField();
+        var enemy = CreateDebugEnemy();
     }
 
     void Update()
@@ -97,7 +98,7 @@ public class GridField : MonoBehaviour
     }
 
     [ContextMenu("CreateDebugEnemy")]
-    public void CreateDebugEnemy()
+    public GridEnemy CreateDebugEnemy()
     {
         if (GetGridObject(DebugEnemyPosX, DebugEnemyPosY) == null)
         {
@@ -105,7 +106,9 @@ public class GridField : MonoBehaviour
             character.GetComponent<GridEnemy>().ReplaceEnemy(DebugEnemyId);
             AddGridObject(DebugEnemyPosX, DebugEnemyPosY, character);
             GetGridCell(DebugEnemyPosX, DebugEnemyPosY).SnapObject();
+            return character.GetComponent<GridEnemy>();
         }
+        return null;
     }
 
 
@@ -114,7 +117,6 @@ public class GridField : MonoBehaviour
     {
         if (x < 0 || y < 0 || x >= SizeX_ || y >= SizeY_)
         {
-            Debug.Log("Getting cell out of field at: " + x + " " + y);
             return null;
         }
         GriddableObject obj = Cells_[x][y].object_;
@@ -126,7 +128,6 @@ public class GridField : MonoBehaviour
     {
         if (x < 0 || y < 0 || x >= SizeX_ || y >= SizeY_)
         {
-            Debug.Log("Getting cell out of field at: " + x + " " + y);
             return null;
         }
         return Cells_[x][y];

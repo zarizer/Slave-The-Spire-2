@@ -23,4 +23,7 @@ public static class DataDicts
     {
         { -1, (EnemyBase)new TestEnemy().Init() },
     };
+
+
+
 }

@@ -140,6 +140,7 @@ public class CameraController : MonoBehaviour
                         GriddableObject obj = hit.transform.GetComponent<GriddableObject>();
                         PrevTarget = Target;
                         Target = obj.transform;
+                        Debug.Log("Hitted griddable object");
                         if (Target != PrevTarget)
                         {
                             field_.CellsNullify();
@@ -147,13 +148,14 @@ public class CameraController : MonoBehaviour
                         }
                         if (obj.GType_ == GriddableObject.GriddableObjectType.Character)
                         {
+                            Debug.Log("Hitted character");
                             UIController.UpdateTabCharacter(true);
 
                         }
                         else if (obj.GType_ == GriddableObject.GriddableObjectType.Enemy)
                         {
                             GridEnemy obj_enemy = hit.transform.GetComponent<GridEnemy>();
-                            UIController.UpdateTabEnemy(true);
+                            UIController.UpdateTabEnemy(true, obj.GetComponent<GridEnemy>().enemy_);
                             obj.field_.FindWaysPlayer(obj.cell_.x_, obj.cell_.y_, obj_enemy.enemy_.cur_moves);
 
                         }

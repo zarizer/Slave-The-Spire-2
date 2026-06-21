@@ -97,7 +97,7 @@ public class Roll
     public RollType rollType;
     public RollRadius rollRadius;
     public List<(int, int)> DamagePositions = new List<(int, int)>();
-    Element element;
+    public Element element;
 
     public int GetRoll()
     {
@@ -108,7 +108,17 @@ public class Roll
         «ƒ≈—‹ —ƒ≈À¿“‹ œ–Œ¬≈– ” Õ¿ ¡¿‘‘€ »√–Œ ¿ 
         */
 
-        return Random.Range(minRoll + min_plus, maxRoll + max_plus);
+        return Random.Range(GetMinRoll() + min_plus, GetMaxRoll() + max_plus);
+    }
+
+    public int GetMaxRoll()
+    {
+        return maxRoll;
+    }
+
+    public int GetMinRoll()
+    {
+        return minRoll;
     }
 
     public Roll(Roll other)
@@ -117,10 +127,12 @@ public class Roll
         maxRoll = other.maxRoll;
         rollType = other.rollType;
         rollRadius = other.rollRadius;
+        element = other.element;
+        skill = other.skill;
         MakeDamagePositions();
     }
 
-    public Roll(int min_roll, int max_roll, RollType type, RollRadius radius_type, int rad, Element element)
+    public Roll(int min_roll, int max_roll, RollType type, RollRadius radius_type, int rad, Element element, PlayerSkill skill_ = null)
     {
         minRoll = min_roll;
         maxRoll = max_roll;
@@ -128,6 +140,7 @@ public class Roll
         rollRadius = radius_type;
         radius = rad;
         this.element = element;
+        skill = skill_;
         MakeDamagePositions();
     }
 
@@ -174,41 +187,3 @@ public class Roll
     }
 }
 
-public enum RollType
-{
-    Def,
-    Atk,
-    Evade,
-    Effect,
-    Other
-}
-
-public enum Element
-{
-    fire,
-    water,
-    dendro,
-    darkness,
-    light,
-    None
-}
-
-public enum RollDist
-{
-    StLine,
-    DgLine,
-    Radius,
-    Any,
-    Other
-}
-
-public enum RollRadius
-{
-    Single,
-    StLine,
-    DgLine,
-    PlayerRadius,
-    TargetRadius,
-    Field,
-    Other
-}

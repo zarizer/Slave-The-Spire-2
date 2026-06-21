@@ -15,6 +15,9 @@ public class EnemyTabController : TabController
     public TextMeshProUGUI energy_text;
     public TextMeshProUGUI atk_text;
     public bool IsVisible;
+
+    public GameObject RollPrefab;
+    public Transform MenuUIRolls;
     void Start()
     {
 
@@ -44,5 +47,24 @@ public class EnemyTabController : TabController
         energy_text.text = character.cur_energy.ToString();
         atk_text.text = character.cur_base_dmg.ToString();
         description_text.text = character.description;
+
+        StaticFuncs.DestroyChildren(MenuUIRolls);
+
+        foreach (Roll roll in character.CurrentRolls)
+        {
+            GameObject menu_roll = Instantiate(RollPrefab, MenuUIRolls);
+            menu_roll.GetComponent<RollScript>().UpdateRollStats(roll);
+        }
+
+
+    }
+
+    private void OnDisable()
+    {
+        for (int i = 0; i < MenuUIRolls.childCount; i++)
+        {
+            Destroy(MenuUIRolls.GetChild(0).gameObject);
+            Debug.Log("deleted roll: " + i);
+        }
     }
 }

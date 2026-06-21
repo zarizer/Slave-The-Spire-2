@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 8d2d12b074d962540b1d68aa3cffae39
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - none_element: {fileID: 2800000, guid: 477c29a1d9c041e4f93f110314427137, type: 3}
+  - fire_element: {fileID: 2800000, guid: 98f594294ecc9c5408d63c8c2c87cd16, type: 3}
+  - water_element: {fileID: 2800000, guid: 3e33ccb7601e49c45b6b081535f151b4, type: 3}
+  - dendro_element: {fileID: 2800000, guid: 46b40b786d58a6d49be7917d3357ef5c, type: 3}
+  - light_element: {fileID: 2800000, guid: 615b5706c0006ec4083152834fdf18b1, type: 3}
+  - darkness_element: {fileID: 2800000, guid: abaa335c6fb4a3c43aa502b7f9ac2b22, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
