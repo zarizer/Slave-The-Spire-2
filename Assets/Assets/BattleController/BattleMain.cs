@@ -8,6 +8,9 @@ public class BattleMain : MonoBehaviour
     public bool IsInBattle = true;
     public bool PlayerCanAttack = false;
     public int turn = 0;
+    public bool lock_cycle = false;
+    public bool make_next_cycle_on_unlock = false;
+    public int ext_data_counter = 0;
 
     List<BattleCycle> cycles = new List<BattleCycle>
     {
@@ -31,7 +34,7 @@ public class BattleMain : MonoBehaviour
 
     void Update()
     {
-
+        CheckCycleLock();
     }
 
     public void StartBattle()
@@ -43,6 +46,7 @@ public class BattleMain : MonoBehaviour
     public void NextCycle(int num = 1, bool activate = true)
     {
         var next_cycle = cycles[(cycles.IndexOf(current_cycle) + num) % cycles.Count];
+        Debug.Log("NextCycle: " + next_cycle);
 
         current_cycle = next_cycle;
         if (activate)
@@ -51,10 +55,12 @@ public class BattleMain : MonoBehaviour
             {
                 CharacterTabSwitch(true, false);
                 EnemyCreateRolls();
+                NextCycle();
             }
             else if (current_cycle == BattleCycle.PlayerTurn)
             {
-                CharacterTabSwitch(false, false, false);
+                
+                CharacterTabSwitch(false, false, true);
                 PlayerCanAttack = true;
             }
             else if (current_cycle == BattleCycle.EnemyTurn1)
@@ -76,7 +82,11 @@ public class BattleMain : MonoBehaviour
         {
             enemy.enemy_.CreateSkills(turn);
             while (enemy.enemy_.CreateNextRolls()) { }
-            enemy.UpdateRollsUI();
+            enemy.UpdateRollsUI(0f);
+            for (int i = 0; i < enemy.enemy_.CurrentRolls.Count; i++)
+            {
+                enemy.RollsUI.GetChild(i).GetComponent<RollScript>().Fade(1f, 0.75f, i * 0.5f, true);
+            } 
         }
     }
 
@@ -90,6 +100,30 @@ public class BattleMain : MonoBehaviour
     {
         if (need_enable) { ResoursesDict.ObjectSet["CharacterTab"].GetComponent<CharacterTabController>().RequestedUpdate(enable); }
         if (need_lock) { ResoursesDict.ObjectSet["CharacterTab"].GetComponent<CharacterTabController>().IsLocked = locked; }
+    }
+
+    void CheckCycleLock()
+    {
+        if (!lock_cycle && make_next_cycle_on_unlock)
+        {
+            make_next_cycle_on_unlock = false;
+            NextCycle();
+        } 
+    }
+
+    public int GetEnemyRollsCount()
+    {
+        int counter = 0;
+        foreach (var enemy in current_field.GridEnemies)
+        {
+            counter += enemy.RollsUI.childCount;
+        }
+        return counter;
+    }
+
+    public void MakeFight(GridCharacter character, GriddableObject enemy)
+    {
+        Debug.Log("ATTACK!");
     }
 }
 

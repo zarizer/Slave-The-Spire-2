@@ -57,7 +57,16 @@ public class FloatingInfoMenu : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    public static void CloseAllWindows()
+    {
+        foreach(var obj in visible_others)
+        {
+            obj.GetComponent<FloatingInfoMenu>().visible = false;
+            Destroy(obj);
+        }
+        visible_others.Clear();
+    }
 
-
+    public void SetParent(GameObject obj) { ParantObj = obj; }
     virtual public void UpdateInfo() { }
 }

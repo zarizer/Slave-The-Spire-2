@@ -11,7 +11,7 @@ public class GridEnemy : GriddableObject
     public Transform RollsUI;
     public GameObject RollUIPrefab;
     public int EnemyId_ = -1;
-    void Start()
+    void Awake()
     {
         enemy_ = GetEnemyByID(EnemyId_);
         player_ = false;
@@ -77,13 +77,14 @@ public class GridEnemy : GriddableObject
         UpdateRollsUI();
     }
 
-    public void UpdateRollsUI()
+    public void UpdateRollsUI(float start_alpha = 1f)
     {
         StaticFuncs.DestroyChildren(RollsUI);
         List<GameObject> rolls_list = new List<GameObject>();
         foreach (Roll roll in enemy_.CurrentRolls)
         {
             GameObject menu_roll = Instantiate(RollUIPrefab, RollsUI);
+            menu_roll.GetComponent<RollScript>().Fade(0f, 0f, 0f);
             menu_roll.GetComponent<RollScript>().UpdateRollStats(roll);
             menu_roll.transform.localScale = (Vector3.one) / 250;
             menu_roll.transform.Rotate(Vector3.up, 180);
@@ -93,7 +94,7 @@ public class GridEnemy : GriddableObject
         {
             for (int i = 0; i < rolls_list.Count; i++)
             {
-                rolls_list[i].transform.localPosition = new Vector3(0.225f * ((float)-Math.Pow(-1f, i)), 0.2f + 0.45f * (i % 2), 0);
+                rolls_list[i].transform.localPosition = new Vector3(0.225f * ((float)-Math.Pow(-1f, i+1)), 0.2f + 0.45f * (i / 2), 0);
             }
         }
         else
@@ -104,4 +105,6 @@ public class GridEnemy : GriddableObject
             }
         }
     }
+
+    public EnemyBase GetEnemyBase() { return enemy_; }
 }

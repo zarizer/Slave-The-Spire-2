@@ -30,6 +30,7 @@ public class UIController : MonoBehaviour
     public void UpdateTabEnemy(bool is_visible, EnemyBase enemy = null)
     {
         CloseAllTabs(ObjectTabs);
+        enemy_tab_controller.SetCurrentEnemy(enemy);
         enemy_tab_controller.RequestedUpdate(is_visible);
         
     }

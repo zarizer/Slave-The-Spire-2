@@ -153,10 +153,13 @@ public class CameraController : MonoBehaviour
                         }
                         else if (obj.GType_ == GriddableObject.GriddableObjectType.Enemy)
                         {
-                            GridEnemy obj_enemy = hit.transform.GetComponent<GridEnemy>();
-                            UIController.UpdateTabEnemy(true, obj.GetComponent<GridEnemy>().enemy_);
-                            obj.field_.FindWaysPlayer(obj.cell_.x_, obj.cell_.y_, obj_enemy.enemy_.cur_moves);
-
+                            if (!CheckAttack())
+                            {
+                                GridEnemy obj_enemy = hit.transform.GetComponent<GridEnemy>();
+                                Debug.Log(obj_enemy.enemy_.CurrentRolls.Count);
+                                UIController.UpdateTabEnemy(true, obj_enemy.GetComponent<GridEnemy>().enemy_);
+                                obj.field_.FindWaysPlayer(obj.cell_.x_, obj.cell_.y_, obj_enemy.enemy_.cur_moves);
+                            }
                         }
                         else
                         {
@@ -204,13 +207,30 @@ public class CameraController : MonoBehaviour
                         field_.CellsNullify();
                         field_.GridObjectsActionNullify();
                     }
-
+                    if (hit.transform.tag != "UI" && hit.transform.tag != "CreateWindow")
+                    {
+                        FloatingInfoMenu.CloseAllWindows();
+                    }
 
                 }
             }
         }
     }
 
+    bool CheckAttack()
+    {
+        if (PrevTarget.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Character &&
+                               PrevTarget.GetComponent<GridCharacter>().TRyingToAttack)
+        {
+            ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>().MakeFight
+                (
+                    PrevTarget.GetComponent<GridCharacter>(),
+                    Target.GetComponent<GriddableObject>()
+                );
+            return true;
+        }
+        return false;
+    }
     void ShowDamageCells()
     {
         if (Target.GetComponent<GridCharacter>() != null)

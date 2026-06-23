@@ -18,6 +18,7 @@ public class EnemyTabController : TabController
 
     public GameObject RollPrefab;
     public Transform MenuUIRolls;
+    EnemyBase current_enemy;
     void Start()
     {
 
@@ -36,7 +37,8 @@ public class EnemyTabController : TabController
             gameObject.SetActive(false);
             return;
         }
-        EnemyBase character = CameraController.Target.gameObject.GetComponent<GridEnemy>().enemy_;
+        EnemyBase character = current_enemy;
+        Debug.Log(CameraController.Target);
         if (character == null) return;
         gameObject.SetActive(true);
         name_text.text = character.name;
@@ -49,9 +51,10 @@ public class EnemyTabController : TabController
         description_text.text = character.description;
 
         StaticFuncs.DestroyChildren(MenuUIRolls);
-
+        
         foreach (Roll roll in character.CurrentRolls)
         {
+            
             GameObject menu_roll = Instantiate(RollPrefab, MenuUIRolls);
             menu_roll.GetComponent<RollScript>().UpdateRollStats(roll);
         }
@@ -66,4 +69,6 @@ public class EnemyTabController : TabController
             Destroy(MenuUIRolls.GetChild(0).gameObject);
         }
     }
+
+    public void SetCurrentEnemy(EnemyBase enemy) { current_enemy = enemy; }
 }

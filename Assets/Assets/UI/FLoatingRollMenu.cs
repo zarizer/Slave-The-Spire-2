@@ -6,12 +6,14 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 public class FloatingRollMenu : FloatingInfoMenu
 {
-    Roll roll;
+    public Roll roll;
     public RawImage ElementImage;
     public RawImage RollTypeImage;
     public RawImage RollDistImage;
     public RawImage RollRadiusImage;
     public TextMeshProUGUI RollDescription;
+    public TextMeshProUGUI MinRollText;
+    public TextMeshProUGUI MaxRollText;
     public int TextSize;
 
     public void Start()
@@ -23,7 +25,7 @@ public class FloatingRollMenu : FloatingInfoMenu
     }
     public override void UpdateInfo()
     {
-        roll = ParantObj.GetComponent<RollScript>().roll;
+        if (ParantObj.GetComponent<RollScript>() != null) roll = ParantObj.GetComponent<RollScript>().roll;
         var skill = roll.skill;
 
         if (roll.element == Element.None) ElementImage.texture = ResoursesDict.TextureSet["NoneElement"];
@@ -50,5 +52,8 @@ public class FloatingRollMenu : FloatingInfoMenu
         else if (roll.rollRadius == RollRadius.StLine) RollRadiusImage.texture = ResoursesDict.TextureSet["st_line"];
         else if (roll.rollRadius == RollRadius.DgLine) RollRadiusImage.texture = ResoursesDict.TextureSet["dg_line"];
         else if (roll.rollRadius == RollRadius.Other) RollRadiusImage.texture = ResoursesDict.TextureSet["custom"];
+
+        MinRollText.text = roll.minRoll.ToString();
+        MaxRollText.text = roll.maxRoll.ToString();
     }
 } 

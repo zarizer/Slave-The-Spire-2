@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 using static UnityEngine.EventSystems.EventTrigger;
@@ -31,6 +32,11 @@ public class PlayerSkill
         character = other.character;
         energy = other.energy;
         dist = other.dist;
+        rolls = new List<Roll>();
+        for (int i = 0; i < other.rolls.Count; i++)
+        {
+            rolls.Add(new Roll(other.rolls[i]));
+        }
         MakeAttackPositions();
     }
 

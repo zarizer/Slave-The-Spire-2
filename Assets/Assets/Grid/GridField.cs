@@ -48,6 +48,7 @@ public class GridField : MonoBehaviour
         List<List<GridCell>> Cells_ = new List<List<GridCell>>();
         CreateField();
         CreateDebugEnemy();
+        CreateDebugCharacter();
     }
 
     [ContextMenu("CreateField")]

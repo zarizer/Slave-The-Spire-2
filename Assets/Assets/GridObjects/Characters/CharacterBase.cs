@@ -47,8 +47,14 @@ public class CharacterBase
     {
         PlayerSkill ret_skill;
 
-        ret_skill = DataDicts.SkillSet[id];
-        if (ret_skill == null ) ret_skill = new TestSkill1();
+        if (DataDicts.SkillSet.ContainsKey(id))
+        {
+            ret_skill = new PlayerSkill(DataDicts.SkillSet[id]);
+        }
+        else
+        {
+            ret_skill = new TestSkill1();
+        }
 
         ret_skill.Init();
         return ret_skill;

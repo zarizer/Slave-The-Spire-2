@@ -217,9 +217,10 @@ GameObject:
   - component: {fileID: 1926619620090528195}
   - component: {fileID: 4812294066700044468}
   - component: {fileID: 7061289946933727814}
+  - component: {fileID: 1117631834487770371}
   m_Layer: 0
   m_Name: RollPrefabMenuUI
-  m_TagString: Untagged
+  m_TagString: CreateWindow
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -272,6 +273,18 @@ MonoBehaviour:
   rollMenuUI: {fileID: 0}
   MinMaxText: {fileID: 2842861749491030447}
   RollImage: {fileID: 8617591014552911163}
+--- !u!225 &1117631834487770371
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5077785896994590603}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &8135558172180362328
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,7 +342,7 @@ MonoBehaviour:
   menu: {fileID: 305184632086804705, guid: 8677fc39fccc31f4784a50e3779d0e3b, type: 3}
   ParantObj: {fileID: 5077785896994590603}
   visible: 0
-  position: {x: 800, y: 0, z: 0}
+  position: {x: 800, y: 300, z: 0}
 --- !u!223 &3788809421118212134
 Canvas:
   m_ObjectHideFlags: 0

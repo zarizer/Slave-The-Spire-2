@@ -74,6 +74,7 @@ public class TestEnemySkill1 : PlayerSkill
         MakeAttackPositions();
         base.Init();
         return this;
+
     }
 }
 

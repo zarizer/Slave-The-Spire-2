@@ -12,6 +12,7 @@ TagManager:
   - ATTACK2
   - ATTACK3
   - ATTACK4
+  - CreateWindow
   layers:
   - Default
   - TransparentFX
