@@ -114,7 +114,9 @@ public class Roll
         гдеяэ ядекюрэ опнбепйс мю аюттш хцпнйю 
         */
 
-        return Random.Range(GetMinRoll() + min_plus, GetMaxRoll() + max_plus);
+        int power = Random.Range(GetMinRoll() + min_plus, GetMaxRoll() + max_plus);
+
+        return power;
     }
 
     public int GetMaxRoll()
@@ -125,6 +127,19 @@ public class Roll
     public int GetMinRoll()
     {
         return minRoll;
+    }
+
+    public int GetDamage()
+    {
+        int min_plus = 0;
+        int max_plus = 0;
+
+        /*
+        гдеяэ ядекюрэ опнбепйс мю аюттш хцпнйю 
+        */
+        int power = Random.Range(GetMinRoll() + min_plus, GetMaxRoll() + max_plus);
+
+        return power;
     }
 
     public Roll(Roll other)

@@ -11,8 +11,8 @@ public class TestSkill1 : PlayerSkill
         rollDist = RollDist.Radius;
         dist = 2;
         rolls.Add(new Roll(
-        4,
-        8,
+        6,
+        12,
         RollType.Atk,
         RollRadius.Single,
         1,
@@ -31,12 +31,12 @@ public class TestSkill2 : PlayerSkill
         id = -2;
         name = "TestSkill2";
         dist = 3;
-        rollDist = RollDist.DgLine;
+        rollDist = RollDist.Any;
         rolls.Add(new Roll(
         5,
         10,
         RollType.Atk,
-        RollRadius.DgLine,
+        RollRadius.Single,
         5,
         Element.None));
         energy = -10;

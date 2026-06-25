@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class CameraController : MonoBehaviour
 {
@@ -74,10 +75,12 @@ public class CameraController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+            bool ret_flag = false;
             PointerEventData eventData = new PointerEventData(EventSystem.current);
             eventData.position = Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(eventData, results);
+
 
             if (GetLastUI(results) != null) 
             {
@@ -97,6 +100,7 @@ public class CameraController : MonoBehaviour
                     cur_skill = 1;
                     field_.CellsNullify();
                     var obj = Target.GetComponent<GridCharacter>();
+                    obj.MakeCurrentRolls(1);
                     obj.TRyingToAttack = true;
                     field_.FindAttacksPlayer(obj.cell_.x_, obj.cell_.y_, obj.character_.Skill1);
                 }
@@ -105,6 +109,7 @@ public class CameraController : MonoBehaviour
                     cur_skill = 2;
                     field_.CellsNullify();
                     var obj = Target.GetComponent<GridCharacter>();
+                    obj.MakeCurrentRolls(2);
                     obj.TRyingToAttack = true;
                     field_.FindAttacksPlayer(obj.cell_.x_, obj.cell_.y_, obj.character_.Skill2);
                 }
@@ -113,6 +118,7 @@ public class CameraController : MonoBehaviour
                     cur_skill = 3;
                     field_.CellsNullify();
                     var obj = Target.GetComponent<GridCharacter>();
+                    obj.MakeCurrentRolls(3);
                     obj.TRyingToAttack = true;
                     field_.FindAttacksPlayer(obj.cell_.x_, obj.cell_.y_, obj.character_.Skill3);
                 }
@@ -121,6 +127,7 @@ public class CameraController : MonoBehaviour
                     cur_skill = 4;
                     field_.CellsNullify();
                     var obj = Target.GetComponent<GridCharacter>();
+                    obj.MakeCurrentRolls(4);
                     obj.TRyingToAttack = true;
                     field_.FindAttacksPlayer(obj.cell_.x_, obj.cell_.y_, obj.character_.Skill4);
                 }
@@ -128,7 +135,21 @@ public class CameraController : MonoBehaviour
             else
             {
                 Ray ray = Camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-
+                if (CheckAttack())
+                {
+                    var cell = GetCellByRayCast(Physics.RaycastAll(ray));
+                    Debug.Log(cell);
+                    if (cell.color_type == GridCell.ColorType.Red)
+                    {
+                        ret_flag = true;
+                        ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>().MakeFight(
+                            Target.GetComponent<GridCharacter>(),
+                            ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>().current_field.GetTargetedObjects());
+                        field_.CellsNullify();
+                        field_.GridObjectsActionNullify();
+                    }
+                }
+                if (ret_flag) return;
                 if (Physics.Raycast(ray, out RaycastHit hit))
                 {
                     //Debug.Log("Hitted: " + hit.transform.tag);
@@ -153,13 +174,12 @@ public class CameraController : MonoBehaviour
                         }
                         else if (obj.GType_ == GriddableObject.GriddableObjectType.Enemy)
                         {
-                            if (!CheckAttack())
-                            {
-                                GridEnemy obj_enemy = hit.transform.GetComponent<GridEnemy>();
-                                Debug.Log(obj_enemy.enemy_.CurrentRolls.Count);
-                                UIController.UpdateTabEnemy(true, obj_enemy.GetComponent<GridEnemy>().enemy_);
-                                obj.field_.FindWaysPlayer(obj.cell_.x_, obj.cell_.y_, obj_enemy.enemy_.cur_moves);
-                            }
+
+                            GridEnemy obj_enemy = hit.transform.GetComponent<GridEnemy>();
+                            Debug.Log(obj_enemy.enemy_.CurrentRolls.Count);
+                            UIController.UpdateTabEnemy(true, obj_enemy.GetComponent<GridEnemy>().enemy_);
+                            obj.field_.FindWaysPlayer(obj.cell_.x_, obj.cell_.y_, obj_enemy.enemy_.cur_moves);
+
                         }
                         else
                         {
@@ -219,14 +239,17 @@ public class CameraController : MonoBehaviour
 
     bool CheckAttack()
     {
-        if (PrevTarget.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Character &&
-                               PrevTarget.GetComponent<GridCharacter>().TRyingToAttack)
+        if (Target == null) return false;
+        if (Target.GetComponent<GriddableObject>() == null) return false;
+        if (Target.GetComponent<GriddableObject>().GType_ != GriddableObject.GriddableObjectType.Character) return false;
+        if (Target.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Character &&
+                               Target.GetComponent<GridCharacter>().TRyingToAttack)
         {
-            ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>().MakeFight
+            /*ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>().MakeFight
                 (
                     PrevTarget.GetComponent<GridCharacter>(),
                     Target.GetComponent<GriddableObject>()
-                );
+                );*/
             return true;
         }
         return false;
@@ -285,7 +308,19 @@ public class CameraController : MonoBehaviour
         }
 
     }
-
+    
+    GridCell GetCellByRayCast(RaycastHit[] raycasts)
+    {
+        foreach(var obj in raycasts)
+        {
+            Debug.Log(obj.transform.gameObject);
+            if (obj.transform.gameObject.tag == "cell")
+            {
+                return (obj.transform.gameObject.GetComponent<GridCell>());
+            }
+        }
+        return null;
+    }
     GameObject GetLastUI(List<RaycastResult> Hits)
     {
         GameObject obj = null;

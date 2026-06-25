@@ -77,14 +77,14 @@ public class GridEnemy : GriddableObject
         UpdateRollsUI();
     }
 
-    public void UpdateRollsUI(float start_alpha = 1f)
+    public List<GameObject> UpdateRollsUI(float start_alpha = 1f)
     {
         StaticFuncs.DestroyChildren(RollsUI);
         List<GameObject> rolls_list = new List<GameObject>();
         foreach (Roll roll in enemy_.CurrentRolls)
         {
             GameObject menu_roll = Instantiate(RollUIPrefab, RollsUI);
-            menu_roll.GetComponent<RollScript>().Fade(0f, 0f, 0f);
+            menu_roll.GetComponent<CanvasGroup>().alpha = 0f;
             menu_roll.GetComponent<RollScript>().UpdateRollStats(roll);
             menu_roll.transform.localScale = (Vector3.one) / 250;
             menu_roll.transform.Rotate(Vector3.up, 180);
@@ -104,7 +104,25 @@ public class GridEnemy : GriddableObject
                 rolls_list[i].transform.localPosition = new Vector3(0, 0.2f + 0.45f * i, 0);
             }
         }
+        return rolls_list;
+    }
+
+    public override Roll GetFirstRoll()
+    {
+        if (enemy_.CurrentRolls.Count == 0) { return null; }
+        return enemy_.CurrentRolls[0];
+    }
+
+    public override void RemoveFirstRoll(float offset = 0f) {   
+        enemy_.CurrentRolls.RemoveAt(0);
     }
 
     public EnemyBase GetEnemyBase() { return enemy_; }
+
+    public override void GetDamage(int damage) 
+    {
+        enemy_.GetDamage(damage);
+    }
+
+
 }

@@ -21,5 +21,10 @@ public class GridObstacle : GriddableObject
     public override void ReplaceObject(int ID)
     {
         // —ƒ≈À¿“‹ –≈¿À»«¿÷»ﬁ
-    } 
+    }
+
+    public override Roll GetFirstRoll()
+    {
+        return null;
+    }
 }

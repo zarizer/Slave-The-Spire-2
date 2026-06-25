@@ -120,5 +120,14 @@ public class CharacterBase
     {
         return new CharacterBase(this);
     }
+
+    public virtual void GetDamage(int damage)
+    {
+        damage -= cur_def;
+        if (damage > 0)
+        {
+            cur_hp -= damage;
+        }
+    } 
 }
 

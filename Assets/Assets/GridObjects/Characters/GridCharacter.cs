@@ -10,7 +10,8 @@ public class GridCharacter : GriddableObject
     public CharacterBase character_;
     public int CharacterId_ = -1;
     
-
+    public List<Roll> CurrentSkillRolls = new List<Roll>();
+    public List<Roll> DefenceRolls = new List<Roll>();
 
     void Start()
     {
@@ -68,7 +69,23 @@ public class GridCharacter : GriddableObject
     {
         if (character_.cur_moves>0) return true;
         return false;
-    } 
+    }
+
+    public void MakeCurrentRolls(int skill_num)
+    {
+        if (skill_num == 1) CurrentSkillRolls = new List<Roll>(character_.Skill1.rolls);
+        if (skill_num == 2) CurrentSkillRolls = new List<Roll>(character_.Skill2.rolls);
+        if (skill_num == 3) CurrentSkillRolls = new List<Roll>(character_.Skill3.rolls);
+        if (skill_num == 4) CurrentSkillRolls = new List<Roll>(character_.Skill4.rolls);
+    }
+
+    public override Roll GetFirstRoll() 
+    { 
+        if (DefenceRolls.Count == 0) return null;
+        return DefenceRolls[0];
+    }
+
+    public override void RemoveFirstRoll(float offset = 0f) { DefenceRolls.RemoveAt(0); }
 }
 
 

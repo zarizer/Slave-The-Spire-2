@@ -520,6 +520,22 @@ public class GridField : MonoBehaviour
             }
         }
     }
+
+    public List<GriddableObject> GetTargetedObjects()
+    {
+        var list = new List<GriddableObject>();
+        foreach (var row in Cells_)
+        {
+            foreach (var cell in row)
+            {
+                if (cell.color_type == GridCell.ColorType.Red)
+                {
+                    if (cell.object_ != null) list.Add(cell.object_);
+                }
+            }
+        }
+        return list;
+    } 
 }
 
 enum Direction

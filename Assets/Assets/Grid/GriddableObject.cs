@@ -87,6 +87,12 @@ public class GriddableObject : MonoBehaviour
     {
         return new Vector3(cell.transform.position.x, cell.transform.position.y - 0.5f, cell.transform.position.z);
     }
+
+    public virtual Roll GetFirstRoll() { return null; }
+
+    public virtual void RemoveFirstRoll(float offset = 0f) { }
+
+    public virtual void GetDamage(int damage) { }
     public enum GriddableObjectType
     {
         Enemy,
