@@ -166,17 +166,12 @@ public class BattleMain : MonoBehaviour
                                 enemy.RollsUI.GetChild(k).GetComponent<RollScript>().Fade(0f, 0.3f, 0, true);
                             }
                             LeanTween.delayedCall(0.4f, () => { EnemyUpdateRolls(enemy); });
-                            
-                           
                         }
-                        
                     }
-
                 } 
             }
             character.CurrentSkillRolls.RemoveAt(0);
         }
-        
     }
 
     public void DealDamageByRoll(Roll roll, GriddableObject obj)

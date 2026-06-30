@@ -73,10 +73,22 @@ public class GridCharacter : GriddableObject
 
     public void MakeCurrentRolls(int skill_num)
     {
-        if (skill_num == 1) CurrentSkillRolls = new List<Roll>(character_.Skill1.rolls);
-        if (skill_num == 2) CurrentSkillRolls = new List<Roll>(character_.Skill2.rolls);
-        if (skill_num == 3) CurrentSkillRolls = new List<Roll>(character_.Skill3.rolls);
-        if (skill_num == 4) CurrentSkillRolls = new List<Roll>(character_.Skill4.rolls);
+        PlayerSkill cur_skill = null;
+        if (skill_num == 1) cur_skill = character_.Skill1;
+        if (skill_num == 2) cur_skill = character_.Skill2;
+        if (skill_num == 3) cur_skill = character_.Skill3;
+        if (skill_num == 4) cur_skill = character_.Skill4;
+
+        if (CheckSkillResourses(cur_skill))
+        {
+            CurrentSkillRolls = cur_skill.GetRolls();
+        }
+    }
+
+    bool CheckSkillResourses(PlayerSkill skill)
+    {
+        if (skill.CheckSkillResourses() && skill.CheckSkillRestrictions()) return true;
+        return false;
     }
 
     public override Roll GetFirstRoll() 

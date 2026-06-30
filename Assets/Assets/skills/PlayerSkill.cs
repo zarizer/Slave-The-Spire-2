@@ -9,6 +9,8 @@ public class PlayerSkill
 {
     public int id;
     public string name;
+    public int max_use_count = 1;
+    public int cur_use_count = 0;
     public List<Roll> rolls = new List<Roll>();
     public int dist;
     public RollDist rollDist;
@@ -32,6 +34,7 @@ public class PlayerSkill
         character = other.character;
         energy = other.energy;
         dist = other.dist;
+        max_use_count = other.max_use_count;
         rolls = new List<Roll>();
         for (int i = 0; i < other.rolls.Count; i++)
         {
@@ -48,6 +51,19 @@ public class PlayerSkill
             roll.skill = this;
         }
         return this; 
+    }
+
+    public virtual bool CheckSkillRestrictions() { return true; }
+    public virtual bool CheckSkillResourses()
+    {
+        if (cur_use_count < max_use_count &&
+            energy < character.cur_energy &&
+            CheckSkillRestrictions())
+        {
+            return true;
+        }
+        ResoursesDict.GetClass<SoundMain>().PlaySound("RestrictSound");
+        return false;
     }
 
 
@@ -91,6 +107,19 @@ public class PlayerSkill
                 }
             }
         }
+    }
+
+    public virtual List<Roll> GetRolls()
+    {
+        var ret_list = new List<Roll>();
+        foreach (Roll roll in rolls)
+        {
+            ret_list.Add(new Roll(roll));
+        }
+        cur_use_count++;
+        character.cur_energy -= energy;
+        ResoursesDict.GetClass<CharacterTabController>().RequestedUpdate(true);
+        return ret_list;
     }
 }
 

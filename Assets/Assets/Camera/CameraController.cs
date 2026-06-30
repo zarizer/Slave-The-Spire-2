@@ -100,7 +100,7 @@ public class CameraController : MonoBehaviour
                     cur_skill = 1;
                     field_.CellsNullify();
                     var obj = Target.GetComponent<GridCharacter>();
-                    obj.MakeCurrentRolls(1);
+
                     obj.TRyingToAttack = true;
                     field_.FindAttacksPlayer(obj.cell_.x_, obj.cell_.y_, obj.character_.Skill1);
                 }
@@ -109,7 +109,7 @@ public class CameraController : MonoBehaviour
                     cur_skill = 2;
                     field_.CellsNullify();
                     var obj = Target.GetComponent<GridCharacter>();
-                    obj.MakeCurrentRolls(2);
+                    //obj.MakeCurrentRolls(2);
                     obj.TRyingToAttack = true;
                     field_.FindAttacksPlayer(obj.cell_.x_, obj.cell_.y_, obj.character_.Skill2);
                 }
@@ -118,7 +118,7 @@ public class CameraController : MonoBehaviour
                     cur_skill = 3;
                     field_.CellsNullify();
                     var obj = Target.GetComponent<GridCharacter>();
-                    obj.MakeCurrentRolls(3);
+                    //obj.MakeCurrentRolls(3);
                     obj.TRyingToAttack = true;
                     field_.FindAttacksPlayer(obj.cell_.x_, obj.cell_.y_, obj.character_.Skill3);
                 }
@@ -127,7 +127,7 @@ public class CameraController : MonoBehaviour
                     cur_skill = 4;
                     field_.CellsNullify();
                     var obj = Target.GetComponent<GridCharacter>();
-                    obj.MakeCurrentRolls(4);
+                   //obj.MakeCurrentRolls(4);
                     obj.TRyingToAttack = true;
                     field_.FindAttacksPlayer(obj.cell_.x_, obj.cell_.y_, obj.character_.Skill4);
                 }
@@ -142,6 +142,7 @@ public class CameraController : MonoBehaviour
                     if (cell.color_type == GridCell.ColorType.Red)
                     {
                         ret_flag = true;
+                        Target.GetComponent<GridCharacter>().MakeCurrentRolls(cur_skill);
                         ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>().MakeFight(
                             Target.GetComponent<GridCharacter>(),
                             ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>().current_field.GetTargetedObjects());

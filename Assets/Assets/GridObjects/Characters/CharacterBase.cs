@@ -46,7 +46,6 @@ public class CharacterBase
     public PlayerSkill GetSkillByID(int id)
     {
         PlayerSkill ret_skill;
-
         if (DataDicts.SkillSet.ContainsKey(id))
         {
             ret_skill = new PlayerSkill(DataDicts.SkillSet[id]);
@@ -55,7 +54,7 @@ public class CharacterBase
         {
             ret_skill = new TestSkill1();
         }
-
+        ret_skill.character = this;
         ret_skill.Init();
         return ret_skill;
     }

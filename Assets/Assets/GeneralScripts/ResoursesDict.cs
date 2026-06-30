@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class ResoursesDict : MonoBehaviour
 {
     public static Dictionary<string, Texture> TextureSet = new Dictionary<string, Texture>();
     public static Dictionary<string, GameObject> ObjectSet = new Dictionary<string, GameObject>();
+    public static Dictionary<string, AudioClip> SoundSet = new Dictionary<string, AudioClip>();
 
     public Texture none_element;
     public Texture fire_element;
@@ -32,6 +34,9 @@ public class ResoursesDict : MonoBehaviour
     public GameObject UICanvas;
     public GameObject battle_main;
     public GameObject character_tab;
+    public GameObject SoundMain;
+
+    public AudioClip restricted_sound;
     public void Awake()
     {
         TextureSet["atk_icon"] = atk_icon;
@@ -58,6 +63,9 @@ public class ResoursesDict : MonoBehaviour
         ObjectSet["UICanvas"] = UICanvas;
         ObjectSet["BattleMain"] = battle_main;
         ObjectSet["CharacterTab"] = character_tab;
+        ObjectSet["SoundMain"] = SoundMain;
+
+        SoundSet["RestrictSound"] = restricted_sound;
     }
 
 
@@ -65,6 +73,17 @@ public class ResoursesDict : MonoBehaviour
     {
         
     }
-
-
+    
+    public static T GetClass<T>()
+    {
+        T obj;
+        foreach (var i in ObjectSet)
+        {
+            if (i.Value.TryGetComponent<T>(out obj))
+            {
+                return obj;
+            }
+        }
+        return (T)(object)null;
+    }
 }
