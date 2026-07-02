@@ -26,6 +26,13 @@ public class CharacterTabController : TabController
     public TextMeshProUGUI skill3_uses;
     public TextMeshProUGUI skill4_uses;
     public TextMeshProUGUI move_button_text;
+
+    public TextMeshProUGUI None_k_text;
+    public TextMeshProUGUI Fire_k_text;
+    public TextMeshProUGUI Water_k_text;
+    public TextMeshProUGUI Dendro_k_text;
+    public TextMeshProUGUI Light_k_text;
+    public TextMeshProUGUI Darkness_k_text;
     
 
     public bool IsVisible;
@@ -59,7 +66,7 @@ public class CharacterTabController : TabController
         speed_text.text = character.cur_speed.ToString();
         moves_text.text = character.cur_moves.ToString();
         energy_text.text = character.cur_energy.ToString();
-        atk_text.text = character.cur_base_dmg.ToString();
+        atk_text.text = character.cur_dmg_k.ToString();
         description_text.text = character.description;
 
         MakeSkillText(1, skill1_energy, skill1_uses, character);
@@ -67,6 +74,13 @@ public class CharacterTabController : TabController
         MakeSkillText(3, skill3_energy, skill3_uses, character);
         MakeSkillText(4, skill4_energy, skill4_uses, character);
         move_button_text.text = character.cur_moves.ToString();
+
+        None_k_text.text = character.none_k.ToString();
+        Fire_k_text.text = character.fire_k.ToString();
+        Water_k_text.text = character.water_k.ToString();
+        Dendro_k_text.text = character.dendro_k.ToString();
+        Light_k_text.text = character.light_k.ToString();
+        Darkness_k_text.text = character.darkness_k.ToString();
 
     }   
 

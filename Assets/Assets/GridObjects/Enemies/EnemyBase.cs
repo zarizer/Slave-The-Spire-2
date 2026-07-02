@@ -65,7 +65,9 @@ public class EnemyBase : CharacterBase
     {
         if (SkillQueue.Count == 0) { Debug.Log("No more enemy skills on:" + name); return false; }
         foreach (Roll roll in SkillQueue[0].rolls) {
-            CurrentRolls.Add(new Roll(roll));
+            var cur_roll = new Roll(roll);
+            cur_roll.skill.character = this;
+            CurrentRolls.Add(cur_roll);
         }
         SkillQueue.RemoveAt(0);
         return true;

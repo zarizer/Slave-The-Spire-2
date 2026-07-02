@@ -1,6 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Dependencies.Sqlite;
+using System.Linq;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
 
@@ -89,8 +90,8 @@ public class GridField : MonoBehaviour
     {
         for (int i = 0; i<10; i++)
         {
-            int rx = Random.Range(0, SizeX_);
-            int ry = Random.Range(0, SizeY_);
+            int rx = UnityEngine.Random.Range(0, SizeX_);
+            int ry = UnityEngine.Random.Range(0, SizeY_);
 
             if (GetGridObject(rx, ry) == null)
             {
@@ -331,7 +332,7 @@ public class GridField : MonoBehaviour
 
     List<(int, int)> GetDamageCellsByRoll(int x, int y, Roll roll, Direction dir)
     {
-        List<(int, int)> cells = new List<(int, int)> ();
+        List<(int, int)> cells = new List<(int, int)>();
 
         if (roll.rollRadius == RollRadius.Field)
         {
@@ -345,7 +346,7 @@ public class GridField : MonoBehaviour
         }
         else if (roll.rollRadius == RollRadius.Single)
         {
-            cells.Add((0,0));
+            cells.Add((0, 0));
         }
         else if (roll.rollRadius == RollRadius.PlayerRadius || roll.rollRadius == RollRadius.TargetRadius)
         {
@@ -354,70 +355,49 @@ public class GridField : MonoBehaviour
                 cells.Add(pos);
             }
         }
-        else if (roll.rollRadius == RollRadius.DgLine)
-        {
-            if (dir == Direction.dg_r_u)
-            {
-                foreach (var pos in roll.DamagePositions)
-                {
-                    if (pos.Item1 > 0 && pos.Item2 > 0) cells.Add(pos);
-                }
-            }
-            if (dir == Direction.dg_r_d)
-            {
-                foreach (var pos in roll.DamagePositions)
-                {
-                    if (pos.Item1 > 0 && pos.Item2 < 0) cells.Add(pos);
-                }
-            }
-            if (dir == Direction.dg_l_u)
-            {
-                foreach (var pos in roll.DamagePositions)
-                {
-                    if (pos.Item1 < 0 && pos.Item2 > 0) cells.Add(pos);
-                }
-            }
-            if (dir == Direction.dg_l_d)
-            {
-                foreach (var pos in roll.DamagePositions)
-                {
-                    if (pos.Item1 < 0 && pos.Item2 < 0) cells.Add(pos);
-                }
-            }
-
-        }
         else if (roll.rollRadius == RollRadius.StLine)
         {
+            int dist = roll.skill != null ? roll.skill.dist : 3;
+
             if (dir == Direction.up)
             {
-                foreach (var pos in roll.DamagePositions)
-                {
-                    if (pos.Item2 > 0) cells.Add(pos);
-                }
+                for (int d = 1; d <= dist; d++) cells.Add((0, d));
             }
-            if (dir == Direction.down)
+            else if (dir == Direction.down)
             {
-                foreach (var pos in roll.DamagePositions)
-                {
-                    if (pos.Item2 < 0) cells.Add(pos);
-                }
+                for (int d = 1; d <= dist; d++) cells.Add((0, -d));
             }
-            if (dir == Direction.right)
+            else if (dir == Direction.right)
             {
-                foreach (var pos in roll.DamagePositions)
-                {
-                    if (pos.Item1 > 0) cells.Add(pos);
-                }
+                for (int d = 1; d <= dist; d++) cells.Add((d, 0));
             }
-            if (dir == Direction.left)
+            else if (dir == Direction.left)
             {
-                foreach (var pos in roll.DamagePositions)
-                {
-                    if (pos.Item1 < 0) cells.Add(pos);
-                }
+                for (int d = 1; d <= dist; d++) cells.Add((-d, 0));
             }
         }
-            
+        else if (roll.rollRadius == RollRadius.DgLine)
+        {
+            int dist = roll.skill != null ? roll.skill.dist : 3;
+
+            if (dir == Direction.dg_r_u)
+            {
+                for (int d = 1; d <= dist; d++) cells.Add((d, d));
+            }
+            else if (dir == Direction.dg_r_d)
+            {
+                for (int d = 1; d <= dist; d++) cells.Add((d, -d));
+            }
+            else if (dir == Direction.dg_l_u)
+            {
+                for (int d = 1; d <= dist; d++) cells.Add((-d, d));
+            }
+            else if (dir == Direction.dg_l_d)
+            {
+                for (int d = 1; d <= dist; d++) cells.Add((-d, -d));
+            }
+        }
+
         return cells;
     }
 
@@ -535,10 +515,789 @@ public class GridField : MonoBehaviour
             }
         }
         return list;
-    } 
+    }
+
+    public GridCell EnemyFindBestCell(GridEnemy enemy)
+    {
+        var start_cell = enemy.cell_;
+        int maxMoves = enemy.enemy_.moves;
+
+        List<GridCell> stopCells = new List<GridCell>();
+        List<GridCell> nonstopCells = new List<GridCell>();
+
+        ClearVisitedFlags();
+
+        Queue<GridCell> queue = new Queue<GridCell>();
+        queue.Enqueue(start_cell);
+        start_cell.visited = true;
+        start_cell.moves = 0;
+
+        while (queue.Count > 0)
+        {
+            GridCell cell = queue.Dequeue();
+
+            if (cell.moves >= maxMoves)
+                continue;
+
+            var up = GetGridCell(cell.x_, cell.y_ + 1);
+            var down = GetGridCell(cell.x_, cell.y_ - 1);
+            var left = GetGridCell(cell.x_ - 1, cell.y_);
+            var right = GetGridCell(cell.x_ + 1, cell.y_);
+
+            CheckAndAddCell(up, cell, maxMoves, stopCells, nonstopCells, queue);
+            CheckAndAddCell(down, cell, maxMoves, stopCells, nonstopCells, queue);
+            CheckAndAddCell(left, cell, maxMoves, stopCells, nonstopCells, queue);
+            CheckAndAddCell(right, cell, maxMoves, stopCells, nonstopCells, queue);
+        }
+
+        List<GridCell> allAvailableCells = new List<GridCell>();
+        allAvailableCells.AddRange(stopCells);
+        allAvailableCells.AddRange(nonstopCells);
+
+        allAvailableCells = allAvailableCells.Where(c => c.moves <= maxMoves).ToList();
+        allAvailableCells = allAvailableCells.Where(c => !IsCellOccupiedByPlayer(c)).ToList();
+
+        if (allAvailableCells.Count == 0)
+            return start_cell;
+
+        bool hasAttackRolls = enemy.enemy_.CurrentRolls.Any(r => r.rollType == RollType.Atk);
+
+        if (!hasAttackRolls)
+        {
+            GridCell playerCell = FindPlayerCell();
+            if (playerCell != null)
+            {
+                return allAvailableCells.OrderBy(c => GetDistance(c, playerCell)).FirstOrDefault() ?? start_cell;
+            }
+            return start_cell;
+        }
+
+        List<GridCell> playerCells = FindAllPlayerCells();
+
+        GridCell bestCell = null;
+        int maxTargets = -1;
+
+        foreach (var cell in allAvailableCells)
+        {
+            int targetsCount = CountReachablePlayers(cell, enemy);
+
+            //Debug.Log($"Cell ({cell.x_}, {cell.y_}) moves: {cell.moves}, targets: {targetsCount}");
+
+            if (targetsCount > maxTargets)
+            {
+                maxTargets = targetsCount;
+                bestCell = cell;
+            }
+            else if (targetsCount == maxTargets && bestCell != null)
+            {
+                float currentMinDistance = GetMinDistanceToAnyPlayer(cell, playerCells);
+                float bestMinDistance = GetMinDistanceToAnyPlayer(bestCell, playerCells);
+
+                if (currentMinDistance < bestMinDistance)
+                {
+                    bestCell = cell;
+                }
+                else if (Mathf.Approximately(currentMinDistance, bestMinDistance) && cell.moves < bestCell.moves)
+                {
+                    bestCell = cell;
+                }
+            }
+        }
+
+        if (bestCell != null && IsCellOccupiedByPlayer(bestCell))
+        {
+            bestCell = allAvailableCells.FirstOrDefault(c => !IsCellOccupiedByPlayer(c)) ?? start_cell;
+        }
+
+        //Debug.Log($"Best cell: ({bestCell?.x_}, {bestCell?.y_}) with moves: {bestCell?.moves}, targets: {maxTargets}");
+        return bestCell ?? start_cell;
+    }
+
+    private List<GridCell> FindAllPlayerCells()
+    {
+        List<GridCell> playerCells = new List<GridCell>();
+
+        for (int i = 0; i < SizeX_; i++)
+        {
+            for (int j = 0; j < SizeY_; j++)
+            {
+                var cell = GetGridCell(i, j);
+                if (cell != null && IsCellOccupiedByPlayer(cell))
+                {
+                    playerCells.Add(cell);
+                }
+            }
+        }
+
+        return playerCells;
+    }
+    private float GetMinDistanceToAnyPlayer(GridCell fromCell, List<GridCell> playerCells)
+    {
+        if (playerCells == null || playerCells.Count == 0)
+            return float.MaxValue;
+
+        float minDistance = float.MaxValue;
+
+        foreach (var playerCell in playerCells)
+        {
+            float distance = GetDistance(fromCell, playerCell);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+            }
+        }
+
+        return minDistance;
+    }
+
+    private void CheckAndAddCell(GridCell neighbor, GridCell current, int maxMoves,
+                                 List<GridCell> stopCells, List<GridCell> nonstopCells,
+                                 Queue<GridCell> queue)
+    {
+        if (neighbor == null || neighbor.visited)
+            return;
+
+        if (!neighbor.IsMovable())
+            return;
+
+        if (IsCellOccupiedByPlayer(neighbor))
+            return;
+
+        int newMoves = current.moves + 1;
+
+        if (newMoves > maxMoves)
+            return;
+
+        neighbor.moves = newMoves;
+
+        if (neighbor.IsStoppable())
+        {
+            stopCells.Add(neighbor);
+        }
+        else
+        {
+            nonstopCells.Add(neighbor);
+        }
+
+        neighbor.ParentCell = current;
+        neighbor.visited = true;
+        queue.Enqueue(neighbor);
+    }
+
+    private bool IsCellOccupiedByPlayer(GridCell cell)
+    {
+        if (cell == null || cell.object_ == null)
+            return false;
+
+        var gridObject = cell.object_.GetComponent<GriddableObject>();
+        if (gridObject == null)
+            return false;
+
+        if (gridObject.GType_ != GriddableObject.GriddableObjectType.Character)
+            return false;
+
+        var character = cell.object_.GetComponent<GridCharacter>();
+        return character != null;
+    }
+
+    private GridCell FindPlayerCell()
+    {
+        for (int i = 0; i < SizeX_; i++)
+        {
+            for (int j = 0; j < SizeY_; j++)
+            {
+                var cell = GetGridCell(i, j);
+                if (cell != null && IsCellOccupiedByPlayer(cell))
+                {
+                    return cell;
+                }
+            }
+        }
+        return null;
+    }
+
+    private int CountReachablePlayers(GridCell fromCell, GridEnemy enemy)
+    {
+        HashSet<GridCharacter> reachablePlayers = new HashSet<GridCharacter>();
+
+        if (enemy.enemy_.CurrentRolls == null || enemy.enemy_.CurrentRolls.Count == 0)
+            return 0;
+
+        foreach (var roll in enemy.enemy_.CurrentRolls)
+        {
+            if (roll.rollType == RollType.Def)
+                continue;
+
+            if (roll.rollType != RollType.Atk)
+                continue;
+
+            List<GridCell> targetCells = GetTargetCellsForRoll(fromCell, roll);
+
+            foreach (var targetCell in targetCells)
+            {
+                List<Direction> directions = GetDirectionsForRadius(roll);
+
+                foreach (var dir in directions)
+                {
+                    List<GridCell> damageCells = GetDamageCellsFromTargetCell(targetCell, roll, dir);
+
+                    foreach (var damageCell in damageCells)
+                    {
+                        if (damageCell != null && IsCellOccupiedByPlayer(damageCell))
+                        {
+                            GridCharacter player = damageCell.object_.GetComponent<GridCharacter>();
+                            if (player != null && player != enemy)
+                            {
+                                reachablePlayers.Add(player);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return reachablePlayers.Count;
+    }
+
+    public List<GridCell> GetTargetCellsForRoll(GridCell fromCell, Roll roll)
+    {
+        List<GridCell> targetCells = new List<GridCell>();
+        int dist = GetSkillDist(roll);
+
+        if (roll.skill.rollDist == RollDist.Any || roll.skill.rollDist == RollDist.Radius)
+        {
+            for (int i = -dist; i <= dist; i++)
+            {
+                for (int j = -dist; j <= dist; j++)
+                {
+                    if (Mathf.Abs(i) + Mathf.Abs(j) > dist)
+                        continue;
+
+                    GridCell cell = GetGridCell(fromCell.x_ + i, fromCell.y_ + j);
+                    if (cell != null)
+                        targetCells.Add(cell);
+                }
+            }
+        }
+        else if (roll.skill.rollDist == RollDist.StLine)
+        {
+            for (int d = 1; d <= dist; d++)
+            {
+                GridCell up = GetGridCell(fromCell.x_, fromCell.y_ + d);
+                GridCell down = GetGridCell(fromCell.x_, fromCell.y_ - d);
+                GridCell right = GetGridCell(fromCell.x_ + d, fromCell.y_);
+                GridCell left = GetGridCell(fromCell.x_ - d, fromCell.y_);
+
+                if (up != null) targetCells.Add(up);
+                if (down != null) targetCells.Add(down);
+                if (right != null) targetCells.Add(right);
+                if (left != null) targetCells.Add(left);
+            }
+        }
+        else if (roll.skill.rollDist == RollDist.DgLine)
+        {
+            for (int d = 1; d <= dist; d++)
+            {
+                GridCell ru = GetGridCell(fromCell.x_ + d, fromCell.y_ + d);
+                GridCell rd = GetGridCell(fromCell.x_ + d, fromCell.y_ - d);
+                GridCell lu = GetGridCell(fromCell.x_ - d, fromCell.y_ + d);
+                GridCell ld = GetGridCell(fromCell.x_ - d, fromCell.y_ - d);
+
+                if (ru != null) targetCells.Add(ru);
+                if (rd != null) targetCells.Add(rd);
+                if (lu != null) targetCells.Add(lu);
+                if (ld != null) targetCells.Add(ld);
+            }
+        }
+
+        return targetCells;
+    }
+
+    public List<GriddableObject> GetTargetObjectsForRoll(GridCell fromCell, Roll roll)
+    {
+        List<GriddableObject> targetObjects = new List<GriddableObject>();
+        int dist = GetSkillDist(roll);
+
+        if (roll.skill.rollDist == RollDist.Any || roll.skill.rollDist == RollDist.Radius)
+        {
+            for (int i = -dist; i <= dist; i++)
+            {
+                for (int j = -dist; j <= dist; j++)
+                {
+                    if (Mathf.Abs(i) + Mathf.Abs(j) > dist)
+                        continue;
+
+                    GridCell cell = GetGridCell(fromCell.x_ + i, fromCell.y_ + j);
+                    if (cell != null)
+                    {
+                        if (cell.object_ != null)
+                        {
+                            targetObjects.Add(cell.object_);
+                        }
+                    }
+                        
+                }
+            }
+        }
+        else if (roll.skill.rollDist == RollDist.StLine)
+        {
+            for (int d = 1; d <= dist; d++)
+            {
+                GridCell up = GetGridCell(fromCell.x_, fromCell.y_ + d);
+                GridCell down = GetGridCell(fromCell.x_, fromCell.y_ - d);
+                GridCell right = GetGridCell(fromCell.x_ + d, fromCell.y_);
+                GridCell left = GetGridCell(fromCell.x_ - d, fromCell.y_);
+
+                if (up != null) { if (up.object_ != null) { targetObjects.Add(up.object_); } }
+                if (down != null) { if (down.object_ != null) { targetObjects.Add(down.object_); } }
+                if (right != null) { if (right.object_ != null) { targetObjects.Add(right.object_); } }
+                if (left != null) { if (left.object_ != null) { targetObjects.Add(left.object_); } }
+            }
+        }
+        else if (roll.skill.rollDist == RollDist.DgLine)
+        {
+            for (int d = 1; d <= dist; d++)
+            {
+                GridCell ru = GetGridCell(fromCell.x_ + d, fromCell.y_ + d);
+                GridCell rd = GetGridCell(fromCell.x_ + d, fromCell.y_ - d);
+                GridCell lu = GetGridCell(fromCell.x_ - d, fromCell.y_ + d);
+                GridCell ld = GetGridCell(fromCell.x_ - d, fromCell.y_ - d);
+
+                if (ru != null) { if (ru.object_ != null) { targetObjects.Add(ru.object_); } }
+                if (rd != null) { if (rd.object_ != null) { targetObjects.Add(rd.object_); } }
+                if (lu != null) { if (lu.object_ != null) { targetObjects.Add(lu.object_); } }
+                if (ld != null) { if (ld.object_ != null) { targetObjects.Add(ld.object_); } }
+            }
+        }
+
+        return targetObjects;
+    }
+
+    private int GetSkillDist(Roll roll)
+    {
+        return roll.skill.dist;
+    }
+
+    private void ClearVisitedFlags()
+    {
+        for (int i = 0; i < SizeX_; i++)
+        {
+            for (int j = 0; j < SizeY_; j++)
+            {
+                var cell = GetGridCell(i, j);
+                if (cell != null)
+                {
+                    cell.visited = false;
+                    cell.moves = 0;
+                    cell.ParentCell = null;
+                }
+            }
+        }
+    }
+
+    private bool IsAlly(GridCharacter character, GridEnemy enemy)
+    {
+        return false;
+    }
+
+    private int GetDistance(GridCell cell1, GridCell cell2)
+    {
+        return Math.Abs(cell1.x_ - cell2.x_) + Math.Abs(cell1.y_ - cell2.y_);
+    }
+
+    public GridCell FindBestCellForRoll(Roll roll, GridEnemy enemy, out Direction bestDirection)
+    {
+        bestDirection = Direction.none;
+
+        List<GridCell> targetCells = GetTargetCellsForRollFromEnemy(roll, enemy);
+
+        if (targetCells.Count == 0)
+            return enemy.cell_;
+
+        GridCell bestCell = null;
+        float bestScore = float.MinValue;
+        Direction bestDir = Direction.none;
+
+        foreach (var targetCell in targetCells)
+        {
+            List<Direction> directions = GetDirectionsForRadius(roll);
+
+            foreach (var dir in directions)
+            {
+                List<GridCell> damageCells = GetDamageCellsFromTargetCell(targetCell, roll, dir);
+
+                int playersHit = 0;
+                int enemiesHit = 0;
+
+                foreach (var damageCell in damageCells)
+                {
+                    if (damageCell == null) continue;
+
+                    if (IsCellOccupiedByPlayer(damageCell))
+                    {
+                        GridCharacter player = damageCell.object_.GetComponent<GridCharacter>();
+                        if (player != null && player != enemy)
+                        {
+                            playersHit++;
+                        }
+                    }
+
+                    if (IsCellOccupiedByEnemy(damageCell))
+                    {
+                        GridEnemy otherEnemy = damageCell.object_.GetComponent<GridEnemy>();
+                        if (otherEnemy != null)
+                        {
+                            enemiesHit++;
+                        }
+                    }
+                }
+
+                float score = CalculateScore(playersHit, enemiesHit, targetCell, enemy);
+
+                Debug.Log($"Target ({targetCell.x_}, {targetCell.y_}) Dir: {dir} Players: {playersHit}, Enemies: {enemiesHit}, Score: {score}");
+
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestCell = targetCell;
+                    bestDir = dir;
+                }
+                else if (Mathf.Approximately(score, bestScore) && bestCell != null)
+                {
+                    float currentDist = GetDistance(targetCell, enemy.cell_);
+                    float bestDist = GetDistance(bestCell, enemy.cell_);
+
+                    if (currentDist < bestDist)
+                    {
+                        bestCell = targetCell;
+                        bestDir = dir;
+                    }
+                }
+            }
+        }
+
+        bestDirection = bestDir;
+        Debug.Log($"Best cell: ({bestCell?.x_}, {bestCell?.y_}) with score: {bestScore}, direction: {bestDir}");
+        return bestCell ?? enemy.cell_;
+    }
+    private float CalculateScore(int playersHit, int enemiesHit, GridCell targetCell, GridEnemy enemy)
+    {
+        float score = 0;
+
+        if (enemiesHit > 0)
+        {
+            score = -1000 - (enemiesHit * 100);
+            score += playersHit * 10;
+        }
+        else
+        {
+            score = playersHit * 100;
+        }
+
+        List<GridCell> playerCells = FindAllPlayerCells();
+        if (playerCells.Count > 0)
+        {
+            float minDistance = GetMinDistanceToAnyPlayer(targetCell, playerCells);
+            score += Mathf.Max(0, 10 - minDistance) * 2;
+        }
+
+        return score;
+    }
+    private float EvaluateCellForRoll(GridCell fromCell, Roll roll, GridEnemy enemy, out Direction bestDirection)
+    {
+        bestDirection = Direction.none;
+        int enemiesHit = 0;
+        int playersHit = 0;
+
+        List<GridCell> targetCells = GetTargetCellsForRoll(fromCell, roll);
+
+        Dictionary<Direction, (int players, int enemies)> directionStats = new Dictionary<Direction, (int, int)>();
+        List<Direction> directions = GetDirectionsForRadius(roll);
+
+        foreach (var dir in directions)
+        {
+            int dirPlayersHit = 0;
+            int dirEnemiesHit = 0;
+
+            foreach (var targetCell in targetCells)
+            {
+                List<GridCell> damageCells = GetDamageCellsFromTargetCell(targetCell, roll, dir);
+                Debug.Log("count:" + damageCells.Count);
+                foreach (var damageCell in damageCells)
+                {
+
+                    if (damageCell == null)
+                        continue;
+
+                    if (IsCellOccupiedByPlayer(damageCell))
+                    {
+                        GridCharacter character = damageCell.object_.GetComponent<GridCharacter>();
+                        if (character != null && character != enemy)
+                        {
+                            dirPlayersHit++;
+                            playersHit++;
+                        }
+                    }
+
+                    if (IsCellOccupiedByEnemy(damageCell))
+                    {
+                        GridEnemy otherEnemy = damageCell.object_.GetComponent<GridEnemy>();
+                        if (otherEnemy != null && otherEnemy != enemy)
+                        {
+                            dirEnemiesHit++;
+                            enemiesHit++;
+                        }
+                    }
+                }
+            }
+
+            directionStats[dir] = (dirPlayersHit, dirEnemiesHit);
+        }
+
+        float score = 0;
+
+        if (enemiesHit > 0)
+        {
+            score = -1000 - (enemiesHit * 100);
+            score += playersHit * 10;
+        }
+        else
+        {
+            score = playersHit * 100;
+        }
+
+        List<GridCell> playerCells = FindAllPlayerCells();
+        if (playerCells.Count > 0)
+        {
+            float minDistance = GetMinDistanceToAnyPlayer(fromCell, playerCells);
+            score += Mathf.Max(0, 10 - minDistance) * 2;
+        }
+
+        Direction bestDir = Direction.none;
+        int bestDirScore = int.MinValue;
+
+        foreach (var kvp in directionStats)
+        {
+            int dirScore;
+            if (kvp.Value.enemies > 0)
+            {
+                dirScore = -10000 - (kvp.Value.enemies * 1000) + (kvp.Value.players * 10);
+            }
+            else
+            {
+                dirScore = kvp.Value.players * 1000;
+            }
+
+            if (dirScore > bestDirScore)
+            {
+                bestDirScore = dirScore;
+                bestDir = kvp.Key;
+            }
+            else if (dirScore == bestDirScore && bestDir != Direction.none)
+            {
+                if (kvp.Value.players > directionStats[bestDir].players)
+                {
+                    bestDir = kvp.Key;
+                }
+            }
+        }
+
+        bestDirection = bestDir;
+        return score;
+    }
+
+    private float EvaluateCellForRoll(GridCell fromCell, Roll roll, GridEnemy enemy)
+    {
+        return EvaluateCellForRoll(fromCell, roll, enemy, out _);
+    }
+
+    private List<Direction> GetDirectionsForRadius(Roll roll)
+    {
+        List<Direction> directions = new List<Direction>();
+
+        if (roll.rollRadius == RollRadius.Single ||
+            roll.rollRadius == RollRadius.PlayerRadius ||
+            roll.rollRadius == RollRadius.TargetRadius ||
+            roll.rollRadius == RollRadius.Field)
+        {
+            directions.Add(Direction.none);
+        }
+        else if (roll.rollRadius == RollRadius.StLine)
+        {
+            directions.AddRange(new[] {
+            Direction.up, Direction.down,
+            Direction.left, Direction.right
+        });
+        }
+        else if (roll.rollRadius == RollRadius.DgLine)
+        {
+            directions.AddRange(new[] {
+            Direction.dg_r_u, Direction.dg_r_d,
+            Direction.dg_l_u, Direction.dg_l_d
+        });
+        }
+
+        return directions;
+    }
+
+    private bool IsCellOccupiedByEnemy(GridCell cell)
+    {
+        if (cell == null || cell.object_ == null)
+            return false;
+
+        var gridObject = cell.object_.GetComponent<GriddableObject>();
+        if (gridObject == null)
+            return false;
+
+        if (gridObject.GType_ == GriddableObject.GriddableObjectType.Enemy)
+            return true;
+
+        return false;
+    }
+
+    public List<GridCell> GetTargetCellsForRollFromEnemy(Roll roll, GridEnemy enemy)
+    {
+        var fromCell = enemy.cell_;
+        List<GridCell> targetCells = new List<GridCell>();
+
+        int dist = 0;
+        if (roll.skill != null)
+        {
+            dist = roll.skill.dist;
+        }
+        RollDist rollDist = roll.skill != null ? roll.skill.rollDist : RollDist.Any;
+        if (rollDist == RollDist.Any)
+        {
+            foreach(var row in Cells_)
+            {
+                foreach(GridCell cell in row)
+                {
+                    targetCells.Add(cell);
+                }
+            }
+        }
+        else if (rollDist == RollDist.Radius)
+        {
+            for (int i = -dist; i <= dist; i++)
+            {
+                for (int j = -dist; j <= dist; j++)
+                {
+                    if (Mathf.Abs(i) + Mathf.Abs(j) > dist)
+                        continue;
+
+                    GridCell cell = GetGridCell(fromCell.x_ + i, fromCell.y_ + j);
+                    if (cell != null)
+                        targetCells.Add(cell);
+                }
+            }
+        }
+        else if (rollDist == RollDist.StLine)
+        {
+            for (int d = 1; d <= dist; d++)
+            {
+                GridCell up = GetGridCell(fromCell.x_, fromCell.y_ + d);
+                GridCell down = GetGridCell(fromCell.x_, fromCell.y_ - d);
+                GridCell right = GetGridCell(fromCell.x_ + d, fromCell.y_);
+                GridCell left = GetGridCell(fromCell.x_ - d, fromCell.y_);
+
+                if (up != null) targetCells.Add(up);
+                if (down != null) targetCells.Add(down);
+                if (right != null) targetCells.Add(right);
+                if (left != null) targetCells.Add(left);
+            }
+        }
+        else if (rollDist == RollDist.DgLine)
+        {
+            for (int d = 1; d <= dist; d++)
+            {
+                GridCell ru = GetGridCell(fromCell.x_ + d, fromCell.y_ + d);
+                GridCell rd = GetGridCell(fromCell.x_ + d, fromCell.y_ - d);
+                GridCell lu = GetGridCell(fromCell.x_ - d, fromCell.y_ + d);
+                GridCell ld = GetGridCell(fromCell.x_ - d, fromCell.y_ - d);
+
+                if (ru != null) targetCells.Add(ru);
+                if (rd != null) targetCells.Add(rd);
+                if (lu != null) targetCells.Add(lu);
+                if (ld != null) targetCells.Add(ld);
+            }
+        }
+        else if (rollDist == RollDist.Other)
+        {
+        }
+
+
+        return targetCells;
+    }
+
+    public List<GridCell> GetDamageCellsFromTargetCell(GridCell targetCell, Roll roll, Direction dir = Direction.none)
+    {
+        List<GridCell> resultCells = new List<GridCell>();
+
+        if (targetCell == null)
+            return resultCells;
+
+        if (roll.rollRadius == RollRadius.Single)
+        {
+            resultCells.Add(targetCell);
+            return resultCells;
+        }
+
+        if (roll.rollRadius == RollRadius.Field)
+        {
+            for (int i = 0; i < SizeX_; i++)
+            {
+                for (int j = 0; j < SizeY_; j++)
+                {
+                    GridCell cell = GetGridCell(i, j);
+                    if (cell != null && !resultCells.Contains(cell))
+                    {
+                        resultCells.Add(cell);
+                    }
+                }
+            }
+            return resultCells;
+        }
+
+        if (roll.rollRadius == RollRadius.PlayerRadius || roll.rollRadius == RollRadius.TargetRadius)
+        {
+            foreach (var pos in roll.DamagePositions)
+            {
+                int targetX = targetCell.x_ + pos.Item1;
+                int targetY = targetCell.y_ + pos.Item2;
+
+                GridCell cell = GetGridCell(targetX, targetY);
+                if (cell != null && !resultCells.Contains(cell))
+                {
+                    resultCells.Add(cell);
+                }
+            }
+            return resultCells;
+        }
+
+        if (roll.rollRadius == RollRadius.StLine || roll.rollRadius == RollRadius.DgLine)
+        {
+            resultCells.Add(targetCell);
+
+            var damageCells = GetDamageCellsByRoll(targetCell.x_, targetCell.y_, roll, dir);
+
+            foreach (var (dx, dy) in damageCells)
+            {
+                int targetX = targetCell.x_ + dx;
+                int targetY = targetCell.y_ + dy;
+
+                GridCell cell = GetGridCell(targetX, targetY);
+                if (cell != null && !resultCells.Contains(cell))
+                {
+                    resultCells.Add(cell);
+                }
+            }
+        }
+
+        return resultCells;
+    }
 }
 
-enum Direction
+public enum Direction
 {
     up,
     down,
@@ -548,4 +1307,5 @@ enum Direction
     dg_r_d,
     dg_l_u,
     dg_l_d,
+    none
 }

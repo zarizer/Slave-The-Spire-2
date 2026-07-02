@@ -19,6 +19,13 @@ public class EnemyTabController : TabController
     public GameObject RollPrefab;
     public Transform MenuUIRolls;
     EnemyBase current_enemy;
+
+    public TextMeshProUGUI None_k_text;
+    public TextMeshProUGUI Fire_k_text;
+    public TextMeshProUGUI Water_k_text;
+    public TextMeshProUGUI Dendro_k_text;
+    public TextMeshProUGUI Light_k_text;
+    public TextMeshProUGUI Darkness_k_text;
     void Start()
     {
 
@@ -47,7 +54,7 @@ public class EnemyTabController : TabController
         speed_text.text = character.cur_speed.ToString();
         moves_text.text = character.cur_moves.ToString();
         energy_text.text = character.cur_energy.ToString();
-        atk_text.text = character.cur_base_dmg.ToString();
+        atk_text.text = character.cur_dmg_k.ToString();
         description_text.text = character.description;
 
         StaticFuncs.DestroyChildren(MenuUIRolls);
@@ -59,7 +66,12 @@ public class EnemyTabController : TabController
             menu_roll.GetComponent<RollScript>().UpdateRollStats(roll);
         }
 
-
+        None_k_text.text = character.none_k.ToString();
+        Fire_k_text.text = character.fire_k.ToString();
+        Water_k_text.text = character.water_k.ToString();
+        Dendro_k_text.text = character.dendro_k.ToString();
+        Light_k_text.text = character.light_k.ToString();
+        Darkness_k_text.text = character.darkness_k.ToString();
     }
 
     private void OnDisable()

@@ -11,7 +11,7 @@ public class TestCharacter : CharacterBase
         def = 10;
         speed = 10;
         speed_dif = 2;
-        base_dmg = 1;
+        dmg_k = 5.2f;
         moves = 8;
         energy = 20;
         name = "Райан Гослинг Тестовый";

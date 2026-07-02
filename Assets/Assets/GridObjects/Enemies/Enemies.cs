@@ -11,8 +11,8 @@ public class TestEnemy : EnemyBase
         def = 10;
         speed = 10;
         speed_dif = 2;
-        base_dmg = 1;
-        moves = 8;
+        dmg_k = 1f;
+        moves = 3;
         energy = 20;
         name = "Линус Торвальдс";
         description = "YOU SHOULD DELETE WINDOWS. NOW!!!";
@@ -20,6 +20,9 @@ public class TestEnemy : EnemyBase
             new List<PlayerSkill>() { DataDicts.SkillSet[-3], DataDicts.SkillSet[-4] },
             new List<PlayerSkill>() { DataDicts.SkillSet[-5] }
         };
+        light_k = 2.5f;
+        darkness_k = 0.1f;
+        fire_k = 1.5f;
         
         return this;
     }

@@ -242,5 +242,21 @@ public class GridCell : MonoBehaviour
         if (color_id_ == 4) return ColorType.Blue;
         return ColorType.None;
     }
+
+    public void FlashColor(Color flashColor, float duration)
+    {
+        
+        foreach (var obj in coloring_objects)
+        {
+            Color originalColor = obj.GetComponent<Renderer>().material.color;
+            LeanTween.color(obj, flashColor, duration)
+            .setEase(LeanTweenType.easeInQuad)
+            .setLoopPingPong(1)
+            .setOnComplete(() => {
+                obj.GetComponent<Renderer>().material.color = originalColor;
+            });
+        }
+        
+    }
 }
 

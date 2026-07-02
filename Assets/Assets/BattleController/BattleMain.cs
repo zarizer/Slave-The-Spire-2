@@ -27,6 +27,7 @@ public class BattleMain : MonoBehaviour
 
     void Start()
     {
+        LeanTween.init(1000);
         Random.InitState(System.DateTime.Now.Second + System.DateTime.Now.Minute + System.DateTime.Now.Millisecond);
         current_field.StartField();
         StartBattle();
@@ -67,12 +68,12 @@ public class BattleMain : MonoBehaviour
             else if (current_cycle == BattleCycle.EnemyTurn1)
             {
                 CharacterTabSwitch(true, false);
-
                 PlayerCanAttack = false;
+                StartCoroutine(EnemiesMove());
             }
             else if (current_cycle == BattleCycle.EnemyTurn2)
             {
-
+                StartCoroutine(EnemiesUseRolls());
             }
         }
     }
@@ -99,7 +100,6 @@ public class BattleMain : MonoBehaviour
         {
             list[i].GetComponent<RollScript>().Fade(1f, 0.75f, i * 0.5f, true);
         }
-
     }
 
     [ContextMenu("NextCycle")]
@@ -152,6 +152,7 @@ public class BattleMain : MonoBehaviour
                         Debug.Log("Tie: " + char_power + " | " + target_power);
                         char_power = char_roll.GetRoll();
                         target_power = target_roll.GetRoll();
+                        Debug.Log("Fighting: " + char_power + " / " + target_power);
                     }
                     if (char_power > target_power)
                     {
@@ -174,11 +175,103 @@ public class BattleMain : MonoBehaviour
         }
     }
 
+    public void MakeFightEnemy(GridEnemy enemy, Roll roll, List<GriddableObject> Targets)
+    {
+        Debug.Log("ATTACK!");
+
+
+        for (int j = 0; j < Targets.Count; j++)
+        {
+            var target = Targets[j];
+            var target_roll = target.GetFirstRoll();
+            if (target == enemy) continue;
+            if (target_roll == null) { DealDamageByRoll(roll, target); }
+            else
+            {
+                int char_power = roll.GetRoll();
+                int target_power = target_roll.GetRoll();
+                Debug.Log("Fighting: " + char_power + " / " + target_power);
+                while (char_power == target_power)
+                {
+                    Debug.Log("Tie: " + char_power + " | " + target_power);
+                    char_power = roll.GetRoll();
+                    target_power = target_roll.GetRoll();
+                    Debug.Log("Fighting: " + char_power + " / " + target_power);
+                }
+                if (char_power > target_power)
+                {
+                    DealDamageByRoll(roll, target);
+                    target.RemoveFirstRoll(0.3f);
+                    if (target.GType_ == GriddableObject.GriddableObjectType.Enemy)
+                    {
+                        var cur_enemy = target.GetComponent<GridEnemy>();
+
+                        for (int k = 0; k < cur_enemy.RollsUI.childCount; k++)
+                        {
+                            cur_enemy.RollsUI.GetChild(k).GetComponent<RollScript>().Fade(0f, 0.3f, 0, true);
+                        }
+                        LeanTween.delayedCall(0.4f, () => { EnemyUpdateRolls(cur_enemy); });
+                    }
+                }
+            }
+        }
+
+        
+    }
+
+    IEnumerator EnemiesMove()
+    {
+        foreach (var enemy in current_field.GridEnemies)
+        {
+            var cell = current_field.EnemyFindBestCell(enemy);
+            enemy.MoveToCell(cell);
+            yield return new WaitForSeconds(1.5f);
+        }
+        NextCycle();
+    }
+
     public void DealDamageByRoll(Roll roll, GriddableObject obj)
     {
-        int damage = roll.GetDamage();
+        Debug.Log("Dealed damage!");
+        Damage damage = new Damage(roll.GetDamage(), roll.element, roll.skill.character);
         obj.GetDamage(damage);
-        Debug.Log("Dealing Damage: " + damage);
+    }
+
+    IEnumerator EnemiesUseRolls()
+    {
+        for (int i = 0; i < current_field.GridEnemies.Count; i++)
+        {
+            var enemy = current_field.GridEnemies[i];
+            while (enemy.GetAtkRollCount() != 0)
+            {
+                var roll = enemy.GetFirstAtkRoll();
+                Direction dir;
+                var cell = current_field.FindBestCellForRoll(roll, enemy, out dir);
+                var dist_cells = current_field.GetTargetCellsForRollFromEnemy(roll, enemy);
+                foreach (var dist_cell in dist_cells)
+                {
+                    dist_cell.FlashColor(Color.yellow, 1f);
+                }
+                yield return new WaitForSeconds(2.1f);
+
+                var target_cells = current_field.GetDamageCellsFromTargetCell(cell, roll, dir);
+                foreach (var target_cell in target_cells)
+                {
+                    target_cell.FlashColor(Color.red, 1f);
+                }
+                yield return new WaitForSeconds(2.1f);
+
+                var objects = new List<GriddableObject>();
+                foreach (var obj in target_cells)
+                {
+                    if (obj.object_ != null) objects.Add(obj.object_);
+                }
+                MakeFightEnemy(enemy, roll, objects);
+                enemy.RemoveRoll(roll);
+                
+            }
+            EnemyUpdateRolls(enemy);
+        }
     }
 }
 

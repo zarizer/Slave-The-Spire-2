@@ -2,12 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class GridEnemy : GriddableObject
 {
 
     public GameObject TexturePlane;
+    public UnityEngine.UI.Image hp_circle;
     public EnemyBase enemy_;
+
     public Transform RollsUI;
     public GameObject RollUIPrefab;
     public int EnemyId_ = -1;
@@ -21,6 +24,7 @@ public class GridEnemy : GriddableObject
     {
         LookAtCamera();
         MoveToDestination();
+        hp_circle.fillAmount = ((float)enemy_.cur_hp) / enemy_.hp;
     }
 
 
@@ -119,9 +123,33 @@ public class GridEnemy : GriddableObject
 
     public EnemyBase GetEnemyBase() { return enemy_; }
 
-    public override void GetDamage(int damage) 
+    public override void GetDamage(Damage damage) 
     {
         enemy_.GetDamage(damage);
+    }
+
+    public void RemoveRoll(Roll roll) 
+    { 
+        enemy_.CurrentRolls.Remove(roll);
+    }
+
+    public Roll GetFirstAtkRoll()
+    {
+        foreach (var roll in enemy_.CurrentRolls) 
+        {
+            if (roll.rollType == RollType.Atk) { return roll; }
+        }
+        return null;
+    }
+
+    public int GetAtkRollCount()
+    {
+        int count = 0;
+        foreach (var roll in enemy_.CurrentRolls)
+        {
+            if (roll.rollType == RollType.Atk) { count++; }
+        }
+        return count;
     }
 
 

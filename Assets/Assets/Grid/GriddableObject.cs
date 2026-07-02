@@ -45,15 +45,14 @@ public class GriddableObject : MonoBehaviour
         if (GType_ == GriddableObjectType.Enemy)
         {
             obj_enemy = (GridEnemy)this;
-            if (cell.color_type == GridCell.ColorType.Green)
-            {
-                MoveByWay(GetWay(cell_, cell), 0.2f);
-                cell_.object_ = null;
-                cell.object_ = this;
-                cell_ = cell;
-                obj_enemy.TryingToMove = false;
-                obj_enemy.enemy_.cur_moves = 0;
-            }
+
+            MoveByWay(GetWay(cell_, cell), 0.2f);
+            cell_.object_ = null;
+            cell.object_ = this;
+            cell_ = cell;
+            obj_enemy.TryingToMove = false;
+            obj_enemy.enemy_.cur_moves = 0;
+
         }
 
     }
@@ -92,7 +91,7 @@ public class GriddableObject : MonoBehaviour
 
     public virtual void RemoveFirstRoll(float offset = 0f) { }
 
-    public virtual void GetDamage(int damage) { }
+    public virtual void GetDamage(Damage damage) { }
     public enum GriddableObjectType
     {
         Enemy,

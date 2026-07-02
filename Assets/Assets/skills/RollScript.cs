@@ -86,7 +86,7 @@ public class RollScript : MonoBehaviour
     public void Fade(float to, float time, float offset, bool trigger_cycle = false)
     {
         LeanTween.delayedCall(offset, () => 
-        { 
+        {
             LeanTween.alphaCanvas(rollMenuUI.GetComponent<CanvasGroup>(), to, time);
         });
     }

@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class GridCharacter : GriddableObject
 {
 
 
     public GameObject TexturePlane;
+    public UnityEngine.UI.Image hp_circle;
     public CharacterBase character_;
     public int CharacterId_ = -1;
     
@@ -23,6 +26,7 @@ public class GridCharacter : GriddableObject
     {
         LookAtCamera();
         MoveToDestination();
+        hp_circle.fillAmount = ((float)character_.cur_hp) / character_.hp;
     }
 
 
@@ -98,6 +102,11 @@ public class GridCharacter : GriddableObject
     }
 
     public override void RemoveFirstRoll(float offset = 0f) { DefenceRolls.RemoveAt(0); }
+
+    public override void GetDamage(Damage damage)
+    {
+        character_.GetDamage(damage);
+    }
 }
 
 

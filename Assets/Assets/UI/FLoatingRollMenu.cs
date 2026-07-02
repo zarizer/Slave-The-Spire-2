@@ -14,6 +14,8 @@ public class FloatingRollMenu : FloatingInfoMenu
     public TextMeshProUGUI RollDescription;
     public TextMeshProUGUI MinRollText;
     public TextMeshProUGUI MaxRollText;
+    public TextMeshProUGUI RollDistText;
+    public TextMeshProUGUI RollRadiusText;
     public int TextSize;
 
     public void Start()
@@ -44,6 +46,7 @@ public class FloatingRollMenu : FloatingInfoMenu
         else if (skill.rollDist == RollDist.StLine) RollDistImage.texture = ResoursesDict.TextureSet["st_line"];
         else if (skill.rollDist == RollDist.DgLine) RollDistImage.texture = ResoursesDict.TextureSet["dg_line"];
         else if (skill.rollDist == RollDist.Other) RollDistImage.texture = ResoursesDict.TextureSet["custom"];
+        RollDistText.text = skill.dist.ToString();
 
         if (roll.rollRadius == RollRadius.Single) RollRadiusImage.texture = ResoursesDict.TextureSet["single"];
         else if (roll.rollRadius == RollRadius.TargetRadius) RollRadiusImage.texture = ResoursesDict.TextureSet["target_radius"];
@@ -52,6 +55,7 @@ public class FloatingRollMenu : FloatingInfoMenu
         else if (roll.rollRadius == RollRadius.StLine) RollRadiusImage.texture = ResoursesDict.TextureSet["st_line"];
         else if (roll.rollRadius == RollRadius.DgLine) RollRadiusImage.texture = ResoursesDict.TextureSet["dg_line"];
         else if (roll.rollRadius == RollRadius.Other) RollRadiusImage.texture = ResoursesDict.TextureSet["custom"];
+        RollRadiusText.text = roll.radius.ToString();
 
         MinRollText.text = roll.minRoll.ToString();
         MaxRollText.text = roll.maxRoll.ToString();

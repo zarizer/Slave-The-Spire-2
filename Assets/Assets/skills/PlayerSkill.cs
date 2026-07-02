@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.TextCore.Text;
 using static UnityEngine.EventSystems.EventTrigger;
 
@@ -177,6 +178,7 @@ public class Roll
         maxRoll = other.maxRoll;
         rollType = other.rollType;
         rollRadius = other.rollRadius;
+        radius = other.radius;
         element = other.element;
         skill = other.skill;
         MakeDamagePositions();
@@ -237,3 +239,16 @@ public class Roll
     }
 }
 
+public class Damage
+{
+    public int damage;
+    public Element element;
+    public CharacterBase from;
+
+    public Damage(int damage, Element element, CharacterBase from)
+    {
+        this.damage = damage;
+        this.element = element;
+        this.from = from;
+    }
+};

@@ -10,7 +10,7 @@ public class CharacterBase
     public int def;
     public int speed;
     public int speed_dif;
-    public float base_dmg;
+    public float dmg_k = 1;
     public int moves;
     public int energy;
     public string name;
@@ -20,9 +20,16 @@ public class CharacterBase
     public int cur_def;
     public int cur_speed;
     public int cur_speed_dif;
-    public float cur_base_dmg;
+    public float cur_dmg_k;
     public int cur_moves;
     public int cur_energy;
+
+    public float fire_k = 1f;
+    public float water_k = 1f;
+    public float dendro_k = 1f;
+    public float light_k = 1f;
+    public float darkness_k = 1f;
+    public float none_k = 1f;
 
     public PlayerSkill Skill1;
     public PlayerSkill Skill2;
@@ -74,7 +81,7 @@ public class CharacterBase
         cur_speed = speed;
         cur_speed_dif = speed_dif;
         cur_moves = moves;
-        cur_base_dmg = base_dmg;
+        cur_dmg_k = dmg_k;
         cur_energy = energy;
     }
 
@@ -90,7 +97,7 @@ public class CharacterBase
         def = other.def;
         speed = other.speed;
         speed_dif = other.speed_dif;
-        base_dmg = other.base_dmg;
+        dmg_k = other.dmg_k;
         moves = other.moves;
         energy = other.energy;
         name = other.name;
@@ -100,7 +107,7 @@ public class CharacterBase
         cur_def = other.cur_def;
         cur_speed = other.cur_speed;
         cur_speed_dif = other.cur_speed_dif;
-        cur_base_dmg = other.cur_base_dmg;
+        cur_dmg_k = other.cur_dmg_k;
         cur_moves = other.cur_moves;
         cur_energy = other.cur_energy;
 
@@ -113,6 +120,13 @@ public class CharacterBase
         skill_id2 = other.skill_id2;
         skill_id3 = other.skill_id3;
         skill_id4 = other.skill_id4;
+
+        fire_k = other.fire_k;
+        water_k = other.water_k;
+        dendro_k = other.dendro_k;
+        light_k = other.light_k;
+        darkness_k = other.darkness_k;
+        none_k = other.none_k;
     }
 
     public virtual CharacterBase Clone()
@@ -120,13 +134,33 @@ public class CharacterBase
         return new CharacterBase(this);
     }
 
-    public virtual void GetDamage(int damage)
+    public virtual void GetDamage(Damage damage)
     {
-        damage -= cur_def;
-        if (damage > 0)
+
+        int dmg = GetRealDamage(damage);
+        int cur_dmg = dmg - cur_def;
+        if (cur_dmg > 0)
         {
-            cur_hp -= damage;
+            cur_hp -= cur_dmg;
+            cur_def = 0;
+        }
+        else
+        {
+            cur_def -= dmg;
         }
     } 
+
+    int GetRealDamage(Damage damage)
+    {
+        int dmg = damage.damage;
+        dmg = (int)(dmg * damage.from.cur_dmg_k);
+        if (damage.element == Element.fire) dmg = (int)(dmg * fire_k);
+        if (damage.element == Element.water) dmg = (int)(dmg * water_k);
+        if (damage.element == Element.dendro) dmg = (int)(dmg * dendro_k);
+        if (damage.element == Element.light) dmg = (int)(dmg * light_k);
+        if (damage.element == Element.darkness) dmg = (int)(dmg * darkness_k);
+        if (damage.element == Element.None) dmg = (int)(dmg * none_k);
+        return dmg;
+    }
 }
 
