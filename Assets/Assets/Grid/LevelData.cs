@@ -12,8 +12,6 @@ public class LevelData
     public int minLevel;
     public int maxLevel;
 
-    // Объекты уровня: позиция -> (тип, id, уровень)
-    // Уровень = 0 означает "не кастомный" (используется общий уровень уровня)
     public Dictionary<(int x, int y), LevelObject> Objects =
         new Dictionary<(int x, int y), LevelObject>();
 
@@ -35,7 +33,7 @@ public class LevelData
 #endif
     }
 
-    public LevelData GetLevelData(int id)
+    public static LevelData GetLevelData(int id)
     {
         if (Levels.ContainsKey(id))
             return Levels[id];
@@ -73,8 +71,23 @@ public class LevelData
                 int id = int.Parse(property.Name);
 
                 LevelDataSerializable dto = JsonConvert.DeserializeObject<LevelDataSerializable>(property.Value.ToString());
-                LevelData level = dto.ToLevelData();
-                Levels[id] = level;
+
+                if (dto != null)
+                {
+                    LevelData level = dto.ToLevelData();
+                    if (level != null)
+                    {
+                        Levels[id] = level;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Уровень с ID {id} не может быть загружен (данные null)");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"DTO для уровня {id} равен null");
+                }
             }
         }
         catch (JsonReaderException e)
@@ -179,8 +192,6 @@ public class LevelData
 #endif
     }
 
-    // ================ КЛАССЫ ДЛЯ СЕРИАЛИЗАЦИИ ================
-
     [System.Serializable]
     private class LevelDataSerializable
     {
@@ -193,23 +204,39 @@ public class LevelData
 
         public LevelDataSerializable(LevelData level_data)
         {
+            if (level_data == null)
+            {
+                Debug.LogError("LevelData is null in LevelDataSerializable constructor");
+                return;
+            }
+
             this.Id = level_data.DebugSaveId;
             this.x_ = level_data.x_;
             this.y_ = level_data.y_;
             this.minLevel = level_data.minLevel;
             this.maxLevel = level_data.maxLevel;
 
-            foreach (var kvp in level_data.Objects)
+            if (level_data.Objects != null)
             {
-                Objects.Add(new ObjectData
+                foreach (var kvp in level_data.Objects)
                 {
-                    posX = kvp.Key.x,
-                    posY = kvp.Key.y,
-                    objType = kvp.Value.type,
-                    id = kvp.Value.id,
-                    level = kvp.Value.level,
-                    isCustomLevel = kvp.Value.isCustomLevel
-                });
+                    if (kvp.Value != null)
+                    {
+                        Objects.Add(new ObjectData
+                        {
+                            posX = kvp.Key.x,
+                            posY = kvp.Key.y,
+                            objType = kvp.Value.type ?? "Obstacle",
+                            id = kvp.Value.id,
+                            level = kvp.Value.level,
+                            isCustomLevel = kvp.Value.isCustomLevel
+                        });
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Объект на позиции ({kvp.Key.x}, {kvp.Key.y}) равен null");
+                    }
+                }
             }
         }
 
@@ -223,15 +250,21 @@ public class LevelData
             level.maxLevel = this.maxLevel;
             level.Objects = new Dictionary<(int, int), LevelObject>();
 
-            foreach (var obj in Objects)
+            if (this.Objects != null)
             {
-                level.Objects[(obj.posX, obj.posY)] = new LevelObject
+                foreach (var obj in this.Objects)
                 {
-                    type = obj.objType,
-                    id = obj.id,
-                    level = obj.level,
-                    isCustomLevel = obj.isCustomLevel
-                };
+                    if (obj != null)
+                    {
+                        level.Objects[(obj.posX, obj.posY)] = new LevelObject
+                        {
+                            type = obj.objType ?? "Obstacle",
+                            id = obj.id,
+                            level = obj.level,
+                            isCustomLevel = obj.isCustomLevel
+                        };
+                    }
+                }
             }
 
             return level;
@@ -243,22 +276,20 @@ public class LevelData
     {
         public int posX;
         public int posY;
-        public string objType; // "Enemy", "Character", "Obstacle"
+        public string objType;
         public int id;
-        public int level; // Уровень объекта (0 если не кастомный)
-        public bool isCustomLevel; // Флаг кастомного уровня
+        public int level;
+        public bool isCustomLevel;
     }
 }
-
-// ================ ОТДЕЛЬНЫЙ КЛАСС ДЛЯ ОБЪЕКТА НА УРОВНЕ ================
 
 [System.Serializable]
 public class LevelObject
 {
-    public string type; // "Enemy", "Character", "Obstacle"
+    public string type;
     public int id;
-    public int level; // Уровень объекта (0 если не кастомный)
-    public bool isCustomLevel; // true - используется свой уровень, false - уровень уровня
+    public int level;
+    public bool isCustomLevel;
 
     public LevelObject()
     {
@@ -270,14 +301,12 @@ public class LevelObject
 
     public LevelObject(string type, int id, int level = 0, bool isCustomLevel = false)
     {
-        this.type = type;
+        this.type = type ?? "Obstacle";
         this.id = id;
         this.level = level;
         this.isCustomLevel = isCustomLevel;
     }
 }
-
-// ================ ОТДЕЛЬНЫЕ КЛАССЫ ДЛЯ ХРАНЕНИЯ ДАННЫХ ================
 
 [System.Serializable]
 public class EnemyData
@@ -286,7 +315,7 @@ public class EnemyData
     public string name;
     public int baseHealth;
     public int baseDamage;
-    public int defaultLevel; // Базовый уровень для врага
+    public int defaultLevel;
 }
 
 [System.Serializable]
@@ -296,7 +325,7 @@ public class CharacterData
     public string name;
     public int baseHealth;
     public int baseDamage;
-    public int defaultLevel; // Базовый уровень для персонажа
+    public int defaultLevel;
 }
 
 [System.Serializable]

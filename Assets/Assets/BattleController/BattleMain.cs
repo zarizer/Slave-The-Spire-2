@@ -11,6 +11,7 @@ public class BattleMain : MonoBehaviour
     public bool make_next_cycle_on_unlock = false;
     public int ext_data_counter = 0;
     public List<CharacterBase> play_characters = new List<CharacterBase>();
+    public int CurrentLevelId = 0;
 
     GameObject CurrentLevel = null;
 
@@ -30,6 +31,7 @@ public class BattleMain : MonoBehaviour
     {
         LeanTween.init(1000);
         Random.InitState(System.DateTime.Now.Second + System.DateTime.Now.Minute + System.DateTime.Now.Millisecond);
+        LevelData.Init();
         StartBattle();
     }
 
@@ -44,7 +46,7 @@ public class BattleMain : MonoBehaviour
     {
         CheckCycleLock();
     }
-
+    [ContextMenu("StartBattle")]
     public void StartBattle()
     {
         SetLevel("Level1.1");

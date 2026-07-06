@@ -54,14 +54,46 @@ public class GridField : MonoBehaviour
     public void StartField(BattleMain battle_data)
     {
         List<List<GridCell>> Cells_ = new List<List<GridCell>>();
-        CreateField();
-        CreateDebugEnemy();
-        CreateDebugCharacter();
+        GetLevelData(battle_data.CurrentLevelId);
     }
 
-    void GetLevelData(int levelId)
+    [ContextMenu("DebugLoadLevelData")]
+    public void DebugLoadLevelData()
     {
-
+        GetLevelData(DebugLevelSaveId);
+    }
+    public void GetLevelData(int levelId)
+    {
+        var level = LevelData.GetLevelData(levelId);
+        SizeX_ = level.x_;
+        SizeY_ = level.y_;
+        CreateField();
+        foreach (var i in level.Objects)
+        {
+            (int, int) cords = i.Key;
+            var obj = i.Value;
+            GriddableObject cur_obj = null;
+            if (obj.type == "Obstacle")
+            {
+                cur_obj = CreateGridObject(GriddableObject.GriddableObjectType.Obstacle, obj.id, cords.Item1, cords.Item2);
+            }
+            else if (obj.type == "Character")
+            {
+                cur_obj = CreateGridObject(GriddableObject.GriddableObjectType.Character, obj.id, cords.Item1, cords.Item2);
+            }
+            else if (obj.type == "Enemy")
+            {
+                cur_obj = CreateGridObject(GriddableObject.GriddableObjectType.Enemy, obj.id, cords.Item1, cords.Item2);
+            }
+            if (obj.isCustomLevel)
+            {
+                cur_obj.GetCharacter().level = obj.level;
+            }
+            else
+            {
+                cur_obj.GetCharacter().level = UnityEngine.Random.Range(level.minLevel, level.maxLevel);
+            }
+        }
     }
 
     [ContextMenu("SaveLevelData")] 
@@ -117,6 +149,9 @@ public class GridField : MonoBehaviour
     [ContextMenu("CreateField")]
     public void CreateField()
     {
+        GridCharacters.Clear();
+        GridEnemies.Clear();
+        GridObstacles.Clear();
         for(int i = Cells_.Count - 1; i>=0;i--)
         {
             for (int j = Cells_[i].Count - 1; j >= 0; j--)

@@ -3,9 +3,17 @@
     "Id": 0,
     "x_": 10,
     "y_": 10,
-    "minLevel": 0,
-    "maxLevel": 0,
+    "minLevel": 1,
+    "maxLevel": 20,
     "Objects": [
+      {
+        "posX": 4,
+        "posY": 6,
+        "objType": "Enemy",
+        "id": 0,
+        "level": 15,
+        "isCustomLevel": true
+      },
       {
         "posX": 4,
         "posY": 4,
@@ -15,40 +23,32 @@
         "isCustomLevel": false
       },
       {
-        "posX": 3,
-        "posY": 2,
+        "posX": 1,
+        "posY": 6,
         "objType": "Character",
         "id": 0,
         "level": 0,
         "isCustomLevel": false
       },
       {
-        "posX": 2,
-        "posY": 6,
-        "objType": "Obstacle",
-        "id": 1,
-        "level": 0,
-        "isCustomLevel": false
-      },
-      {
-        "posX": 9,
-        "posY": 0,
+        "posX": 6,
+        "posY": 4,
         "objType": "Obstacle",
         "id": 0,
         "level": 0,
         "isCustomLevel": false
       },
       {
-        "posX": 0,
-        "posY": 8,
+        "posX": 1,
+        "posY": 5,
         "objType": "Obstacle",
         "id": 0,
         "level": 0,
         "isCustomLevel": false
       },
       {
-        "posX": 7,
-        "posY": 2,
+        "posX": 3,
+        "posY": 1,
         "objType": "Obstacle",
         "id": 0,
         "level": 0,
@@ -56,14 +56,6 @@
       },
       {
         "posX": 6,
-        "posY": 0,
-        "objType": "Obstacle",
-        "id": 0,
-        "level": 0,
-        "isCustomLevel": false
-      },
-      {
-        "posX": 8,
         "posY": 2,
         "objType": "Obstacle",
         "id": 0,
@@ -71,8 +63,8 @@
         "isCustomLevel": false
       },
       {
-        "posX": 3,
-        "posY": 9,
+        "posX": 5,
+        "posY": 0,
         "objType": "Obstacle",
         "id": 0,
         "level": 0,
@@ -80,14 +72,14 @@
       },
       {
         "posX": 9,
-        "posY": 9,
+        "posY": 1,
         "objType": "Obstacle",
         "id": 0,
         "level": 0,
         "isCustomLevel": false
       },
       {
-        "posX": 0,
+        "posX": 6,
         "posY": 9,
         "objType": "Obstacle",
         "id": 0,
@@ -96,15 +88,15 @@
       },
       {
         "posX": 5,
-        "posY": 4,
+        "posY": 9,
         "objType": "Obstacle",
         "id": 0,
         "level": 0,
         "isCustomLevel": false
       },
       {
-        "posX": 6,
-        "posY": 8,
+        "posX": 1,
+        "posY": 0,
         "objType": "Obstacle",
         "id": 0,
         "level": 0,
