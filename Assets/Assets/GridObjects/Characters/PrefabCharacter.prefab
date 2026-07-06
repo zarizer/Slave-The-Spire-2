@@ -341,7 +341,7 @@ MonoBehaviour:
   TRyingToAttack: 0
   TexturePlane: {fileID: 9222514808385476471}
   hp_circle: {fileID: 6057086036640516372}
-  CharacterId_: -1
+  CharacterId_: 0
 --- !u!65 &8503215599278561149
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class GridField : MonoBehaviour
 {
@@ -19,6 +18,14 @@ public class GridField : MonoBehaviour
     public int DebugEnemyId;
     public int DebugEnemyPosX;
     public int DebugEnemyPosY;
+
+    public int DebugLevelSaveId;
+    public int DebugMinLevel;
+    public int DebugMaxLevel;
+
+    public int DebugObstacleId;
+    public int DebugObstaclePosX;
+    public int DebugObstaclePosY;
 
     public CameraController Camera;
 
@@ -36,20 +43,75 @@ public class GridField : MonoBehaviour
     public GridObstacle BaseObstacle;
     void Start()
     {
-        
+
     }
 
     void Update()
     {
-        
+
     }
 
-    public void StartField()
+    public void StartField(BattleMain battle_data)
     {
         List<List<GridCell>> Cells_ = new List<List<GridCell>>();
         CreateField();
         CreateDebugEnemy();
         CreateDebugCharacter();
+    }
+
+    void GetLevelData(int levelId)
+    {
+
+    }
+
+    [ContextMenu("SaveLevelData")] 
+    public void SaveLevelData()
+    {
+        LevelData data = new LevelData();
+
+        data.x_ = SizeX_;
+        data.y_ = SizeY_;
+        data.DebugSaveId = DebugLevelSaveId;
+        data.minLevel = DebugMinLevel;
+        data.maxLevel = DebugMaxLevel;
+
+        foreach (GridEnemy enemy in GridEnemies)
+        {
+            LevelObject obj = new LevelObject();
+            obj.type = "Enemy";
+            obj.id = enemy.GetCharacter().id;
+            if (enemy.IsCustomLevel)
+            {
+                obj.isCustomLevel = true;
+                obj.level = enemy.CustomLevel;
+            }
+            data.Objects[(enemy.cell_.x_, enemy.cell_.y_)] = obj;
+        }
+        foreach (GridCharacter character in GridCharacters)
+        {
+            LevelObject obj = new LevelObject();
+            obj.type = "Character";
+            obj.id = character.GetCharacter().id;
+            if (character.IsCustomLevel)
+            {
+                obj.isCustomLevel = true;
+                obj.level = character.CustomLevel;
+            }
+            data.Objects[(character.cell_.x_, character.cell_.y_)] = obj;
+        }
+        foreach (GridObstacle obstacle in GridObstacles)
+        {
+            LevelObject obj = new LevelObject();
+            obj.type = "Obstacle";
+            obj.id = obstacle.GetCharacter().id;
+            if (obstacle.IsCustomLevel)
+            {
+                obj.isCustomLevel = true;
+                obj.level = obstacle.CustomLevel;
+            }
+            data.Objects[(obstacle.cell_.x_, obstacle.cell_.y_)] = obj;
+        }
+        LevelData.SaveLevel(data);
     }
 
     [ContextMenu("CreateField")]
@@ -95,7 +157,7 @@ public class GridField : MonoBehaviour
 
             if (GetGridObject(rx, ry) == null)
             {
-                AddGridObject(rx, ry, Instantiate(RockObject, transform));
+                CreateGridObject(GriddableObject.GriddableObjectType.Obstacle, 0, rx, ry);
             }
         }
     }
@@ -110,6 +172,12 @@ public class GridField : MonoBehaviour
     public void CreateDebugEnemy()
     {
         CreateGridObject(GriddableObject.GriddableObjectType.Enemy, DebugEnemyId, DebugEnemyPosX, DebugEnemyPosY);
+    }
+
+    [ContextMenu("CreateDebugObstacle")]
+    public void CreateDebugObstacle()
+    {
+        CreateGridObject(GriddableObject.GriddableObjectType.Obstacle, DebugObstacleId, DebugObstaclePosX, DebugObstaclePosY);
     }
 
     public GriddableObject CreateGridObject(GriddableObject.GriddableObjectType type, int ID, int X, int Y)
@@ -138,7 +206,6 @@ public class GridField : MonoBehaviour
             cur_object = obj.GetComponent<GriddableObject>();
             GridObstacles.Add(cur_object.GetComponent<GridObstacle>());
         }
-        //—ƒ≈À¿“‹ –≈¿À»«¿÷»ﬁ ƒÀﬂ GRIDBREAKABLE
         cur_object.ReplaceObject(ID);
         AddGridObject(X, Y, cur_object);
         GetGridCell(X, Y).SnapObject();
@@ -520,7 +587,7 @@ public class GridField : MonoBehaviour
     public GridCell EnemyFindBestCell(GridEnemy enemy)
     {
         var start_cell = enemy.cell_;
-        int maxMoves = enemy.enemy_.moves;
+        int maxMoves = enemy.enemy_.cur_moves;
 
         List<GridCell> stopCells = new List<GridCell>();
         List<GridCell> nonstopCells = new List<GridCell>();
@@ -530,7 +597,7 @@ public class GridField : MonoBehaviour
         Queue<GridCell> queue = new Queue<GridCell>();
         queue.Enqueue(start_cell);
         start_cell.visited = true;
-        start_cell.moves = 0;
+        start_cell.moves = 1;
 
         while (queue.Count > 0)
         {

@@ -152,5 +152,10 @@ public class GridEnemy : GriddableObject
         return count;
     }
 
+    public override int GetLevel()
+    {
+        return enemy_.level;
+    }
 
+    public override CharacterBase GetCharacter() { return enemy_; }
 }

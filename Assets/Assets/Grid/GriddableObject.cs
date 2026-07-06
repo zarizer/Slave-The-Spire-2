@@ -14,6 +14,8 @@ public class GriddableObject : MonoBehaviour
     public GridCell cell_;
     public bool TryingToMove = false;
     public bool TRyingToAttack = false;
+    public bool IsCustomLevel = false;
+    public int CustomLevel = 1;
 
     void Start()
     {
@@ -91,7 +93,11 @@ public class GriddableObject : MonoBehaviour
 
     public virtual void RemoveFirstRoll(float offset = 0f) { }
 
+    public virtual int GetLevel() { return 1; }
+
     public virtual void GetDamage(Damage damage) { }
+
+    public virtual CharacterBase GetCharacter() { return null; }
     public enum GriddableObjectType
     {
         Enemy,

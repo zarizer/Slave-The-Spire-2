@@ -10,6 +10,7 @@ public class CharacterTabController : TabController
     public CameraController CameraController;
     public TextMeshProUGUI description_text;
     public TextMeshProUGUI name_text;
+    public TextMeshProUGUI lv_text;
     public TextMeshProUGUI hp_text;
     public TextMeshProUGUI def_text;
     public TextMeshProUGUI speed_text;
@@ -61,6 +62,7 @@ public class CharacterTabController : TabController
         if (character == null) return;
         gameObject.SetActive(true);
         name_text.text = character.name;
+        lv_text.text = "lv " + character.level;
         hp_text.text = character.cur_hp + " / " + character.hp;
         def_text.text = character.cur_def.ToString();
         speed_text.text = character.cur_speed.ToString();
@@ -109,7 +111,7 @@ public class CharacterTabController : TabController
         }
         text.text += Math.Abs(skill.energy).ToString();
 
-        text_use.text = skill.cur_use_count.ToString() + "/" + skill.max_use_count.ToString();
+        text_use.text = (skill.max_use_count - skill.cur_use_count).ToString() + "/" + skill.max_use_count.ToString();
     }
 }
 

@@ -87,7 +87,7 @@ public class RollScript : MonoBehaviour
     {
         LeanTween.delayedCall(offset, () => 
         {
-            LeanTween.alphaCanvas(rollMenuUI.GetComponent<CanvasGroup>(), to, time);
+            if (rollMenuUI != null) LeanTween.alphaCanvas(rollMenuUI.GetComponent<CanvasGroup>(), to, time);
         });
     }
 }

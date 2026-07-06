@@ -287,7 +287,7 @@ MonoBehaviour:
   hp_circle: {fileID: 7420755907166483433}
   RollsUI: {fileID: 819188207265203195}
   RollUIPrefab: {fileID: 5077785896994590603, guid: 27a9d0141ef6fbb41a509caa7b089f63, type: 3}
-  EnemyId_: -1
+  EnemyId_: 0
 --- !u!65 &8503215599278561149
 BoxCollider:
   m_ObjectHideFlags: 0

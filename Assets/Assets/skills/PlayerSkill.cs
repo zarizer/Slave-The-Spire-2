@@ -184,6 +184,18 @@ public class Roll
         MakeDamagePositions();
     }
 
+    public Roll()
+    {
+        minRoll = 1;
+        maxRoll = 3;
+        rollType = RollType.Atk;
+        rollRadius = RollRadius.Single;
+        radius = 1;
+        element = Element.None;
+        skill = null;
+        MakeDamagePositions();
+    }
+
     public Roll(int min_roll, int max_roll, RollType type, RollRadius radius_type, int rad, Element element, PlayerSkill skill_ = null)
     {
         minRoll = min_roll;

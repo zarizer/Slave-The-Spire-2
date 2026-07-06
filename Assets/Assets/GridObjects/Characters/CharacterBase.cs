@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UIElements;
 
 public class CharacterBase
@@ -15,6 +16,7 @@ public class CharacterBase
     public int energy;
     public string name;
     public string description;
+    public int level = 1;
 
     public int cur_hp;
     public int cur_def;
@@ -53,13 +55,13 @@ public class CharacterBase
     public PlayerSkill GetSkillByID(int id)
     {
         PlayerSkill ret_skill;
-        if (DataDicts.SkillSet.ContainsKey(id))
+        if (DataDicts.PlayerSkillSet.ContainsKey(id))
         {
-            ret_skill = new PlayerSkill(DataDicts.SkillSet[id]);
+            ret_skill = new PlayerSkill(DataDicts.PlayerSkillSet[id]);
         }
         else
         {
-            ret_skill = new TestSkill1();
+            ret_skill = new PlayerSkill(DataDicts.PlayerSkillSet[0]);
         }
         ret_skill.character = this;
         ret_skill.Init();
@@ -100,6 +102,7 @@ public class CharacterBase
         dmg_k = other.dmg_k;
         moves = other.moves;
         energy = other.energy;
+        level = other.level;
         name = other.name;
         description = other.description;
 
@@ -161,6 +164,15 @@ public class CharacterBase
         if (damage.element == Element.darkness) dmg = (int)(dmg * darkness_k);
         if (damage.element == Element.None) dmg = (int)(dmg * none_k);
         return dmg;
+    }
+
+    public virtual void UpdateStatsOnNewTurn()
+    {
+        Skill1.cur_use_count = 0;
+        Skill2.cur_use_count = 0;
+        Skill3.cur_use_count = 0;
+        Skill4.cur_use_count = 0;
+        cur_moves += moves;
     }
 }
 

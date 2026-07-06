@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class BattleMain : MonoBehaviour
@@ -12,6 +10,9 @@ public class BattleMain : MonoBehaviour
     public bool lock_cycle = false;
     public bool make_next_cycle_on_unlock = false;
     public int ext_data_counter = 0;
+    public List<CharacterBase> play_characters = new List<CharacterBase>();
+
+    GameObject CurrentLevel = null;
 
     List<BattleCycle> cycles = new List<BattleCycle>
     {
@@ -29,8 +30,13 @@ public class BattleMain : MonoBehaviour
     {
         LeanTween.init(1000);
         Random.InitState(System.DateTime.Now.Second + System.DateTime.Now.Minute + System.DateTime.Now.Millisecond);
-        current_field.StartField();
         StartBattle();
+    }
+
+    private void Awake()
+    {
+        Skills.Init();
+        Debug.Log(Application.companyName + " " + Application.productName + " " + Application.persistentDataPath);
     }
 
 
@@ -41,8 +47,16 @@ public class BattleMain : MonoBehaviour
 
     public void StartBattle()
     {
+        SetLevel("Level1.1");
+        current_field.StartField(this);
         current_cycle = cycles[0];
         NextCycle(0);
+    }
+
+    [ContextMenu("StopCode")]
+    public void StopCode()
+    {
+        //
     }
 
     public void NextCycle(int num = 1, bool activate = true)
@@ -56,7 +70,7 @@ public class BattleMain : MonoBehaviour
             if (current_cycle == BattleCycle.EnemyRollsCreate)
             {
                 CharacterTabSwitch(true, false);
-                EnemyCreateRolls();
+                StartCoroutine(EnemyCreateRolls());
                 NextCycle();
             }
             else if (current_cycle == BattleCycle.PlayerTurn)
@@ -74,16 +88,20 @@ public class BattleMain : MonoBehaviour
             else if (current_cycle == BattleCycle.EnemyTurn2)
             {
                 StartCoroutine(EnemiesUseRolls());
+                turn++;
+                
+                UpdatePlayerSkills();
             }
         }
     }
 
-    void EnemyCreateRolls()
+    IEnumerator EnemyCreateRolls()
     {
         foreach (var enemy in current_field.GridEnemies)
         {
             enemy.enemy_.CreateSkills(turn);
             while (enemy.enemy_.CreateNextRolls()) { }
+            yield return new WaitForSeconds(0.2f);
             enemy.UpdateRollsUI(1f);
             for (int i = 0; i < enemy.enemy_.CurrentRolls.Count; i++)
             {
@@ -144,14 +162,14 @@ public class BattleMain : MonoBehaviour
                 if (target_roll == null) { DealDamageByRoll(char_roll, Targets[i]); }
                 else
                 {
-                    int char_power = char_roll.GetRoll();
-                    int target_power = target_roll.GetRoll();
+                    int char_power;
+                    int target_power;
+                    GetRolls(out char_power, out target_power, char_roll, target_roll);
                     Debug.Log("Fighting: " + char_power + " / " + target_power);
                     while (char_power == target_power) 
                     {
                         Debug.Log("Tie: " + char_power + " | " + target_power);
-                        char_power = char_roll.GetRoll();
-                        target_power = target_roll.GetRoll();
+                        GetRolls(out char_power, out target_power, char_roll, target_roll);
                         Debug.Log("Fighting: " + char_power + " / " + target_power);
                     }
                     if (char_power > target_power)
@@ -175,6 +193,7 @@ public class BattleMain : MonoBehaviour
         }
     }
 
+
     public void MakeFightEnemy(GridEnemy enemy, Roll roll, List<GriddableObject> Targets)
     {
         Debug.Log("ATTACK!");
@@ -188,14 +207,14 @@ public class BattleMain : MonoBehaviour
             if (target_roll == null) { DealDamageByRoll(roll, target); }
             else
             {
-                int char_power = roll.GetRoll();
-                int target_power = target_roll.GetRoll();
+                int char_power;
+                int target_power;
+                GetRolls(out char_power, out target_power, roll, target_roll);
                 Debug.Log("Fighting: " + char_power + " / " + target_power);
                 while (char_power == target_power)
                 {
                     Debug.Log("Tie: " + char_power + " | " + target_power);
-                    char_power = roll.GetRoll();
-                    target_power = target_roll.GetRoll();
+                    GetRolls(out char_power, out target_power, roll, target_roll);
                     Debug.Log("Fighting: " + char_power + " / " + target_power);
                 }
                 if (char_power > target_power)
@@ -217,6 +236,15 @@ public class BattleMain : MonoBehaviour
         }
 
         
+    }
+
+    void GetRolls(out int p1, out int p2, Roll roll1, Roll roll2)
+    {
+        int pow1 = roll1.GetRoll();
+        int pow2 = roll2.GetRoll();
+
+        p1 = pow1 + (roll1.skill.character.level - roll2.skill.character.level) / 4;
+        p2 = pow2;
     }
 
     IEnumerator EnemiesMove()
@@ -268,10 +296,26 @@ public class BattleMain : MonoBehaviour
                 }
                 MakeFightEnemy(enemy, roll, objects);
                 enemy.RemoveRoll(roll);
-                
+                EnemyUpdateRolls(enemy);
             }
-            EnemyUpdateRolls(enemy);
+            
+            NextCycle();
         }
+    }
+
+    void UpdatePlayerSkills()
+    {
+        foreach (var character in current_field.GridCharacters)
+        {
+            character.character_.UpdateStatsOnNewTurn();
+        }
+    }
+
+    void SetLevel(string name)
+    {
+
+        if (CurrentLevel != null) Destroy(CurrentLevel);
+        CurrentLevel = Instantiate(ResoursesDict.ObjectSet[name]);
     }
 }
 

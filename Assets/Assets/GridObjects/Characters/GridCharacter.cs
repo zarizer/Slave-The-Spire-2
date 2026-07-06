@@ -11,7 +11,7 @@ public class GridCharacter : GriddableObject
     public GameObject TexturePlane;
     public UnityEngine.UI.Image hp_circle;
     public CharacterBase character_;
-    public int CharacterId_ = -1;
+    public int CharacterId_ = 0;
     
     public List<Roll> CurrentSkillRolls = new List<Roll>();
     public List<Roll> DefenceRolls = new List<Roll>();
@@ -107,6 +107,13 @@ public class GridCharacter : GriddableObject
     {
         character_.GetDamage(damage);
     }
+
+    public override int GetLevel()
+    {
+        return character_.level;
+    }
+
+    public override CharacterBase GetCharacter() { return character_; }
 }
 
 

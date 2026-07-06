@@ -9,6 +9,7 @@ public class ResoursesDict : MonoBehaviour
     public static Dictionary<string, Texture> TextureSet = new Dictionary<string, Texture>();
     public static Dictionary<string, GameObject> ObjectSet = new Dictionary<string, GameObject>();
     public static Dictionary<string, AudioClip> SoundSet = new Dictionary<string, AudioClip>();
+    public static List<GameObject> ModelSet = new List<GameObject>();
 
     public Texture none_element;
     public Texture fire_element;
@@ -37,6 +38,11 @@ public class ResoursesDict : MonoBehaviour
     public GameObject SoundMain;
 
     public AudioClip restricted_sound;
+
+    public GameObject level1_1;
+
+    public GameObject ModelSimpleStone;
+    public GameObject ModelSpawnPoint;
     public void Awake()
     {
         TextureSet["atk_icon"] = atk_icon;
@@ -66,6 +72,11 @@ public class ResoursesDict : MonoBehaviour
         ObjectSet["SoundMain"] = SoundMain;
 
         SoundSet["RestrictSound"] = restricted_sound;
+
+        ObjectSet["Level1.1"] = level1_1;
+
+        ModelSet.Add(ModelSimpleStone);
+        ModelSet.Add(ModelSpawnPoint);
     }
 
 

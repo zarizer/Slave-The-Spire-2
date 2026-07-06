@@ -8,6 +8,7 @@ public class EnemyTabController : TabController
     public CameraController CameraController;
     public TextMeshProUGUI description_text;
     public TextMeshProUGUI name_text;
+    public TextMeshProUGUI lv_text;
     public TextMeshProUGUI hp_text;
     public TextMeshProUGUI def_text;
     public TextMeshProUGUI speed_text;
@@ -49,6 +50,7 @@ public class EnemyTabController : TabController
         if (character == null) return;
         gameObject.SetActive(true);
         name_text.text = character.name;
+        lv_text.text = "lv " + character.level;
         hp_text.text = character.cur_hp + " / " + character.hp;
         def_text.text = character.cur_def.ToString();
         speed_text.text = character.cur_speed.ToString();

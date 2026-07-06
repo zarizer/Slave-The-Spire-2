@@ -1,0 +1,76 @@
+{
+  "skills": [
+
+    {
+      "id": 0,
+      "name": "TestEnemySkill0",
+      "rollDist": "Any",
+      "dist": 3,
+      "rolls": [
+        {
+          "minRoll": 5,
+          "maxRoll": 10,
+          "rollType": "Atk",
+          "rollRadius": "Single",
+          "radius": 1,
+          "element": "None",
+          "specialEffects": [
+
+          ]
+        },
+        {
+          "minRoll": 5,
+          "maxRoll": 14,
+          "rollType": "Atk",
+          "rollRadius": "PlayerRadius",
+          "radius": 1,
+          "element": "Dendro",
+          "specialEffects": [
+
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": 1,
+      "name": "TestEnemySkill1",
+      "rollDist": "StLine",
+      "dist": 5,
+      "rolls": [
+        {
+          "minRoll": 6,
+          "maxRoll": 12,
+          "rollType": "Atk",
+          "rollRadius": "Single",
+          "radius": 4,
+          "element": "Water",
+          "specialEffects": [
+
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": 2,
+      "name": "TestEnemySkill2",
+      "rollDist": "Radius",
+      "dist": 1,
+      "rolls": [
+        {
+          "minRoll": 11,
+          "maxRoll": 14,
+          "rollType": "Atk",
+          "rollRadius": "Single",
+          "radius": 5,
+          "element": "None",
+          "specialEffects": [
+
+          ]
+        }
+      ]
+    }
+
+  ]
+}
