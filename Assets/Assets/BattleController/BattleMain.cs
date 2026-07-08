@@ -49,10 +49,19 @@ public class BattleMain : MonoBehaviour
     [ContextMenu("StartBattle")]
     public void StartBattle()
     {
-        SetLevel("Level1.1");
+        SetBackGroundAccourdingToLevelId(CurrentLevelId);
+        if (current_field != null) Destroy(current_field);
+        current_field = Instantiate(ResoursesDict.ObjectSet["Field"]).GetComponent<GridField>();
         current_field.StartField(this);
         current_cycle = cycles[0];
+        turn = 0;
         NextCycle(0);
+    }
+
+    public void StartLevel(int level_id)
+    {
+        CurrentLevelId = level_id;
+        StartBattle();
     }
 
     [ContextMenu("StopCode")]
@@ -318,6 +327,14 @@ public class BattleMain : MonoBehaviour
 
         if (CurrentLevel != null) Destroy(CurrentLevel);
         CurrentLevel = Instantiate(ResoursesDict.ObjectSet[name]);
+    }
+
+    void SetBackGroundAccourdingToLevelId(int levelId)
+    {
+        if (levelId > -1)
+        {
+            SetLevel("Level1.1");
+        }
     }
 }
 

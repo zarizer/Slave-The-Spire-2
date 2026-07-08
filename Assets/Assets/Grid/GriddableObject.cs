@@ -16,6 +16,7 @@ public class GriddableObject : MonoBehaviour
     public bool TRyingToAttack = false;
     public bool IsCustomLevel = false;
     public int CustomLevel = 1;
+    public int specialValue = 0;
 
     void Start()
     {

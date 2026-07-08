@@ -18,6 +18,7 @@ public class CameraController : MonoBehaviour
     public Transform DeffaultTarget;
     public GridField field_;
     public UIController UIController;
+    BattleMain battleMain;
     public bool IsTargeted;
     public float XMovement;
     public float ZMovement;
@@ -30,11 +31,13 @@ public class CameraController : MonoBehaviour
     public GridCell prev_cell = null;
     void Start()
     {
-
+        battleMain = ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>();
     }
 
     void Update()
     {
+        field_ = battleMain.current_field;
+
         XMovement = Input.GetAxis("Horizontal") * CameraSensativity;
         ZMovement = Input.GetAxis("Mouse ScrollWheel") * CameraSensativity;
 

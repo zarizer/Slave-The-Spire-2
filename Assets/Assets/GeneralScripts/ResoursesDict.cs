@@ -36,9 +36,11 @@ public class ResoursesDict : MonoBehaviour
     public GameObject battle_main;
     public GameObject character_tab;
     public GameObject SoundMain;
+    public GameObject profileManager;
 
     public AudioClip restricted_sound;
 
+    public GameObject battleField;
     public GameObject level1_1;
 
     public GameObject ModelSimpleStone;
@@ -70,9 +72,11 @@ public class ResoursesDict : MonoBehaviour
         ObjectSet["BattleMain"] = battle_main;
         ObjectSet["CharacterTab"] = character_tab;
         ObjectSet["SoundMain"] = SoundMain;
+        ObjectSet["ProfileManager"] = profileManager;
 
         SoundSet["RestrictSound"] = restricted_sound;
 
+        ObjectSet["Field"] = battleField;
         ObjectSet["Level1.1"] = level1_1;
 
         ModelSet.Add(ModelSimpleStone);

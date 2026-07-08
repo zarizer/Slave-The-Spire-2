@@ -38,7 +38,7 @@ public class GridCharacter : GriddableObject
 
     void LookAtCamera()
     {
-        TexturePlane.transform.LookAt(field_.Camera.Camera);
+        TexturePlane.transform.LookAt(field_.cameraController.Camera);
         TexturePlane.transform.localEulerAngles = new Vector3(0,
                                                               TexturePlane.transform.localEulerAngles.y,
                                                               TexturePlane.transform.localEulerAngles.z);

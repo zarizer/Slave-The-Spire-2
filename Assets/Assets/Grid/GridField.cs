@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class GridField : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class GridField : MonoBehaviour
     public int DebugObstaclePosX;
     public int DebugObstaclePosY;
 
-    public CameraController Camera;
+    public CameraController cameraController;
 
     public List<GriddableObject> GridObjects;
 
@@ -41,9 +42,9 @@ public class GridField : MonoBehaviour
     public GridCharacter BaseCharacter;
     public GridEnemy BaseEnemy;
     public GridObstacle BaseObstacle;
-    void Start()
+    void Awake()
     {
-
+        cameraController = Camera.main.transform.parent.GetComponent<CameraController>(); 
     }
 
     void Update()
@@ -93,6 +94,7 @@ public class GridField : MonoBehaviour
             {
                 cur_obj.GetCharacter().level = UnityEngine.Random.Range(level.minLevel, level.maxLevel);
             }
+            cur_obj.specialValue = obj.specialValue;
         }
     }
 
@@ -112,6 +114,7 @@ public class GridField : MonoBehaviour
             LevelObject obj = new LevelObject();
             obj.type = "Enemy";
             obj.id = enemy.GetCharacter().id;
+            obj.specialValue = enemy.specialValue;
             if (enemy.IsCustomLevel)
             {
                 obj.isCustomLevel = true;
@@ -124,6 +127,7 @@ public class GridField : MonoBehaviour
             LevelObject obj = new LevelObject();
             obj.type = "Character";
             obj.id = character.GetCharacter().id;
+            obj.specialValue = character.specialValue;
             if (character.IsCustomLevel)
             {
                 obj.isCustomLevel = true;
@@ -136,6 +140,7 @@ public class GridField : MonoBehaviour
             LevelObject obj = new LevelObject();
             obj.type = "Obstacle";
             obj.id = obstacle.GetCharacter().id;
+            obj.specialValue = obstacle.specialValue;
             if (obstacle.IsCustomLevel)
             {
                 obj.isCustomLevel = true;
@@ -179,7 +184,7 @@ public class GridField : MonoBehaviour
             }
             Cells_.Add(list);
         }
-        Camera.prev_cell = Cells_[SizeX_ - 1][SizeY_-1].GetComponent<GridCell>();
+        cameraController.prev_cell = Cells_[SizeX_ - 1][SizeY_-1].GetComponent<GridCell>();
     }
 
     [ContextMenu("CreateRocks")]
@@ -360,7 +365,7 @@ public class GridField : MonoBehaviour
 
     public void FindAttacksPlayer(int x, int y, PlayerSkill skill)
     {
-        if (skill.energy > Camera.Target.gameObject.GetComponent<GridCharacter>().character_.energy) return;
+        if (skill.energy > cameraController.Target.gameObject.GetComponent<GridCharacter>().character_.energy) return;
         if (skill.rollDist == RollDist.Any)
         {
             for (int i = 0; i<SizeX_; i++)
@@ -381,9 +386,9 @@ public class GridField : MonoBehaviour
     }
     public void ShowDamagePlayer(int x, int y, PlayerSkill skill, int px = 0, int py = 0)
     {
-        if (skill.energy > Camera.Target.gameObject.GetComponent<GridCharacter>().character_.energy) return;
-        (int, int) p_pos = (Camera.Target.gameObject.GetComponent<GridCharacter>().cell_.x_,
-                            Camera.Target.gameObject.GetComponent<GridCharacter>().cell_.y_);
+        if (skill.energy > cameraController.Target.gameObject.GetComponent<GridCharacter>().character_.energy) return;
+        (int, int) p_pos = (cameraController.Target.gameObject.GetComponent<GridCharacter>().cell_.x_,
+                            cameraController.Target.gameObject.GetComponent<GridCharacter>().cell_.y_);
         List<(int, int)> damage_cells = new List<(int, int)>();
 
         Direction dir = Direction.up;

@@ -25,12 +25,12 @@ public class LevelData
 
     public static void SaveLevel(LevelData levelData)
     {
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
         InitializePath();
         AddObjectToJson(levelData.DebugSaveId, levelData);
-#else
+    #else
         // В билде только чтение
-#endif
+    #endif
     }
 
     public static LevelData GetLevelData(int id)
@@ -104,9 +104,9 @@ public class LevelData
 
     private static string ReadJsonFile()
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
+    #if UNITY_ANDROID && !UNITY_EDITOR
         return ReadFileFromStreamingAssets(JsonPath);
-#else
+    #else
         if (File.Exists(JsonPath))
         {
             return File.ReadAllText(JsonPath);
@@ -116,31 +116,11 @@ public class LevelData
             Debug.LogWarning($"Файл не найден по пути: {JsonPath}");
             return null;
         }
-#endif
+    #endif
     }
-
-#if UNITY_ANDROID && !UNITY_EDITOR
-    private static string ReadFileFromStreamingAssets(string path)
-    {
-        UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequest.Get(path);
-        www.SendWebRequest();
-        while (!www.isDone) { }
-        
-        if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
-        {
-            return www.downloadHandler.text;
-        }
-        else
-        {
-            Debug.LogError($"Ошибка чтения файла: {www.error}");
-            return null;
-        }
-    }
-#endif
-
     private static void AddObjectToJson(int key, LevelData obj)
     {
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
         string directory = Path.GetDirectoryName(JsonPath);
         if (!Directory.Exists(directory))
         {
@@ -162,13 +142,13 @@ public class LevelData
                 }
                 catch (JsonReaderException)
                 {
-                    Debug.LogWarning($"Файл {JsonPath} повреждён. Создаём новый.");
+                    Debug.LogWarning($"Файл {JsonPath} повреждён. Создал новый.");
                     jsonObject = new JObject();
                 }
             }
             else
             {
-                Debug.Log($"Файл {JsonPath} пуст. Создаём новый.");
+                Debug.Log($"Файл {JsonPath} пуст. Создал новый.");
                 jsonObject = new JObject();
             }
         }
@@ -189,7 +169,7 @@ public class LevelData
             Levels[key] = obj;
         else
             Levels.Add(key, obj);
-#endif
+    #endif
     }
 
     [System.Serializable]
@@ -206,7 +186,7 @@ public class LevelData
         {
             if (level_data == null)
             {
-                Debug.LogError("LevelData is null in LevelDataSerializable constructor");
+                //Debug.LogError("LevelData is null in LevelDataSerializable constructor");
                 return;
             }
 
@@ -229,7 +209,9 @@ public class LevelData
                             objType = kvp.Value.type ?? "Obstacle",
                             id = kvp.Value.id,
                             level = kvp.Value.level,
-                            isCustomLevel = kvp.Value.isCustomLevel
+                            isCustomLevel = kvp.Value.isCustomLevel,
+                            specialValue = kvp.Value.specialValue,
+                            
                         });
                     }
                     else
@@ -261,7 +243,8 @@ public class LevelData
                             type = obj.objType ?? "Obstacle",
                             id = obj.id,
                             level = obj.level,
-                            isCustomLevel = obj.isCustomLevel
+                            isCustomLevel = obj.isCustomLevel,
+                            specialValue = obj.specialValue,
                         };
                     }
                 }
@@ -280,6 +263,7 @@ public class LevelData
         public int id;
         public int level;
         public bool isCustomLevel;
+        public int specialValue;
     }
 }
 
@@ -290,6 +274,7 @@ public class LevelObject
     public int id;
     public int level;
     public bool isCustomLevel;
+    public int specialValue;
 
     public LevelObject()
     {
@@ -299,12 +284,13 @@ public class LevelObject
         isCustomLevel = false;
     }
 
-    public LevelObject(string type, int id, int level = 0, bool isCustomLevel = false)
+    public LevelObject(string type, int id, int level = 0, bool isCustomLevel = false, int specialValue = 0)
     {
         this.type = type ?? "Obstacle";
         this.id = id;
         this.level = level;
         this.isCustomLevel = isCustomLevel;
+        this.specialValue = specialValue;
     }
 }
 
@@ -316,6 +302,7 @@ public class EnemyData
     public int baseHealth;
     public int baseDamage;
     public int defaultLevel;
+    public int specialValue;
 }
 
 [System.Serializable]
@@ -326,6 +313,7 @@ public class CharacterData
     public int baseHealth;
     public int baseDamage;
     public int defaultLevel;
+    public int specialValue;
 }
 
 [System.Serializable]
@@ -335,4 +323,5 @@ public class ObstacleData
     public string name;
     public int health;
     public bool isDestructible;
+    public int specialValue;
 }

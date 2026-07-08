@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8597450235918162182
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4608927817913658721}
+  - component: {fileID: 1384378680096632410}
+  m_Layer: 0
+  m_Name: Field
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4608927817913658721
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8597450235918162182}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.5, y: 0, z: -4.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1384378680096632410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8597450235918162182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1211f8b175cb52643a04316e2d54b4e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CellObject: {fileID: 3955325084726692281, guid: bfbecbd312fe04c468571e92181385ed, type: 3}
+  RockObject: {fileID: 5902112976088767501, guid: 043c6b5b74e63bd40968a7ff4ff49a91, type: 3}
+  DebugCharacter: {fileID: 7903500308385000291, guid: 3c53ee1864acb3046a62177e846003de, type: 3}
+  DebugCharacterId: 0
+  DebugCharacterPosX: 3
+  DebugCharacterPosY: 2
+  DebugEnemy: {fileID: 7903500308385000291, guid: e2268ce31e36a6441b27f9e40a14e29b, type: 3}
+  DebugEnemyId: 0
+  DebugEnemyPosX: 4
+  DebugEnemyPosY: 4
+  DebugLevelSaveId: 0
+  DebugMinLevel: 0
+  DebugMaxLevel: 0
+  DebugObstacleId: 0
+  DebugObstaclePosX: 0
+  DebugObstaclePosY: 0
+  Camera: {fileID: 0}
+  GridObjects: []
+  SizeX_: 10
+  SizeY_: 10
+  GridEnemies: []
+  GridCharacters: []
+  GridObstacles: []
+  BaseCharacter: {fileID: 4718569247299793797, guid: 3c53ee1864acb3046a62177e846003de, type: 3}
+  BaseEnemy: {fileID: -8007137783566499895, guid: e2268ce31e36a6441b27f9e40a14e29b, type: 3}
+  BaseObstacle: {fileID: 92458452228894397, guid: 043c6b5b74e63bd40968a7ff4ff49a91, type: 3}
