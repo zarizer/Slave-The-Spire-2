@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class MainMenuManager : MonoBehaviour
 {
+    public PrepareBattleScript prepareBattleScrit;
+    public BattleMain battleMain;
+    public GameObject CurrentDebugMenu;
     public GameObject StartMenu;
     public GameObject BackGroundRoom;
     public bool EnableOnStart = false;
@@ -11,9 +14,16 @@ public class MainMenuManager : MonoBehaviour
     public GameObject CurrentMenu;
     Stack<GameObject> MenuStack = new Stack<GameObject>();
 
+
+    private void Awake()
+    {
+        CurrentDebugMenu.SetActive(false);        
+    }
+
     void Start()
     {
         if (EnableOnStart) { SetMenu(StartMenu); BackGroundRoom.SetActive(true); }
+        LevelData.Init();
     }
 
     void Update()
@@ -42,5 +52,13 @@ public class MainMenuManager : MonoBehaviour
     public void ExitGame()
     {
         Application.Quit();
+    }
+
+
+    public void StartBattle()
+    {
+        SetMenu(battleMain.gameObject);
+        battleMain.CurrentLevelId = prepareBattleScrit.LevelId;
+        battleMain.StartBattle();
     }
 }

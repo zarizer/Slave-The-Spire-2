@@ -31,8 +31,7 @@ public class GridCell : MonoBehaviour
     }
 
     public void SnapObject()
-    {
-        Debug.Log("snapping:" + object_.name);
+    { 
         if (object_ == null) return;
         if (object_.GType_ == GriddableObject.GriddableObjectType.Obstacle)
         {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,17 +30,10 @@ public class GridObstacle : GriddableObject
     }
     ObstacleBase GetObstacleByID(int id)
     {
-        ObstacleBase ret_obstacle = null;
-
-
-        ret_obstacle = DataDicts.ObstacleSet[id].Clone();
-
-        Debug.Log("Got Obstacle: " + ret_obstacle.name + " id: " + id);
-
-        if (ret_obstacle == null) ret_obstacle = new SimpleStone();
-
-        ret_obstacle.Init();
-        return ret_obstacle;
+        Type type = DataDicts.ObstacleTypes[id];
+        ObstacleBase result = (ObstacleBase)Activator.CreateInstance(type);
+        result.Init();
+        return result;
     }
 
     public override Roll GetFirstRoll()

@@ -13,6 +13,7 @@ TagManager:
   - ATTACK3
   - ATTACK4
   - CreateWindow
+  - target
   layers:
   - Default
   - TransparentFX

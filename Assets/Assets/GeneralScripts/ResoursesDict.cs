@@ -37,14 +37,25 @@ public class ResoursesDict : MonoBehaviour
     public GameObject character_tab;
     public GameObject SoundMain;
     public GameObject profileManager;
+    public GameObject skill_floating_window;
+    public GameObject cameraController;
 
     public AudioClip restricted_sound;
+    public AudioClip accept_sound;
+    public AudioClip easter_egg_sound1;
 
     public GameObject battleField;
     public GameObject level1_1;
+    public GameObject level0;
 
     public GameObject ModelSimpleStone;
     public GameObject ModelSpawnPoint;
+    public GameObject ModelDoor;
+
+    public GameObject ModelCh1R1;
+    public GameObject ModelCh1R2;
+    public GameObject ModelCh1R3;
+    public GameObject ModelCh1R4;
     public void Awake()
     {
         TextureSet["atk_icon"] = atk_icon;
@@ -73,14 +84,24 @@ public class ResoursesDict : MonoBehaviour
         ObjectSet["CharacterTab"] = character_tab;
         ObjectSet["SoundMain"] = SoundMain;
         ObjectSet["ProfileManager"] = profileManager;
+        ObjectSet["CameraController"] = cameraController;
+        ObjectSet["skill_floating_window"] = skill_floating_window;
 
         SoundSet["RestrictSound"] = restricted_sound;
+        SoundSet["AcceptSound"] = accept_sound;
+        SoundSet["Egg1"] = easter_egg_sound1;
 
         ObjectSet["Field"] = battleField;
         ObjectSet["Level1.1"] = level1_1;
+        ObjectSet["Level0"] = level0;
 
         ModelSet.Add(ModelSimpleStone);
         ModelSet.Add(ModelSpawnPoint);
+        ModelSet.Add(ModelDoor);
+        ModelSet.Add(ModelCh1R1);
+        ModelSet.Add(ModelCh1R2);
+        ModelSet.Add(ModelCh1R3);
+        ModelSet.Add(ModelCh1R4);
     }
 
 

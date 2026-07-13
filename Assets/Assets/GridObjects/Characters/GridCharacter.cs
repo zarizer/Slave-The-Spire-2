@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,7 +19,7 @@ public class GridCharacter : GriddableObject
 
     void Start()
     {
-        character_ = GetCharacterByID(CharacterId_);
+        //character_ = GetCharacterByID(CharacterId_);
         player_ = true;
     }
 
@@ -54,19 +55,14 @@ public class GridCharacter : GriddableObject
     {
         character_ = GetCharacterByID(id);
     }
-    CharacterBase GetCharacterByID(int id)
+    public static CharacterBase GetCharacterByID(int id)
     {
-        CharacterBase ret_character = null;
-        
-
-        ret_character = DataDicts.CharacterSet[id].Clone();
-        
-        Debug.Log("Got Character: " + ret_character.name + " id: "+ id);
-        
-        if (ret_character == null) ret_character = new TestCharacter();
-        
-        ret_character.Init();
-        return ret_character;
+        Type type = DataDicts.CharacterTypes[id];
+        CharacterBase result = (CharacterBase)Activator.CreateInstance(type);
+        result.Init();
+        result.InitCurStats();
+        result.InitSkills();
+        return result;
     }
 
     public bool CanMove()

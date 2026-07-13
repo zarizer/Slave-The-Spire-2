@@ -43,7 +43,7 @@ public class EnemyBase : CharacterBase
         }
     }
 
-    public virtual new EnemyBase Clone()
+    public virtual new CharacterBase Clone()
     {
         return new EnemyBase(this);
     }

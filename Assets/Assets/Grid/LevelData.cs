@@ -18,6 +18,8 @@ public class LevelData
     private static Dictionary<int, LevelData> Levels = new Dictionary<int, LevelData>();
     private static string JsonPath;
 
+    public static Dictionary<int, Dictionary<int, List<int>>> LevelAmounts = new Dictionary<int, Dictionary<int, List<int>>>();
+
     private static void InitializePath()
     {
         JsonPath = Path.Combine(Application.streamingAssetsPath, "levels/levels.json");
@@ -25,12 +27,12 @@ public class LevelData
 
     public static void SaveLevel(LevelData levelData)
     {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
         InitializePath();
         AddObjectToJson(levelData.DebugSaveId, levelData);
-    #else
+#else
         // В билде только чтение
-    #endif
+#endif
     }
 
     public static LevelData GetLevelData(int id)
@@ -48,6 +50,7 @@ public class LevelData
     {
         InitializePath();
         LoadLevels();
+        UpdateLevelAmounts();
     }
 
     private static void LoadLevels()
@@ -104,9 +107,9 @@ public class LevelData
 
     private static string ReadJsonFile()
     {
-    #if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
         return ReadFileFromStreamingAssets(JsonPath);
-    #else
+#else
         if (File.Exists(JsonPath))
         {
             return File.ReadAllText(JsonPath);
@@ -116,11 +119,12 @@ public class LevelData
             Debug.LogWarning($"Файл не найден по пути: {JsonPath}");
             return null;
         }
-    #endif
+#endif
     }
+
     private static void AddObjectToJson(int key, LevelData obj)
     {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
         string directory = Path.GetDirectoryName(JsonPath);
         if (!Directory.Exists(directory))
         {
@@ -169,7 +173,56 @@ public class LevelData
             Levels[key] = obj;
         else
             Levels.Add(key, obj);
-    #endif
+#endif
+    }
+
+    private static void UpdateLevelAmounts()
+    {
+        LevelAmounts.Clear();
+
+        foreach (var levelEntry in Levels)
+        {
+            int levelId = levelEntry.Key;
+            string idString = levelId.ToString();
+            if (idString.Length < 9)
+            {
+                continue;
+            }
+            string companyStr = idString.Substring(2, 2);
+            string chapterStr = idString.Substring(4, 2);
+
+            if (!int.TryParse(companyStr, out int companyId))
+            {
+                Debug.LogWarning($"Не удалось распарсить компанию из ID {levelId}");
+                continue;
+            }
+
+            if (!int.TryParse(chapterStr, out int chapterId))
+            {
+                Debug.LogWarning($"Не удалось распарсить главу из ID {levelId}");
+                continue;
+            }
+            if (!LevelAmounts.ContainsKey(companyId))
+            {
+                LevelAmounts[companyId] = new Dictionary<int, List<int>>();
+            }
+
+            if (!LevelAmounts[companyId].ContainsKey(chapterId))
+            {
+                LevelAmounts[companyId][chapterId] = new List<int>();
+            }
+
+            LevelAmounts[companyId][chapterId].Add(levelId);
+        }
+        foreach (var companyEntry in LevelAmounts)
+        {
+            foreach (var chapterEntry in companyEntry.Value)
+            {
+                chapterEntry.Value.Sort();
+            }
+        }
+
+        Debug.Log($"LevelAmounts обновлен. Компаний: {LevelAmounts.Count}");
     }
 
     [System.Serializable]
@@ -211,7 +264,7 @@ public class LevelData
                             level = kvp.Value.level,
                             isCustomLevel = kvp.Value.isCustomLevel,
                             specialValue = kvp.Value.specialValue,
-                            
+
                         });
                     }
                     else

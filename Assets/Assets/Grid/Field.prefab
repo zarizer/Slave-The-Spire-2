@@ -45,22 +45,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CellObject: {fileID: 3955325084726692281, guid: bfbecbd312fe04c468571e92181385ed, type: 3}
-  RockObject: {fileID: 5902112976088767501, guid: 043c6b5b74e63bd40968a7ff4ff49a91, type: 3}
+  DebugObstacle: {fileID: 5902112976088767501, guid: 043c6b5b74e63bd40968a7ff4ff49a91, type: 3}
   DebugCharacter: {fileID: 7903500308385000291, guid: 3c53ee1864acb3046a62177e846003de, type: 3}
-  DebugCharacterId: 0
-  DebugCharacterPosX: 3
-  DebugCharacterPosY: 2
   DebugEnemy: {fileID: 7903500308385000291, guid: e2268ce31e36a6441b27f9e40a14e29b, type: 3}
-  DebugEnemyId: 0
-  DebugEnemyPosX: 4
-  DebugEnemyPosY: 4
+  DebugX: 1
+  DebugY: 3
+  DebugObjectType: 2
+  DebugObjectId: 1
   DebugLevelSaveId: 0
   DebugMinLevel: 0
   DebugMaxLevel: 0
-  DebugObstacleId: 0
-  DebugObstaclePosX: 0
-  DebugObstaclePosY: 0
-  Camera: {fileID: 0}
+  cameraController: {fileID: 0}
   GridObjects: []
   SizeX_: 10
   SizeY_: 10
@@ -70,3 +65,5 @@ MonoBehaviour:
   BaseCharacter: {fileID: 4718569247299793797, guid: 3c53ee1864acb3046a62177e846003de, type: 3}
   BaseEnemy: {fileID: -8007137783566499895, guid: e2268ce31e36a6441b27f9e40a14e29b, type: 3}
   BaseObstacle: {fileID: 92458452228894397, guid: 043c6b5b74e63bd40968a7ff4ff49a91, type: 3}
+  character_spawn_num: 0
+  current_object: {fileID: 0}

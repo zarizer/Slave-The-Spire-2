@@ -9,24 +9,20 @@ public class GridField : MonoBehaviour
 {
     public List<List<GridCell>> Cells_ = new List<List<GridCell>>();
     public GameObject CellObject;
-    public GameObject RockObject;
-    public GameObject DebugCharacter;
-    public int DebugCharacterId;
-    public int DebugCharacterPosX;
-    public int DebugCharacterPosY;
+    [SerializeField] private GameObject DebugObstacle;
+    [SerializeField] private GameObject DebugCharacter;
+    [SerializeField] private GameObject DebugEnemy;
+    [SerializeField] private int DebugX;
+    [SerializeField] private int DebugY;
+    [SerializeField] private GriddableObject.GriddableObjectType DebugObjectType;
+    [SerializeField] private int DebugObjectId;
 
-    public GameObject DebugEnemy;
-    public int DebugEnemyId;
-    public int DebugEnemyPosX;
-    public int DebugEnemyPosY;
+
+
 
     public int DebugLevelSaveId;
     public int DebugMinLevel;
     public int DebugMaxLevel;
-
-    public int DebugObstacleId;
-    public int DebugObstaclePosX;
-    public int DebugObstaclePosY;
 
     public CameraController cameraController;
 
@@ -42,6 +38,11 @@ public class GridField : MonoBehaviour
     public GridCharacter BaseCharacter;
     public GridEnemy BaseEnemy;
     public GridObstacle BaseObstacle;
+
+    public int character_spawn_num = 0;
+    public GriddableObject current_object = null; 
+
+    private BattleMain battleMain;
     void Awake()
     {
         cameraController = Camera.main.transform.parent.GetComponent<CameraController>(); 
@@ -54,6 +55,7 @@ public class GridField : MonoBehaviour
 
     public void StartField(BattleMain battle_data)
     {
+        battleMain = battle_data;
         List<List<GridCell>> Cells_ = new List<List<GridCell>>();
         GetLevelData(battle_data.CurrentLevelId);
     }
@@ -95,6 +97,7 @@ public class GridField : MonoBehaviour
                 cur_obj.GetCharacter().level = UnityEngine.Random.Range(level.minLevel, level.maxLevel);
             }
             cur_obj.specialValue = obj.specialValue;
+
         }
     }
 
@@ -202,25 +205,8 @@ public class GridField : MonoBehaviour
         }
     }
 
-    [ContextMenu("CreateDebugCharacter")]
-    public void CreateDebugCharacter()
-    {
-        CreateGridObject(GriddableObject.GriddableObjectType.Character, DebugCharacterId, DebugCharacterPosX, DebugCharacterPosY);
-    }
 
-    [ContextMenu("CreateDebugEnemy")]
-    public void CreateDebugEnemy()
-    {
-        CreateGridObject(GriddableObject.GriddableObjectType.Enemy, DebugEnemyId, DebugEnemyPosX, DebugEnemyPosY);
-    }
-
-    [ContextMenu("CreateDebugObstacle")]
-    public void CreateDebugObstacle()
-    {
-        CreateGridObject(GriddableObject.GriddableObjectType.Obstacle, DebugObstacleId, DebugObstaclePosX, DebugObstaclePosY);
-    }
-
-    public GriddableObject CreateGridObject(GriddableObject.GriddableObjectType type, int ID, int X, int Y)
+    public GriddableObject CreateGridObject(GriddableObject.GriddableObjectType type, int ID, int X, int Y, bool trigger_spawn = true)
     {
         if (GetGridCell(X, Y) == null)
         {
@@ -246,9 +232,35 @@ public class GridField : MonoBehaviour
             cur_object = obj.GetComponent<GriddableObject>();
             GridObstacles.Add(cur_object.GetComponent<GridObstacle>());
         }
+        
         cur_object.ReplaceObject(ID);
         AddGridObject(X, Y, cur_object);
         GetGridCell(X, Y).SnapObject();
+        current_object = cur_object;
+
+        if (trigger_spawn) cur_object.GetCharacter().OnSpawn(this);
+        return cur_object;
+    }
+
+    public GriddableObject SpawnCharacter(int X, int Y, bool trigger_spawn = true)
+    {
+        if (GetGridCell(X, Y) == null)
+        {
+            Debug.Log("ERROR: CREATING OBJECT IN INVALID POSITION");
+            return null;
+        }
+        GridCharacter cur_object = null;
+
+        var obj = Instantiate(BaseCharacter, transform);
+        cur_object = obj.GetComponent<GridCharacter>();
+        GridCharacters.Add(cur_object);
+        cur_object.character_ = battleMain.play_characters[character_spawn_num];
+        character_spawn_num++;
+        AddGridObject(X, Y, cur_object);
+        GetGridCell(X, Y).SnapObject();
+        current_object = cur_object;
+
+        if (trigger_spawn) cur_object.GetCharacter().OnSpawn(this);
         return cur_object;
     }
 
@@ -1402,6 +1414,42 @@ public class GridField : MonoBehaviour
 
         return resultCells;
     }
+
+    public void RemoveObject(GriddableObject griddableObject)
+    {
+        RemoveObject(griddableObject.cell_);
+    }
+
+    public void RemoveObject(GridCell cell)
+    {
+        var temp = cell.object_;
+        cell.object_ = null;
+        if (temp.GType_ == GriddableObject.GriddableObjectType.Enemy) GridEnemies.Remove((GridEnemy)temp);
+        if (temp.GType_ == GriddableObject.GriddableObjectType.Character) GridCharacters.Remove((GridCharacter)temp);
+        if (temp.GType_ == GriddableObject.GriddableObjectType.Obstacle) GridObstacles.Remove((GridObstacle)temp);
+        temp.GetCharacter().OnRemove(this);
+        Destroy(temp.gameObject);
+    }
+
+    List<GridCell> GetAllCells()
+    {
+        var result = new List<GridCell>();
+        foreach (var row in Cells_)
+        {
+            foreach(var cell in row)
+            {
+                result.Add(cell);
+            }
+        }
+        return result;
+    }
+
+    [ContextMenu("DebugCreateObject")]
+    public void DebugCreateObject()
+    {
+        CreateGridObject(DebugObjectType, DebugObjectId, DebugX, DebugY, false);
+    }
+
 }
 
 public enum Direction

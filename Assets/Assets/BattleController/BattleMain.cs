@@ -1,9 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BattleMain : MonoBehaviour
 {
+    [SerializeField] private Camera battle_camera;
+    [SerializeField] private Camera ui_camera;
+    [SerializeField] private GameObject battle_ui;
+    [SerializeField] private GameObject ui_ui;
     public bool IsInBattle = true;
     public bool PlayerCanAttack = false;
     public int turn = 0;
@@ -12,8 +17,17 @@ public class BattleMain : MonoBehaviour
     public int ext_data_counter = 0;
     public List<CharacterBase> play_characters = new List<CharacterBase>();
     public int CurrentLevelId = 0;
+    public int level_num;
+    public int compaign_num;
+    public int chapter_num;
+
+    List<LevelId> variants = new List<LevelId>();
+    List<LevelId> variants_normal = new List<LevelId>();
+    List<LevelId> variants_hard = new List<LevelId>();
 
     GameObject CurrentLevel = null;
+
+    List<GameObject> DestroyList = new List<GameObject>();
 
     List<BattleCycle> cycles = new List<BattleCycle>
     {
@@ -29,16 +43,17 @@ public class BattleMain : MonoBehaviour
 
     void Start()
     {
-        LeanTween.init(1000);
+        
+
+        LeanTween.init(10000);
         Random.InitState(System.DateTime.Now.Second + System.DateTime.Now.Minute + System.DateTime.Now.Millisecond);
         LevelData.Init();
-        StartBattle();
     }
 
     private void Awake()
     {
         Skills.Init();
-        Debug.Log(Application.companyName + " " + Application.productName + " " + Application.persistentDataPath);
+        //Debug.Log(Application.companyName + " " + Application.productName + " " + Application.persistentDataPath);
     }
 
 
@@ -46,12 +61,28 @@ public class BattleMain : MonoBehaviour
     {
         CheckCycleLock();
     }
+
+    void DebugAddPlayCharacters()
+    {
+        play_characters.Add(GridCharacter.GetCharacterByID(0));
+        //play_characters.Add(GridCharacter.GetCharacterByID(0));
+        //play_characters.Add(GridCharacter.GetCharacterByID(0));
+        //play_characters.Add(GridCharacter.GetCharacterByID(0));
+        //play_characters.Add(GridCharacter.GetCharacterByID(0));
+    }
+
     [ContextMenu("StartBattle")]
     public void StartBattle()
     {
+        play_characters.Clear();
+        DebugAddPlayCharacters();
+        battle_ui.SetActive(true);
+        ui_camera.gameObject.SetActive(false);
+        battle_camera.gameObject.SetActive(true);
         SetBackGroundAccourdingToLevelId(CurrentLevelId);
-        if (current_field != null) Destroy(current_field);
+        if (current_field != null) Destroy(current_field.gameObject);
         current_field = Instantiate(ResoursesDict.ObjectSet["Field"]).GetComponent<GridField>();
+        ResoursesDict.GetClass<CameraController>().Target = current_field.transform;
         current_field.StartField(this);
         current_cycle = cycles[0];
         turn = 0;
@@ -67,7 +98,7 @@ public class BattleMain : MonoBehaviour
     [ContextMenu("StopCode")]
     public void StopCode()
     {
-        //
+        
     }
 
     public void NextCycle(int num = 1, bool activate = true)
@@ -80,6 +111,8 @@ public class BattleMain : MonoBehaviour
         {
             if (current_cycle == BattleCycle.EnemyRollsCreate)
             {
+                UpdatePlayerSkills();
+                UpdateObstacleSkills();
                 CharacterTabSwitch(true, false);
                 StartCoroutine(EnemyCreateRolls());
                 NextCycle();
@@ -101,7 +134,8 @@ public class BattleMain : MonoBehaviour
                 StartCoroutine(EnemiesUseRolls());
                 turn++;
                 
-                UpdatePlayerSkills();
+                
+                
             }
         }
     }
@@ -310,8 +344,9 @@ public class BattleMain : MonoBehaviour
                 EnemyUpdateRolls(enemy);
             }
             
-            NextCycle();
+            
         }
+        NextCycle();
     }
 
     void UpdatePlayerSkills()
@@ -319,6 +354,13 @@ public class BattleMain : MonoBehaviour
         foreach (var character in current_field.GridCharacters)
         {
             character.character_.UpdateStatsOnNewTurn();
+        }
+    }
+    void UpdateObstacleSkills()
+    {
+        foreach (var character in current_field.GridObstacles)
+        {
+            ((ObstacleBase)(character.GetCharacter())).cur_use_count = ((ObstacleBase)(character.GetCharacter())).use_count;
         }
     }
 
@@ -331,11 +373,61 @@ public class BattleMain : MonoBehaviour
 
     void SetBackGroundAccourdingToLevelId(int levelId)
     {
-        if (levelId > -1)
+        LevelId level = new LevelId(levelId);
+        if (levelId == 0)
         {
-            SetLevel("Level1.1");
+            SetLevel("Level0");
+            return;
+        }
+        if (level.compaign == 1)
+        {
+            if (level.chapter == 1)
+            {
+                SetLevel("Level1.1");
+            }
+        }
+               
+    }
+
+    void GetLevelCurrentChapterVariants()
+    {
+        variants.Clear();
+        var levels = LevelData.LevelAmounts[compaign_num][chapter_num];
+        foreach (var level in levels) {
+            var cur_level = new LevelId(level);
+            variants.Add(cur_level);
+            if (cur_level.is_hard) variants_hard.Add(cur_level);
+            else variants_normal.Add(cur_level);
         }
     }
+
+    int GetNextLevelId(int curLevelId)
+    {
+        int next_id = -1;
+        if (curLevelId < 10)
+        {
+            GetLevelCurrentChapterVariants();
+            
+
+            bool is_hard;
+            if (Random.Range(0, level_num) > 3) is_hard = true;
+            else is_hard = false;
+
+            LevelId level;
+            if (is_hard) level = variants_hard[Random.Range(0, variants_hard.Count-1)];
+            else level = variants_normal[Random.Range(0, variants_normal.Count-1)];
+
+            next_id = level.GetLevelId();
+        }
+        return next_id;
+    }
+
+    public void NextLevel()
+    {
+        CurrentLevelId = GetNextLevelId(CurrentLevelId);
+        StartBattle();
+    }
+    
 }
 
 
@@ -346,3 +438,47 @@ enum BattleCycle
     EnemyTurn1,
     EnemyTurn2
 };
+
+class LevelId
+{
+    public bool correct;
+    public int compaign;
+    public int chapter;
+    public int level;
+    public int difficulty;
+    public bool is_hard; 
+
+    public LevelId(int level_id)
+    {
+        correct = false;
+        if (level_id >= 0 && level_id <= 5) correct = true;
+        if (level_id / 10000000 == 52) correct = true;
+
+        compaign = (level_id / 100000) % 100;
+
+        chapter = (level_id / 1000) % 100;
+
+        level = (level_id / 10) % 100;
+
+        difficulty = level_id % 10;
+
+        if (level >= 50) is_hard = true;
+        else is_hard = false;
+
+    }
+
+    public LevelId()
+    {
+        correct = true;
+        compaign= 0;
+        chapter = 0;
+        level = 0;
+        difficulty = 0;
+        is_hard = false;
+    }
+
+    public int GetLevelId()
+    {
+        return 52 * 10000000 + compaign * 100000 + chapter * 1000 + level * 10 + difficulty;
+    }
+}

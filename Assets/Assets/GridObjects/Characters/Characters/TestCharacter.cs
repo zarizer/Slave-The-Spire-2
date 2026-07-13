@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TestCharacter : CharacterBase
 {
+
+    
     public override CharacterBase Init() 
     {
         id = 0;
@@ -16,13 +18,18 @@ public class TestCharacter : CharacterBase
         moves = 8;
         energy = 20;
         name = "Райан Гослинг Тестовый";
-        description = "ЕМУ ПОЕБАТЬ\nshjbsbcsbchchjsbhcbhjjsdbhfsbhdbvhdbdhcbghxdvghcghdbchbdhcbhdbchjjbhdcbshebchbsdhcbshdbcbsdcbhjsdbchjsbdcbsdbschsghdc-hsbghfcbsghbghbghbzhgbhsbhjsdbhsd";
+        description = "nshjbsbcsbchchjsbhcbhjjsdbhfsbhdbvhdbdhcbghxdvghcghdbchbdhcbhdbchjjbhdcbshebchbsdhcbshdbcbsdcbhjsdbchjsbdcbsdbschsghdc-hsbghfcbsghbghbghbzhgbhsbhjsdbhsd";
         skill_id1 = 1;
         skill_id2 = 1;
         skill_id3 = 1;
         skill_id4 = 0;
+        base.Init();
         return this;
     }
-
+    public override void OnSpawn(GridField field_data)
+    {
+        Debug.Log("1111111111");
+        base.OnSpawn(field_data);
+    }
     public int GetMoves() { return moves; }
 }

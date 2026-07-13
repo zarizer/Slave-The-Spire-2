@@ -49,7 +49,7 @@ public class CharacterTabController : TabController
 
     public override void RequestedUpdate(bool is_visible)
     {
-        Debug.Log("update");
+        //Debug.Log("update");
         if (IsLocked) return;
         IsVisible = is_visible;
         
@@ -58,7 +58,7 @@ public class CharacterTabController : TabController
             gameObject.SetActive(false);
             return;
         }
-        CharacterBase character = CameraController.Target.gameObject.GetComponent<GridCharacter>().character_;
+        CharacterBase character = CameraController.Target.gameObject.GetComponent<GridCharacter>().GetCharacter();
         if (character == null) return;
         gameObject.SetActive(true);
         name_text.text = character.name;

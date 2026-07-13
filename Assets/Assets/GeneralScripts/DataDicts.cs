@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -19,22 +20,23 @@ public static class DataDicts
         { 2, new PlayerSkill(Skills.enemy_skills[2]) },
     };
 
-    public static Dictionary<int, CharacterBase> CharacterSet = new Dictionary<int, CharacterBase>()
+    public static Dictionary<int, Type> CharacterTypes = new Dictionary<int, Type>()
     {
-        { 0, new TestCharacter().Init() },
+        { 0, typeof(MainCharacter) },
     };
 
-    public static Dictionary<int, EnemyBase> EnemySet = new Dictionary<int, EnemyBase>()
+    public static Dictionary<int, Type> EnemyTypes = new Dictionary<int, Type>()
     {
-        { 0, (EnemyBase)new TestEnemy().Init() },
+        {  0, typeof(TestEnemy) },
     };
 
-    public static Dictionary<int, ObstacleBase> ObstacleSet = new Dictionary<int, ObstacleBase>()
+    public static Dictionary<int, Type> ObstacleTypes = new Dictionary<int, Type>()
     {
-        { 0, (ObstacleBase)new SimpleStone().Init() },
-        { 1, (ObstacleBase)new CharacterSpawn().Init() },
+        { 0, typeof(SimpleStone) },
+        { 1, typeof(CharacterSpawn) },
+        { 2, typeof(LevelChange) },
+        { 3, typeof(Chapter1RandomObstacle) },
     };
-
 
 
 }

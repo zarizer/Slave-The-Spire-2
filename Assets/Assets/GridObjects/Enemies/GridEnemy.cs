@@ -53,13 +53,10 @@ public class GridEnemy : GriddableObject
     }
     EnemyBase GetEnemyByID(int id)
     {
-        EnemyBase ret_character;
-
-        ret_character = DataDicts.EnemySet[id].Clone();
-        if (ret_character == null) ret_character = new TestEnemy();
-
-        ret_character.Init();
-        return ret_character;
+        Type type = DataDicts.EnemyTypes[id];
+        EnemyBase result = (EnemyBase)Activator.CreateInstance(type);
+        result.Init();
+        return result;
     }
 
     public bool CanMove()

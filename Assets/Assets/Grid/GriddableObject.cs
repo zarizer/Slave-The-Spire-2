@@ -99,6 +99,20 @@ public class GriddableObject : MonoBehaviour
     public virtual void GetDamage(Damage damage) { }
 
     public virtual CharacterBase GetCharacter() { return null; }
+
+    public void OnTarget()
+    {
+        if (GetCharacter() != null)
+        {
+            GetCharacter().OnCameraTarget(field_);
+        }
+
+        if (specialValue == 13371)
+        {
+            ResoursesDict.GetClass<SoundMain>().PlaySound("Egg1");
+        }
+    }
+    
     public enum GriddableObjectType
     {
         Enemy,

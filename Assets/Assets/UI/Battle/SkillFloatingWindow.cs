@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 public class SkillFloatingWindow : MonoBehaviour, IPointerClickHandler
 {
-    List<GameObject> roll_windows = new List<GameObject>();
+    public List<GameObject> roll_windows = new List<GameObject>();
     public Transform RollsUI;
     public GameObject RollMenu;
     void Start()
@@ -22,6 +22,7 @@ public class SkillFloatingWindow : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        Debug.Log(gameObject.name + transform.parent.name);
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             StaticFuncs.DestroyChildren(RollsUI);
@@ -48,5 +49,11 @@ public class SkillFloatingWindow : MonoBehaviour, IPointerClickHandler
                 menu.UpdateInfo();
             }
         }
+    }
+
+    public void CloseAllWindows()
+    {
+        StaticFuncs.DestroyChildren(RollsUI);
+        roll_windows.Clear();
     }
 }

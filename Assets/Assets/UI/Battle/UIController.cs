@@ -6,6 +6,7 @@ public class UIController : MonoBehaviour
 {
     public CharacterTabController character_tab_controller;
     public EnemyTabController enemy_tab_controller;
+    public ObstacleTabController obstacle_tab_controller;
 
     public Transform EnemyRollsUI;
 
@@ -14,6 +15,7 @@ public class UIController : MonoBehaviour
     {
         ObjectTabs.Add(character_tab_controller);
         ObjectTabs.Add(enemy_tab_controller);
+        ObjectTabs.Add(obstacle_tab_controller);
     }
 
     void Update()
@@ -25,6 +27,7 @@ public class UIController : MonoBehaviour
     {
         character_tab_controller.RequestedUpdate(false);
         enemy_tab_controller.RequestedUpdate(false);
+        obstacle_tab_controller.RequestedUpdate(false);
     }
 
     public void UpdateTabEnemy(bool is_visible, EnemyBase enemy = null)
@@ -38,6 +41,12 @@ public class UIController : MonoBehaviour
     {
         CloseAllTabs(ObjectTabs);
         character_tab_controller.RequestedUpdate(is_visible);
+    }
+
+    public void UpdateTabObstacle(bool is_visible)
+    {
+        CloseAllTabs(ObjectTabs);
+        obstacle_tab_controller.RequestedUpdate(is_visible);
     }
 
     void CloseAllTabs(List<TabController> tabs)

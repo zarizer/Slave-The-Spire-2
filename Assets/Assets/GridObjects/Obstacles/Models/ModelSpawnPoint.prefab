@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6816722903251394451}
   m_Layer: 0
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: target
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -116,7 +116,7 @@ GameObject:
   - component: {fileID: 6015384556894031478}
   m_Layer: 0
   m_Name: ModelSpawnPoint
-  m_TagString: Untagged
+  m_TagString: target
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -221,7 +221,7 @@ GameObject:
   - component: {fileID: 9213320325900671144}
   m_Layer: 0
   m_Name: RawImage
-  m_TagString: Untagged
+  m_TagString: target
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -26,25 +26,47 @@ public class ProfileManager : MonoBehaviour
 
     static public void LoadImage(string path)
     {
-        if (!File.Exists(path))
+        path = CleanPath(path);
+
+        if (string.IsNullOrEmpty(path) || !File.Exists(path))
         {
-            Debug.Log("Wrong path");
+            Debug.Log($"Путь к изображению не найден или не существует: {path}");
             profile_picture = DeffaultImage;
             return;
         }
+
         try
         {
             byte[] fileData = File.ReadAllBytes(path);
             Texture2D texture = new Texture2D(2, 2);
             texture.LoadImage(fileData);
             profile_picture = texture;
-            Debug.Log("good");
+            Debug.Log($"Изображение успешно загружено: {path}");
         }
-        catch (System.Exception)
+        catch (System.Exception e)
         {
-            Debug.Log("Wrong");
+            Debug.LogError($"Ошибка загрузки изображения: {e.Message}");
             profile_picture = DeffaultImage;
         }
+    }
+    private static string CleanPath(string path)
+    {
+        if (string.IsNullOrEmpty(path))
+            return path;
+        char[] invalidChars = new char[]
+        {
+            '\u200B',
+            '\u200C',
+            '\u200D',
+            '\uFEFF',
+            '\u00A0',
+        };
+
+        foreach (char c in invalidChars)
+        {
+            path = path.Replace(c.ToString(), "");
+        }
+        return path.Trim();
     }
 
     private static void InitializePaths()
@@ -76,7 +98,7 @@ public class ProfileManager : MonoBehaviour
         {
             string json = JsonConvert.SerializeObject(profile, Formatting.Indented);
             File.WriteAllText(SavePath, json);
-            //Debug.Log($"Данные сохранены в: {SavePath}");
+            Debug.Log($"Данные сохранены в: {SavePath}");
         }
         catch (System.Exception e)
         {
@@ -95,8 +117,21 @@ public class ProfileManager : MonoBehaviour
 
                 if (profile != null)
                 {
-                    //Debug.Log($"Профиль загружен из: {SavePath}");
-                    profile_picture = DeffaultImage;
+                    Debug.Log($"Профиль загружен из: {SavePath}");
+
+                    if (!string.IsNullOrEmpty(profile.profile_picture_path))
+                    {
+                        profile.profile_picture_path = CleanPath(profile.profile_picture_path);
+                    }
+
+                    if (!string.IsNullOrEmpty(profile.profile_picture_path))
+                    {
+                        LoadImage(profile.profile_picture_path);
+                    }
+                    else
+                    {
+                        profile_picture = DeffaultImage;
+                    }
                     return;
                 }
             }
@@ -105,6 +140,7 @@ public class ProfileManager : MonoBehaviour
                 Debug.LogError($"Ошибка загрузки из {SavePath}: {e.Message}");
             }
         }
+
         if (File.Exists(DefaultPath))
         {
             try
@@ -114,19 +150,23 @@ public class ProfileManager : MonoBehaviour
 
                 if (profile != null)
                 {
-                    //Debug.Log($"Профиль загружен из StreamingAssets: {DefaultPath}");
+                    Debug.Log($"Профиль загружен из StreamingAssets: {DefaultPath}");
+                    if (!string.IsNullOrEmpty(profile.profile_picture_path))
+                    {
+                        profile.profile_picture_path = CleanPath(profile.profile_picture_path);
+                    }
+
                     SaveProfile();
                     return;
                 }
             }
             catch (System.Exception e)
             {
-                profile_picture = DeffaultImage;
                 Debug.LogError($"Ошибка загрузки из StreamingAssets: {e.Message}");
             }
         }
         profile = new Profile();
-        LoadImage(profile.profile_picture_path);
+        profile_picture = DeffaultImage;
         SaveProfile();
     }
 
@@ -152,7 +192,6 @@ public class Profile
     public string profile_picture_path;
     public List<int> CharacterIds;
     public Dictionary<int, int> PullCounters;
-    public Dictionary<Item, int> ItemCounters;
 
     public Profile()
     {
@@ -163,16 +202,6 @@ public class Profile
         max_difficulty = 1;
         CharacterIds = new List<int>();
         PullCounters = new Dictionary<int, int>();
-        ItemCounters = new Dictionary<Item, int>();
         profile_picture_path = "";
-
     }
 }
-
-public enum Item
-{
-    xp_ticket,
-    iron,
-    gold,
-    titan,
-};

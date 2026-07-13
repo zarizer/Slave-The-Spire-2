@@ -23,7 +23,8 @@ public class TestEnemy : EnemyBase
         light_k = 2.5f;
         darkness_k = 0.1f;
         fire_k = 1.5f;
-        
+        base.Init();
         return this;
     }
+
 }

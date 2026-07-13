@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 
 public class CharacterBase
 {
+    public float init_time;
     public int id;
     public int hp;
     public int def;
@@ -13,6 +14,7 @@ public class CharacterBase
     public int speed_dif;
     public float dmg_k = 1;
     public int moves;
+
     public int energy;
     public string name;
     public string description;
@@ -47,6 +49,7 @@ public class CharacterBase
 
     public virtual CharacterBase Init() 
     {
+        init_time = Time.realtimeSinceStartup;
         InitSkills();
         InitCurStats();
         return this;
@@ -68,7 +71,7 @@ public class CharacterBase
         return ret_skill;
     }
 
-    protected void InitSkills()
+    public void InitSkills()
     {
         Skill1 = GetSkillByID(skill_id1);
         Skill2 = GetSkillByID(skill_id2);
@@ -76,7 +79,7 @@ public class CharacterBase
         Skill4 = GetSkillByID(skill_id4);
     }
 
-    protected void InitCurStats()
+    public void InitCurStats()
     {
         cur_hp = hp;
         cur_def = def;
@@ -174,5 +177,17 @@ public class CharacterBase
         Skill4.cur_use_count = 0;
         cur_moves += moves;
     }
+
+    public virtual void OnSpawn(GridField field_data) { }
+
+    public virtual void OnRemove(GridField field_data) { }
+
+    public virtual void OnDie(GridField field_data) { }
+
+    public virtual void OnGetDamage(GridField field_data) { }
+
+    public virtual void OnAttack(GridField field_data) { }
+
+    public virtual void OnCameraTarget(GridField field_data) { }
 }
 

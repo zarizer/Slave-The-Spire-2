@@ -88,7 +88,8 @@ public class CameraController : MonoBehaviour
             if (GetLastUI(results) != null) 
             {
                 var UIElem = GetLastUI(results).GetComponent<UIElement>();
-                if (UIElem.UIType == "move")
+                if (UIElem == null) { }
+                else if (UIElem.UIType == "move")
                 {
                     field_.CellsNullify();
                     var obj = Target.GetComponent<GridCharacter>();
@@ -98,7 +99,7 @@ public class CameraController : MonoBehaviour
                         obj.field_.FindWaysPlayer(obj.cell_.x_, obj.cell_.y_, (obj).character_.cur_moves);
                     }
                 }
-                if (UIElem.UIType == "attack1")
+                else  if (UIElem.UIType == "attack1")
                 {
                     cur_skill = 1;
                     field_.CellsNullify();
@@ -107,33 +108,39 @@ public class CameraController : MonoBehaviour
                     obj.TRyingToAttack = true;
                     field_.FindAttacksPlayer(obj.cell_.x_, obj.cell_.y_, obj.character_.Skill1);
                 }
-                if (UIElem.UIType == "attack2")
+                else if (UIElem.UIType == "attack2")
                 {
                     cur_skill = 2;
                     field_.CellsNullify();
                     var obj = Target.GetComponent<GridCharacter>();
-                    //obj.MakeCurrentRolls(2);
                     obj.TRyingToAttack = true;
                     field_.FindAttacksPlayer(obj.cell_.x_, obj.cell_.y_, obj.character_.Skill2);
                 }
-                if (UIElem.UIType == "attack3")
+                else if (UIElem.UIType == "attack3")
                 {
                     cur_skill = 3;
                     field_.CellsNullify();
                     var obj = Target.GetComponent<GridCharacter>();
-                    //obj.MakeCurrentRolls(3);
                     obj.TRyingToAttack = true;
                     field_.FindAttacksPlayer(obj.cell_.x_, obj.cell_.y_, obj.character_.Skill3);
                 }
-                if (UIElem.UIType == "attack4")
+                else if (UIElem.UIType == "attack4")
                 {
                     cur_skill = 4;
                     field_.CellsNullify();
                     var obj = Target.GetComponent<GridCharacter>();
-                   //obj.MakeCurrentRolls(4);
                     obj.TRyingToAttack = true;
                     field_.FindAttacksPlayer(obj.cell_.x_, obj.cell_.y_, obj.character_.Skill4);
                 }
+                else if (UIElem.UIType == "next_cycle")
+                {
+                    field_.CellsNullify();
+                    var obj = Target.GetComponent<GridCharacter>();
+                    ResoursesDict.GetClass<BattleMain>().NextCycle();
+                }
+                FloatingInfoMenu.CloseAllWindows();
+                FloatingRollMenu.CloseAllWindows();
+                ResoursesDict.GetClass<SkillFloatingWindow>().CloseAllWindows();
             }
             else
             {
@@ -159,11 +166,12 @@ public class CameraController : MonoBehaviour
                     //Debug.Log("Hitted: " + hit.transform.tag);
                     //Debug.Log("Hitted: " + hit.transform.name);
 
-                    if (hit.transform.GetComponent<GriddableObject>() != null)
+                    if (hit.transform.GetComponent<GriddableObject>() != null || hit.transform.tag == "target")
                     {
-                        GriddableObject obj = hit.transform.GetComponent<GriddableObject>();
+                        GriddableObject obj = RecursiveGriddableObjectFind(hit.transform);
                         PrevTarget = Target;
                         Target = obj.transform;
+                        obj.OnTarget();
                         //Debug.Log("Hitted griddable object");
                         if (Target != PrevTarget)
                         {
@@ -187,8 +195,17 @@ public class CameraController : MonoBehaviour
                         }
                         else
                         {
-
-                            UIController.CloseAllObjectTabs();
+                            if (obj.GType_ == GriddableObject.GriddableObjectType.Obstacle &&
+                                ((ObstacleBase)(obj.GetComponent<GridObstacle>().GetCharacter())).Interactable)
+                            {
+                                Debug.Log(Target);
+                                UIController.UpdateTabObstacle(true);
+                            }
+                            else
+                            {
+                                UIController.CloseAllObjectTabs();
+                            }
+                                
                             field_.CellsNullify();
                             field_.GridObjectsActionNullify();
                         }
@@ -337,5 +354,20 @@ public class CameraController : MonoBehaviour
         }
         return obj;
     }
-    
+
+    GriddableObject RecursiveGriddableObjectFind(Transform t)
+    {
+        Debug.Log(t.name);
+        GriddableObject g;
+        g = t.gameObject.GetComponent<GriddableObject>();
+        if (g != null)
+        {
+            return g;
+        }
+        else
+        {
+            
+            return RecursiveGriddableObjectFind(t.parent);
+        }
+    }
 }
