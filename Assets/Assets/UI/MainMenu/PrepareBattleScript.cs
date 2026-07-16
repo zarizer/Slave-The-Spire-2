@@ -37,12 +37,13 @@ public class PrepareBattleScript : MonoBehaviour
         Dictionary<int, string> dif_names = new Dictionary<int, string>
         {
             { 1, "нормис" },
-            { 2, "наш слоняра" },
-            { 3, "хардкорщик" },
-            { 4, "легенда" },
-            { 5, "мастер качалки" },
+            { 2, "слон" },
+            { 3, "легенда" },
+            { 4, "мастер качалки" },
+            { 5, "шизоид" },
         };
         difficulty = (int)difficulty_slider.value;
+        ResoursesDict.GetClass<BattleMain>().difficulty = difficulty;
         DifficultyName.text = dif_names[difficulty];
     }
 

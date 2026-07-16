@@ -22,4 +22,41 @@ class StaticFuncs : MonoBehaviour
     {
         DestroyChildren(obj.transform);
     }
+                     
+    public static bool RecursiveGetComponentDeep<T>(GameObject obj, out T component) 
+    {
+        component = default(T);
+        List<GameObject> BFSList = new List<GameObject>();
+        BFSList.Add(obj);
+        int i = 0;
+        while (BFSList.Count > 0)
+        {
+            GameObject cur_obj = BFSList[0];
+            if (cur_obj.TryGetComponent<T>(out component)) return true;
+            BFSList.AddRange(GetChildren(cur_obj.transform));
+            BFSList.RemoveAt(0);
+            if (i > 500)
+            {
+                Debug.LogError("RecursiveGetComponentDeep too deep recursion Error");
+                break;
+            }
+            i++;
+        }
+        return false;
+    }
+
+    static List<GameObject> GetChildren(Transform t)
+    {
+        List<GameObject> children = new List<GameObject>();
+        foreach (Transform obj in t)
+        {
+            children.Add(obj.gameObject);
+        }
+        return children;
+    }
+
+    public static int RandomRangeInclusive(int min, int max)
+    {
+        return UnityEngine.Random.Range(min, max + 1);
+    }
 }

@@ -17,7 +17,7 @@ public class TestEnemy : EnemyBase
         name = "Линус Торвальдс";
         description = "YOU SHOULD DELETE WINDOWS. NOW!!!";
         SkillsPerTurn = new List<List<PlayerSkill>> {
-            new List<PlayerSkill>() { DataDicts.EnemySkillSet[0], DataDicts.EnemySkillSet[1] },
+            new List<PlayerSkill>() { DataDicts.EnemySkillSet[3], DataDicts.EnemySkillSet[4] },
             new List<PlayerSkill>() { DataDicts.EnemySkillSet[2], DataDicts.EnemySkillSet[0] }
         };
         light_k = 2.5f;

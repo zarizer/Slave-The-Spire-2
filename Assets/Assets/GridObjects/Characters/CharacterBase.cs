@@ -18,6 +18,7 @@ public class CharacterBase
     public int energy;
     public string name;
     public string description;
+    public string skills_description;
     public int level = 1;
 
     public int cur_hp;
@@ -45,7 +46,11 @@ public class CharacterBase
     public int skill_id3;
     public int skill_id4;
 
-
+    public List<BattleBuff> buffs = new List<BattleBuff>();
+    public List<Passive> passives = new List<Passive>();
+    public List<int> passive_ids = new List<int>();
+    public List<int> passive_levels = new List<int>();
+    public GameObject object_;
 
     public virtual CharacterBase Init() 
     {
@@ -92,7 +97,13 @@ public class CharacterBase
 
     public CharacterBase()
     {
-
+        passive_levels.Add(1);
+        passive_levels.Add(1);
+        passive_levels.Add(1);
+        passive_levels.Add(1);
+        passive_levels.Add(1);
+        passive_levels.Add(1);
+        passive_levels.Add(1);
     }
 
     public CharacterBase(CharacterBase other)
@@ -135,25 +146,56 @@ public class CharacterBase
         none_k = other.none_k;
     }
 
+    public void CreatePassives()
+    { 
+        passives.Clear();
+        for (int i = 0; i < passive_ids.Count; i++)
+        {
+            var passive = Passive.GetPassiveInstance(DataDicts.PassiveTypes[passive_ids[i]]);
+            passive.character = this;
+            passive.level = passive_levels[i];
+            passives.Add(passive);
+           
+        }
+        CreateSkillDescription();
+    }
+
     public virtual CharacterBase Clone()
     {
         return new CharacterBase(this);
     }
 
+    public void CreateSkillDescription()
+    {
+        skills_description = "";
+        foreach (var passive in passives)
+        {
+            skills_description += passive.Name + ":\n";
+            skills_description += passive.Description + "\n\n";
+        }
+    }
     public virtual void GetDamage(Damage damage)
     {
-
         int dmg = GetRealDamage(damage);
-        int cur_dmg = dmg - cur_def;
-        if (cur_dmg > 0)
+
+        if (damage.element != Element.True)
         {
-            cur_hp -= cur_dmg;
-            cur_def = 0;
+            int cur_dmg = dmg - cur_def;
+            if (cur_dmg > 0)
+            {
+                cur_hp -= cur_dmg;
+                cur_def = 0;
+            }
+            else
+            {
+                cur_def -= dmg;
+            }
         }
         else
         {
-            cur_def -= dmg;
+            cur_hp -= dmg;
         }
+        OnGetDamage(object_.GetComponent<GriddableObject>().field_, damage);
     } 
 
     int GetRealDamage(Damage damage)
@@ -178,16 +220,50 @@ public class CharacterBase
         cur_moves += moves;
     }
 
+    public int GetSpecialValue()
+    {
+        return object_.GetComponent<GriddableObject>().specialValue;
+    }
+
     public virtual void OnSpawn(GridField field_data) { }
 
     public virtual void OnRemove(GridField field_data) { }
 
-    public virtual void OnDie(GridField field_data) { }
+    public virtual void OnDie(GridField field_data, Damage dmg) 
+    {
+        foreach (var passive in passives)
+        {
+            passive.OnDeath(field_data, dmg);
+        }
+    }
 
-    public virtual void OnGetDamage(GridField field_data) { }
+    public virtual void OnGetDamage(GridField field_data, Damage dmg) 
+    {
+        foreach (var passive in passives)
+        {
+            passive.OnGetDamage(field_data, dmg);
+        }
+    }
 
-    public virtual void OnAttack(GridField field_data) { }
+    public virtual void OnAttack(GridField field_data, CharacterBase target, Damage dmg) 
+    {
+        foreach (var passive in passives)
+        {
+            passive.OnAttack(field_data, target, dmg);
+        }
+    }
+
+    public virtual void OnBattleStart(GridField field_data)
+    {
+        foreach (var passive in passives)
+        {
+            passive.OnBattleStart(field_data);
+        }
+    }
 
     public virtual void OnCameraTarget(GridField field_data) { }
+
+    public virtual void OnLevelStart(GridField field_data) { }
+
 }
 

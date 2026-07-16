@@ -24,7 +24,14 @@ public class RollScript : MonoBehaviour
     public void UpdateRollStats(Roll new_roll)
     {
         roll = new_roll;
-        MinMaxText.text = roll.GetMinRoll().ToString() + "-" + roll.GetMaxRoll().ToString();
+        if (roll.rollType == RollType.Def)
+        {
+            MinMaxText.text = roll.maxRoll.ToString();
+        }
+        else
+        {
+            MinMaxText.text = roll.GetMinRoll().ToString() + "-" + roll.GetMaxRoll().ToString();
+        }
         RollImage.color = GetImageColor();
         
     }
@@ -109,7 +116,8 @@ public enum Element
     dendro,
     darkness,
     light,
-    None
+    None,
+    True
 }
 
 public enum RollDist

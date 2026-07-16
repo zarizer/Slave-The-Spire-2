@@ -20,6 +20,7 @@ public class BattleMain : MonoBehaviour
     public int level_num;
     public int compaign_num;
     public int chapter_num;
+    public int difficulty;
 
     List<LevelId> variants = new List<LevelId>();
     List<LevelId> variants_normal = new List<LevelId>();
@@ -71,11 +72,17 @@ public class BattleMain : MonoBehaviour
         //play_characters.Add(GridCharacter.GetCharacterByID(0));
     }
 
-    [ContextMenu("StartBattle")]
-    public void StartBattle()
+    public void StartGame()
     {
         play_characters.Clear();
         DebugAddPlayCharacters();
+        StartBattle();
+    }
+
+    [ContextMenu("StartBattle")]
+    public void StartBattle()
+    {
+        UpdateCharacters();
         battle_ui.SetActive(true);
         ui_camera.gameObject.SetActive(false);
         battle_camera.gameObject.SetActive(true);
@@ -86,6 +93,10 @@ public class BattleMain : MonoBehaviour
         current_field.StartField(this);
         current_cycle = cycles[0];
         turn = 0;
+        foreach(var character in current_field.GridCharacters)
+        {
+            character.GetCharacter().OnBattleStart(current_field);
+        }
         NextCycle(0);
     }
 
@@ -207,31 +218,73 @@ public class BattleMain : MonoBehaviour
                 if (target_roll == null) { DealDamageByRoll(char_roll, Targets[i]); }
                 else
                 {
-                    int char_power;
-                    int target_power;
-                    GetRolls(out char_power, out target_power, char_roll, target_roll);
-                    Debug.Log("Fighting: " + char_power + " / " + target_power);
-                    while (char_power == target_power) 
+                    if (target_roll.rollType == RollType.Def)
                     {
-                        Debug.Log("Tie: " + char_power + " | " + target_power);
+                        int char_power;
+                        int target_power;
                         GetRolls(out char_power, out target_power, char_roll, target_roll);
-                        Debug.Log("Fighting: " + char_power + " / " + target_power);
-                    }
-                    if (char_power > target_power)
-                    {
-                        DealDamageByRoll(char_roll, Targets[i]);
-                        Targets[i].RemoveFirstRoll(0.3f);
-                        if (Targets[i].GType_ == GriddableObject.GriddableObjectType.Enemy)
+                        int init_roll = target_roll.maxRoll;
+                        target_roll.maxRoll -= char_power;
+                        if (target_roll.maxRoll < 0)
                         {
-                            var enemy = Targets[i].GetComponent<GridEnemy>();
-                            
-                            for (int k = 0; k < enemy.RollsUI.childCount; k++)
+                            int dmg = char_power - init_roll;
+                            char_roll.maxRoll = dmg;
+                            char_roll.minRoll = dmg;
+                            DealDamageByRoll(char_roll, Targets[i]);
+                            Targets[i].RemoveFirstRoll(0.3f);
+                            Debug.Log("removed");
+                            if (Targets[i].GType_ == GriddableObject.GriddableObjectType.Enemy)
                             {
-                                enemy.RollsUI.GetChild(k).GetComponent<RollScript>().Fade(0f, 0.3f, 0, true);
+                                var enemy = Targets[i].GetComponent<GridEnemy>();
+
+                                for (int k = 0; k < enemy.RollsUI.childCount; k++)
+                                {
+                                    enemy.RollsUI.GetChild(k).GetComponent<RollScript>().Fade(0f, 0.3f, 0, true);
+                                }
+                                LeanTween.delayedCall(0.4f, () => { EnemyUpdateRolls(enemy); });
                             }
-                            LeanTween.delayedCall(0.4f, () => { EnemyUpdateRolls(enemy); });
+                        }
+                        else
+                        {
+                            if (Targets[i].GType_ == GriddableObject.GriddableObjectType.Enemy)
+                            {
+                                var enemy = Targets[i].GetComponent<GridEnemy>();
+
+                                for (int k = 0; k < enemy.RollsUI.childCount; k++)
+                                {
+                                    enemy.RollsUI.GetChild(k).GetComponent<RollScript>().MinMaxText.text = enemy.RollsUI.GetChild(k).GetComponent<RollScript>().roll.maxRoll.ToString();
+                                }
+                            }
                         }
                     }
+                    else
+                    {
+                        int char_power;
+                        int target_power;
+                        GetRolls(out char_power, out target_power, char_roll, target_roll);
+                        Debug.Log("Fighting: " + char_power + " / " + target_power);
+                        while (char_power == target_power)
+                        {
+                            Debug.Log("Tie: " + char_power + " | " + target_power);
+                            GetRolls(out char_power, out target_power, char_roll, target_roll);
+                            Debug.Log("Fighting: " + char_power + " / " + target_power);
+                        }
+                        if (char_power > target_power)
+                        {
+                            DealDamageByRoll(char_roll, Targets[i]);
+                            Targets[i].RemoveFirstRoll(0.3f);
+                            if (Targets[i].GType_ == GriddableObject.GriddableObjectType.Enemy)
+                            {
+                                var enemy = Targets[i].GetComponent<GridEnemy>();
+
+                                for (int k = 0; k < enemy.RollsUI.childCount; k++)
+                                {
+                                    enemy.RollsUI.GetChild(k).GetComponent<RollScript>().Fade(0f, 0.3f, 0, true);
+                                }
+                                LeanTween.delayedCall(0.4f, () => { EnemyUpdateRolls(enemy); });
+                            }
+                        }
+                    }    
                 } 
             }
             character.CurrentSkillRolls.RemoveAt(0);
@@ -305,9 +358,10 @@ public class BattleMain : MonoBehaviour
 
     public void DealDamageByRoll(Roll roll, GriddableObject obj)
     {
-        Debug.Log("Dealed damage!");
+        
         Damage damage = new Damage(roll.GetDamage(), roll.element, roll.skill.character);
         obj.GetDamage(damage);
+        Debug.Log("Dealed damage!" + damage.damage);
     }
 
     IEnumerator EnemiesUseRolls()
@@ -416,8 +470,17 @@ public class BattleMain : MonoBehaviour
             LevelId level;
             if (is_hard) level = variants_hard[Random.Range(0, variants_hard.Count-1)];
             else level = variants_normal[Random.Range(0, variants_normal.Count-1)];
+            level.difficulty = difficulty;
 
             next_id = level.GetLevelId();
+        }
+        else
+        {
+            if (level_num < 9)
+            {
+                level_num++;
+                return 1;
+            }
         }
         return next_id;
     }
@@ -425,10 +488,47 @@ public class BattleMain : MonoBehaviour
     public void NextLevel()
     {
         CurrentLevelId = GetNextLevelId(CurrentLevelId);
+        UpdateCharacters();
         StartBattle();
+    }
+
+    public void ApplyBaff(BattleBuff buff)
+    {
+        foreach (var character in play_characters)
+        {
+            if (buff.OneTime)
+            {
+                buff.MakeBuff(character);
+            }
+            else
+            {
+                character.buffs.Add(buff);
+            }
+        }
+    }
+
+    public static void UseBaffs(CharacterBase character)
+    {
+        foreach (var buff in character.buffs)
+        {
+            buff.MakeBuff(character);
+        }
+    }
+
+    void UpdateCharacters()
+    {
+        foreach (var character in play_characters)
+        {
+            character.Init();
+            character.CreatePassives();
+            UseBaffs(character);
+        }
+        
     }
     
 }
+
+
 
 
 enum BattleCycle

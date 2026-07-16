@@ -256,6 +256,7 @@ public class Damage
     public int damage;
     public Element element;
     public CharacterBase from;
+    public bool is_true_damage;
 
     public Damage(int damage, Element element, CharacterBase from)
     {

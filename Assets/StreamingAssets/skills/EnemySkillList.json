@@ -70,7 +70,45 @@
           ]
         }
       ]
-    }
+    },
+	{
+      "id": 3,
+      "name": "TestEnemyDefence",
+      "rollDist": "StLine",
+      "dist": 5,
+      "rolls": [
+        {
+          "minRoll": 6,
+          "maxRoll": 12,
+          "rollType": "Def",
+          "rollRadius": "Single",
+          "radius": 4,
+          "element": "None",
+          "specialEffects": [
+
+          ]
+        }
+      ]
+    },
+	{
+      "id": 4,
+      "name": "TestEnemyEvade",
+      "rollDist": "StLine",
+      "dist": 5,
+      "rolls": [
+        {
+          "minRoll": 6,
+          "maxRoll": 12,
+          "rollType": "Def",
+          "rollRadius": "Single",
+          "radius": 4,
+          "element": "Water",
+          "specialEffects": [
+
+          ]
+        }
+      ]
+    },
 
   ]
 }

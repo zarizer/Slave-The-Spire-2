@@ -57,7 +57,7 @@ public class EnemyTabController : TabController
         moves_text.text = character.cur_moves.ToString();
         energy_text.text = character.cur_energy.ToString();
         atk_text.text = character.cur_dmg_k.ToString();
-        description_text.text = character.description;
+        description_text.text = character.skills_description;
 
         StaticFuncs.DestroyChildren(MenuUIRolls);
         

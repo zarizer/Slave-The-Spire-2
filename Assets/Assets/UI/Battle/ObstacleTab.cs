@@ -63,7 +63,7 @@ public class ObstacleTabController : TabController
         
         energy_text.text = character.cur_energy.ToString();
         atk_text.text = character.cur_dmg_k.ToString();
-        description_text.text = character.description;
+        description_text.text = character.skills_description;
 
         None_k_text.text = character.none_k.ToString();
         Fire_k_text.text = character.fire_k.ToString();

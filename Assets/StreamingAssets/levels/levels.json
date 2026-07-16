@@ -186,6 +186,15 @@
         "isCustomLevel": false,
         "specialValue": 0
       },
+	  {
+        "posX": 5,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 2,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 1
+      },
       {
         "posX": 6,
         "posY": 4,
@@ -400,7 +409,7 @@
         "id": 0,
         "level": 0,
         "isCustomLevel": false,
-        "specialValue": 0
+        "specialValue": 1
       },
       {
         "posX": 0,
@@ -423,6 +432,96 @@
       {
         "posX": 1,
         "posY": 4,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      }
+    ]
+  },
+  "1": {
+    "Id": 1,
+    "x_": 5,
+    "y_": 5,
+    "minLevel": 0,
+    "maxLevel": 0,
+    "Objects": [
+      {
+        "posX": 0,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 0,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 2,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 4,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 2,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 2,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 2,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 1
+      },
+      {
+        "posX": 4,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 0,
+        "posY": 2,
         "objType": "Obstacle",
         "id": 0,
         "level": 0,

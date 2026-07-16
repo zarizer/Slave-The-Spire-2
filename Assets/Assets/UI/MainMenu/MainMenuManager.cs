@@ -59,6 +59,6 @@ public class MainMenuManager : MonoBehaviour
     {
         SetMenu(battleMain.gameObject);
         battleMain.CurrentLevelId = prepareBattleScrit.LevelId;
-        battleMain.StartBattle();
+        battleMain.StartGame();
     }
 }

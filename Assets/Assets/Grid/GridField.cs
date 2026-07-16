@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 using static UnityEngine.EventSystems.EventTrigger;
 
 public class GridField : MonoBehaviour
@@ -87,6 +89,10 @@ public class GridField : MonoBehaviour
             else if (obj.type == "Enemy")
             {
                 cur_obj = CreateGridObject(GriddableObject.GriddableObjectType.Enemy, obj.id, cords.Item1, cords.Item2);
+                var enemy = cur_obj.GetComponent<GridEnemy>().GetCharacter();
+                enemy.Init();
+                enemy.CreatePassives();
+                BattleMain.UseBaffs(enemy);
             }
             if (obj.isCustomLevel)
             {
@@ -98,7 +104,17 @@ public class GridField : MonoBehaviour
             }
             cur_obj.specialValue = obj.specialValue;
 
+            
         }
+        var objs = new List<GriddableObject>();
+        objs.AddRange(GridEnemies);
+        objs.AddRange(GridObstacles);
+        objs.AddRange(GridCharacters);
+        foreach (GriddableObject obj in objs)
+        {
+            obj.GetCharacter().OnLevelStart(this);
+        }
+        
     }
 
     [ContextMenu("SaveLevelData")] 
@@ -234,6 +250,7 @@ public class GridField : MonoBehaviour
         }
         
         cur_object.ReplaceObject(ID);
+        cur_object.GetCharacter().object_ = cur_object.gameObject;
         AddGridObject(X, Y, cur_object);
         GetGridCell(X, Y).SnapObject();
         current_object = cur_object;

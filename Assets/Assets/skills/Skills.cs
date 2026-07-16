@@ -41,6 +41,16 @@ public class Skills
         {
             enemy_skills.Add(CreateSkill(obj, false));
         }
+
+        foreach(var skill in player_skills)
+        {
+            DataDicts.PlayerSkillSet[skill.id] = skill;
+        }
+
+        foreach (var skill in enemy_skills)
+        {
+            DataDicts.EnemySkillSet[skill.id] = skill;
+        }
     }
 
     static PlayerSkill CreateSkill(JToken obj, bool is_player)

@@ -69,7 +69,7 @@ public class CharacterTabController : TabController
         moves_text.text = character.cur_moves.ToString();
         energy_text.text = character.cur_energy.ToString();
         atk_text.text = character.cur_dmg_k.ToString();
-        description_text.text = character.description;
+        description_text.text = character.skills_description;
 
         MakeSkillText(1, skill1_energy, skill1_uses, character);
         MakeSkillText(2, skill2_energy, skill2_uses, character);

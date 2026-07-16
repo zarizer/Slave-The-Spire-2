@@ -38,6 +38,7 @@ public class ResoursesDict : MonoBehaviour
     public GameObject SoundMain;
     public GameObject profileManager;
     public GameObject skill_floating_window;
+    public GameObject prepareBattleScript;
     public GameObject cameraController;
 
     public AudioClip restricted_sound;
@@ -51,6 +52,7 @@ public class ResoursesDict : MonoBehaviour
     public GameObject ModelSimpleStone;
     public GameObject ModelSpawnPoint;
     public GameObject ModelDoor;
+    public GameObject BaffAltar;
 
     public GameObject ModelCh1R1;
     public GameObject ModelCh1R2;
@@ -85,6 +87,7 @@ public class ResoursesDict : MonoBehaviour
         ObjectSet["SoundMain"] = SoundMain;
         ObjectSet["ProfileManager"] = profileManager;
         ObjectSet["CameraController"] = cameraController;
+        ObjectSet["PrepareBattleScript"] = prepareBattleScript;
         ObjectSet["skill_floating_window"] = skill_floating_window;
 
         SoundSet["RestrictSound"] = restricted_sound;
@@ -102,6 +105,7 @@ public class ResoursesDict : MonoBehaviour
         ModelSet.Add(ModelCh1R2);
         ModelSet.Add(ModelCh1R3);
         ModelSet.Add(ModelCh1R4);
+        ModelSet.Add(BaffAltar);
     }
 
 

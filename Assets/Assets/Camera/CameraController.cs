@@ -138,12 +138,14 @@ public class CameraController : MonoBehaviour
                     var obj = Target.GetComponent<GridCharacter>();
                     ResoursesDict.GetClass<BattleMain>().NextCycle();
                 }
-                FloatingInfoMenu.CloseAllWindows();
-                FloatingRollMenu.CloseAllWindows();
-                ResoursesDict.GetClass<SkillFloatingWindow>().CloseAllWindows();
+                
+                //ResoursesDict.GetClass<SkillFloatingWindow>().CloseAllWindows();
             }
             else
             {
+                ResoursesDict.GetClass<SkillFloatingWindow>().CloseAllWindows();
+                FloatingInfoMenu.CloseAllWindows();
+                FloatingRollMenu.CloseAllWindows();
                 Ray ray = Camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
                 if (CheckAttack())
                 {
@@ -242,6 +244,8 @@ public class CameraController : MonoBehaviour
                     }
                     else if (hit.transform.tag != "UI")
                     {
+                        
+                        Debug.Log("close:" + hit.transform.name + hit.transform.tag);
                         PrevTarget = Target;
                         Target = DeffaultTarget;
                         UIController.CloseAllObjectTabs();

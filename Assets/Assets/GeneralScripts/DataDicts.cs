@@ -9,15 +9,12 @@ public static class DataDicts
 
     public static Dictionary<int, PlayerSkill> PlayerSkillSet = new Dictionary<int, PlayerSkill>()
     {
-        { 0, new PlayerSkill(Skills.player_skills[0]) },
-        { 1, new PlayerSkill(Skills.player_skills[1]) },
+
     };
 
     public static Dictionary<int, PlayerSkill> EnemySkillSet = new Dictionary<int, PlayerSkill>()
     {
-        { 0, new PlayerSkill(Skills.enemy_skills[0]) },
-        { 1, new PlayerSkill(Skills.enemy_skills[1]) },
-        { 2, new PlayerSkill(Skills.enemy_skills[2]) },
+
     };
 
     public static Dictionary<int, Type> CharacterTypes = new Dictionary<int, Type>()
@@ -36,7 +33,22 @@ public static class DataDicts
         { 1, typeof(CharacterSpawn) },
         { 2, typeof(LevelChange) },
         { 3, typeof(Chapter1RandomObstacle) },
+        { 4, typeof(BuffAltar) },
     };
 
+    public static Dictionary<int, Type> BaffTypes = new Dictionary<int, Type>()
+    {
+        {0, typeof(HPBuff) },
+        {1, typeof(DefBuff) },
+        {2, typeof(StrBuff) },
+        {3, typeof(ElementDefBuff) },
+        {4, typeof(SpeedBuff) },
+    };
 
+    public static Dictionary<int, Type> PassiveTypes = new Dictionary<int, Type>()
+    {
+        {0, typeof(PassiveMain1) },
+        {1, typeof(PassiveMain2) },
+        {2, typeof(PassiveMain3) },
+    };
 }
