@@ -77,3 +77,47 @@ public class PassiveMain3 : Passive
         Value = level * 4;
     }
 };
+
+public class PassiveVosh1 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Мерзость";
+        Description = $"Если этому отморозку нанесли урон, нанёсший теряет {Value} скорости";
+    }
+
+    public override void OnGetDamage(GridField field, Damage dmg)
+    {
+        base.OnBattleStart(field);
+        dmg.from.cur_moves -= (int)Value;
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = level;
+    }
+};
+
+public class PassiveVosh2 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "отвратительные брызги";
+        Description = $"При смерти этого отморозка, нанёсший последнюю атаку получает {Value} гидро урона";
+    }
+
+    public override void OnDeath(GridField field, Damage dmg)
+    {
+        base.OnBattleStart(field);
+        dmg.from.GetDamage(new Damage((int)Value, Element.water, character));
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = 3 * level;
+    }
+};

@@ -20,12 +20,12 @@ public class GriddableObject : MonoBehaviour
 
     void Start()
     {
-        
+
     }
 
     void Update()
     {
-        
+
     }
 
     public virtual void ReplaceObject(int ID) { }
@@ -33,7 +33,8 @@ public class GriddableObject : MonoBehaviour
     {
         GridCharacter obj_character = null;
         GridEnemy obj_enemy = null;
-        if (GType_ == GriddableObjectType.Character) {
+        if (GType_ == GriddableObjectType.Character)
+        {
             obj_character = (GridCharacter)this;
             if (cell.color_type == GridCell.ColorType.Green)
             {
@@ -48,7 +49,6 @@ public class GriddableObject : MonoBehaviour
         if (GType_ == GriddableObjectType.Enemy)
         {
             obj_enemy = (GridEnemy)this;
-
             MoveByWay(GetWay(cell_, cell), 0.2f);
             cell_.object_ = null;
             cell.object_ = this;
@@ -63,15 +63,12 @@ public class GriddableObject : MonoBehaviour
     List<GridCell> GetWay(GridCell start_cell, GridCell finish_cell)
     {
         List<GridCell> way = new List<GridCell>();
-
-        way.Add(finish_cell);
-        GridCell cur_cell = finish_cell.ParentCell;
+        GridCell cur_cell = finish_cell;
         while (cur_cell != start_cell)
         {
             way.Add(cur_cell);
             cur_cell = cur_cell.ParentCell;
         }
-
         way.Reverse();
         return way;
     }
@@ -112,7 +109,7 @@ public class GriddableObject : MonoBehaviour
             ResoursesDict.GetClass<SoundMain>().PlaySound("Egg1");
         }
     }
-    
+
     public enum GriddableObjectType
     {
         Enemy,

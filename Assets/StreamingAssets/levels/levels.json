@@ -165,14 +165,14 @@
     "Id": 1,
     "x_": 10,
     "y_": 10,
-    "minLevel": 0,
-    "maxLevel": 0,
+    "minLevel": 1,
+    "maxLevel": 5,
     "Objects": [
       {
         "posX": 4,
         "posY": 6,
         "objType": "Enemy",
-        "id": 0,
+        "id": 1,
         "level": 0,
         "isCustomLevel": false,
         "specialValue": 666
@@ -181,7 +181,7 @@
         "posX": 4,
         "posY": 4,
         "objType": "Enemy",
-        "id": 0,
+        "id": 1,
         "level": 0,
         "isCustomLevel": false,
         "specialValue": 0

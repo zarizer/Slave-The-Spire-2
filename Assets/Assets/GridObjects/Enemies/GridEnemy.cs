@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
+using UnityEngine.UI;
 
 public class GridEnemy : GriddableObject
 {
 
     public GameObject TexturePlane;
+    public RawImage Texture;
     public UnityEngine.UI.Image hp_circle;
     public EnemyBase enemy_;
 
@@ -90,6 +92,7 @@ public class GridEnemy : GriddableObject
             menu_roll.transform.localScale = (Vector3.one) / 250;
             menu_roll.transform.Rotate(Vector3.up, 180);
             rolls_list.Add(menu_roll);
+            Debug.Log(roll.minRoll + " " + roll.maxRoll);
         }
         if (rolls_list.Count > 6)
         {

@@ -14,7 +14,8 @@ class StaticFuncs : MonoBehaviour
         }
         foreach (GameObject child in children)
         {
-            Destroy(child);
+            child.SetActive(false);
+            child.transform.parent = ResoursesDict.GetClass<TrashManager>().transform;
         }
     }
 

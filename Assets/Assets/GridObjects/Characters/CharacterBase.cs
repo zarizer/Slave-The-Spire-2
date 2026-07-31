@@ -160,6 +160,8 @@ public class CharacterBase
         CreateSkillDescription();
     }
 
+    virtual public void CreateStatsAccourdingToLevel() { }
+
     public virtual CharacterBase Clone()
     {
         return new CharacterBase(this);
@@ -176,6 +178,7 @@ public class CharacterBase
     }
     public virtual void GetDamage(Damage damage)
     {
+        Debug.Log(object_);
         int dmg = GetRealDamage(damage);
 
         if (damage.element != Element.True)
@@ -195,7 +198,7 @@ public class CharacterBase
         {
             cur_hp -= dmg;
         }
-        OnGetDamage(object_.GetComponent<GriddableObject>().field_, damage);
+        OnGetDamage(ResoursesDict.GetClass<BattleMain>().current_field, damage);
     } 
 
     int GetRealDamage(Damage damage)

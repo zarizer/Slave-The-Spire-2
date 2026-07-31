@@ -40,6 +40,8 @@ public class ResoursesDict : MonoBehaviour
     public GameObject skill_floating_window;
     public GameObject prepareBattleScript;
     public GameObject cameraController;
+    public GameObject trashManager;
+    public GameObject iconManager;
 
     public AudioClip restricted_sound;
     public AudioClip accept_sound;
@@ -89,6 +91,8 @@ public class ResoursesDict : MonoBehaviour
         ObjectSet["CameraController"] = cameraController;
         ObjectSet["PrepareBattleScript"] = prepareBattleScript;
         ObjectSet["skill_floating_window"] = skill_floating_window;
+        ObjectSet["TrashManager"] = trashManager;
+        ObjectSet["IconManager"] = iconManager;
 
         SoundSet["RestrictSound"] = restricted_sound;
         SoundSet["AcceptSound"] = accept_sound;

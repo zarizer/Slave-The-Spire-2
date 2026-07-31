@@ -123,6 +123,7 @@ public class BattleMain : MonoBehaviour
             if (current_cycle == BattleCycle.EnemyRollsCreate)
             {
                 UpdatePlayerSkills();
+                UpdateEnemySkills();
                 UpdateObstacleSkills();
                 CharacterTabSwitch(true, false);
                 StartCoroutine(EnemyCreateRolls());
@@ -209,7 +210,7 @@ public class BattleMain : MonoBehaviour
 
     public void MakeFight(GridCharacter character, List<GriddableObject> Targets)
     {
-        Debug.Log("ATTACK!");
+        //Debug.Log("ATTACK!");
         for (int i = 0; i<character.CurrentSkillRolls.Count; i += 0)
         {
             var char_roll = character.CurrentSkillRolls[0];
@@ -232,7 +233,6 @@ public class BattleMain : MonoBehaviour
                             char_roll.minRoll = dmg;
                             DealDamageByRoll(char_roll, Targets[i]);
                             Targets[i].RemoveFirstRoll(0.3f);
-                            Debug.Log("removed");
                             if (Targets[i].GType_ == GriddableObject.GriddableObjectType.Enemy)
                             {
                                 var enemy = Targets[i].GetComponent<GridEnemy>();
@@ -294,7 +294,7 @@ public class BattleMain : MonoBehaviour
 
     public void MakeFightEnemy(GridEnemy enemy, Roll roll, List<GriddableObject> Targets)
     {
-        Debug.Log("ATTACK!");
+        //Debug.Log("ATTACK!");
 
 
         for (int j = 0; j < Targets.Count; j++)
@@ -347,6 +347,7 @@ public class BattleMain : MonoBehaviour
 
     IEnumerator EnemiesMove()
     {
+        current_field.CellsNullify();
         foreach (var enemy in current_field.GridEnemies)
         {
             var cell = current_field.EnemyFindBestCell(enemy);
@@ -522,8 +523,17 @@ public class BattleMain : MonoBehaviour
             character.Init();
             character.CreatePassives();
             UseBaffs(character);
+            character.CreateStatsAccourdingToLevel();
         }
         
+    }
+
+    void UpdateEnemySkills()
+    {
+        foreach (var enemy in current_field.GridEnemies)
+        {
+            enemy.GetCharacter().UpdateStatsOnNewTurn();
+        }
     }
     
 }

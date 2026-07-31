@@ -71,6 +71,7 @@ public class Skills
             roll.minRoll = roll_obj["minRoll"].Value<int>();
             roll.maxRoll = roll_obj["maxRoll"].Value<int>();
             roll.skill = skill;
+            roll.Description = roll_obj["description"].Value<string>();
             roll.radius = roll_obj["radius"].Value<int>();
             roll.rollRadius = GetRadius(roll_obj["rollRadius"].Value<string>());
             roll.rollType = GetType(roll_obj["rollType"].Value<string>());

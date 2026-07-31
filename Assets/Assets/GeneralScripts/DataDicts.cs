@@ -25,6 +25,7 @@ public static class DataDicts
     public static Dictionary<int, Type> EnemyTypes = new Dictionary<int, Type>()
     {
         {  0, typeof(TestEnemy) },
+        {  1, typeof(EnemyVosh) },
     };
 
     public static Dictionary<int, Type> ObstacleTypes = new Dictionary<int, Type>()
@@ -50,5 +51,7 @@ public static class DataDicts
         {0, typeof(PassiveMain1) },
         {1, typeof(PassiveMain2) },
         {2, typeof(PassiveMain3) },
+        {3, typeof(PassiveVosh1) },
+        {4, typeof(PassiveVosh2) },
     };
 }

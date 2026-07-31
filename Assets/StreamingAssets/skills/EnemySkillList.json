@@ -14,6 +14,7 @@
           "rollRadius": "Single",
           "radius": 1,
           "element": "None",
+		  "description": "",
           "specialEffects": [
 
           ]
@@ -25,6 +26,7 @@
           "rollRadius": "PlayerRadius",
           "radius": 1,
           "element": "Dendro",
+		  "description": "",
           "specialEffects": [
 
           ]
@@ -45,6 +47,7 @@
           "rollRadius": "Single",
           "radius": 4,
           "element": "Water",
+		  "description": "",
           "specialEffects": [
 
           ]
@@ -65,6 +68,7 @@
           "rollRadius": "Single",
           "radius": 5,
           "element": "None",
+		  "description": "",
           "specialEffects": [
 
           ]
@@ -84,6 +88,7 @@
           "rollRadius": "Single",
           "radius": 4,
           "element": "None",
+		  "description": "",
           "specialEffects": [
 
           ]
@@ -103,6 +108,69 @@
           "rollRadius": "Single",
           "radius": 4,
           "element": "Water",
+		  "description": "",
+          "specialEffects": [
+
+          ]
+        }
+      ]
+    },
+	
+	
+	{
+      "id": 5,
+      "name": "VoshAttack1",
+      "rollDist": "StLine",
+      "dist": 1,
+      "rolls": [
+        {
+          "minRoll": 3,
+          "maxRoll": 6,
+          "rollType": "Atk",
+          "rollRadius": "Single",
+          "radius": 1,
+          "element": "Water",
+		  "description": "",
+          "specialEffects": [
+
+          ]
+        }
+      ]
+    },
+	{
+      "id": 6,
+      "name": "VoshAttack2",
+      "rollDist": "DgLine",
+      "dist": 1,
+      "rolls": [
+        {
+          "minRoll": 3,
+          "maxRoll": 7,
+          "rollType": "Atk",
+          "rollRadius": "Single",
+          "radius": 1,
+          "element": "None",
+		  "description": "",
+          "specialEffects": [
+
+          ]
+        }
+      ]
+    },
+	{
+      "id": 7,
+      "name": "VoshAttack3",
+      "rollDist": "DgLine",
+      "dist": 1,
+      "rolls": [
+        {
+          "minRoll": 10,
+          "maxRoll": 10,
+          "rollType": "Def",
+          "rollRadius": "Single",
+          "radius": 1,
+          "element": "None",
+		  "description": "",
           "specialEffects": [
 
           ]

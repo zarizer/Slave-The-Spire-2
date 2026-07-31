@@ -59,5 +59,7 @@ public class FloatingRollMenu : FloatingInfoMenu
 
         MinRollText.text = roll.minRoll.ToString();
         MaxRollText.text = roll.maxRoll.ToString();
+
+        RollDescription.text = roll.Description;
     }
 } 

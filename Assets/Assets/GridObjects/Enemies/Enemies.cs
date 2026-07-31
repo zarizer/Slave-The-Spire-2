@@ -27,4 +27,40 @@ public class TestEnemy : EnemyBase
         return this;
     }
 
+    
+
+}
+
+public class EnemyVosh : EnemyBase
+{
+    public override CharacterBase Init()
+    {
+        id = 1;
+        hp = 25;
+        def = 0;
+        speed = 2;
+        speed_dif = 2;
+        dmg_k = 1f;
+        moves = 3;
+        energy = 0;
+        name = "Вош";
+        description = "Типичная вошь, которая водится в колтушских лесах";
+        SkillsPerTurn = new List<List<PlayerSkill>> {
+            new List<PlayerSkill>() { DataDicts.EnemySkillSet[5], DataDicts.EnemySkillSet[7] },
+            new List<PlayerSkill>() { DataDicts.EnemySkillSet[6], DataDicts.EnemySkillSet[7] }
+        };
+        none_k = 1.2f;
+        water_k = 0.75f;
+        fire_k = 1.2f;
+        base.Init();
+        return this;
+    }
+
+    public EnemyVosh()
+    {
+        passive_ids = new List<int>();
+        passive_ids.Add(3);
+        passive_ids.Add(4);
+    }
+
 }

@@ -127,6 +127,7 @@ public class PlayerSkill
 public class Roll
 {
     public PlayerSkill skill;
+    public string Description;
     public int radius;
     public int minRoll;
     public int maxRoll;
@@ -181,6 +182,7 @@ public class Roll
         radius = other.radius;
         element = other.element;
         skill = other.skill;
+        Description = other.Description;
         MakeDamagePositions();
     }
 
@@ -193,10 +195,11 @@ public class Roll
         radius = 1;
         element = Element.None;
         skill = null;
+        Description = "";
         MakeDamagePositions();
     }
 
-    public Roll(int min_roll, int max_roll, RollType type, RollRadius radius_type, int rad, Element element, PlayerSkill skill_ = null)
+    public Roll(int min_roll, int max_roll, RollType type, RollRadius radius_type, int rad, Element element, string description = "", PlayerSkill skill_ = null)
     {
         minRoll = min_roll;
         maxRoll = max_roll;
@@ -205,6 +208,7 @@ public class Roll
         radius = rad;
         this.element = element;
         skill = skill_;
+        Description = description;
         MakeDamagePositions();
     }
 

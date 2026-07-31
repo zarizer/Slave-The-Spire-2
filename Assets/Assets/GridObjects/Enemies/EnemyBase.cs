@@ -48,12 +48,17 @@ public class EnemyBase : CharacterBase
         return new EnemyBase(this);
     }
 
-   
+    public override void UpdateStatsOnNewTurn()
+    {
+        cur_moves = moves;
+    }
     public void CreateSkills(int cur_turn)
     {
         int turn = cur_turn;
 
         SkillQueue.Clear();
+        CurrentRolls.Clear();
+        Debug.Log(SkillsPerTurn);
         foreach (PlayerSkill skill in SkillsPerTurn[turn % SkillsPerTurn.Count])
         {
             SkillQueue.Add(skill);

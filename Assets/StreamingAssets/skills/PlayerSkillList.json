@@ -16,6 +16,7 @@
           "rollRadius": "Single",
           "radius": 1,
           "element": "Fire",
+		  "description": "обычная атака",
           "specialEffects": [
 
           ]
@@ -27,6 +28,7 @@
           "rollRadius": "Single",
           "radius": 1,
           "element": "Fire",
+		  "description": "",
           "specialEffects": [
 
           ]
@@ -49,6 +51,7 @@
           "rollRadius": "Single",
           "radius": 5,
           "element": "None",
+		  "description": "",
           "specialEffects": [
 
           ]

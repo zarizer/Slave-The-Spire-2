@@ -5,6 +5,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
+using UnityEngine.UI;
 using static UnityEngine.EventSystems.EventTrigger;
 
 public class GridField : MonoBehaviour
@@ -81,6 +82,8 @@ public class GridField : MonoBehaviour
             if (obj.type == "Obstacle")
             {
                 cur_obj = CreateGridObject(GriddableObject.GriddableObjectType.Obstacle, obj.id, cords.Item1, cords.Item2);
+                var obstacle = cur_obj.GetComponent<GridObstacle>().GetCharacter();
+                obstacle.CreateStatsAccourdingToLevel();
             }
             else if (obj.type == "Character")
             {
@@ -93,6 +96,7 @@ public class GridField : MonoBehaviour
                 enemy.Init();
                 enemy.CreatePassives();
                 BattleMain.UseBaffs(enemy);
+                enemy.CreateStatsAccourdingToLevel();
             }
             if (obj.isCustomLevel)
             {
@@ -104,7 +108,6 @@ public class GridField : MonoBehaviour
             }
             cur_obj.specialValue = obj.specialValue;
 
-            
         }
         var objs = new List<GriddableObject>();
         objs.AddRange(GridEnemies);
@@ -235,12 +238,15 @@ public class GridField : MonoBehaviour
             var obj = Instantiate(BaseCharacter, transform);
             cur_object = obj.GetComponent<GriddableObject>();
             GridCharacters.Add(cur_object.GetComponent<GridCharacter>());
+            cur_object.GetComponent<GridCharacter>().TexturePlane.GetComponent<Image>().sprite = IconManager.PlayerIcons[ID];
         }
         else if (type == GriddableObject.GriddableObjectType.Enemy)
         {
             var obj = Instantiate(BaseEnemy, transform);
             cur_object = obj.GetComponent<GriddableObject>();
             GridEnemies.Add(cur_object.GetComponent<GridEnemy>());
+            Debug.Log(IconManager.EnemyIcons[ID]);
+            cur_object.GetComponent<GridEnemy>().Texture.texture = IconManager.EnemyIcons[ID].texture;
         }
         else if (type == GriddableObject.GriddableObjectType.Obstacle)
         {
@@ -248,9 +254,11 @@ public class GridField : MonoBehaviour
             cur_object = obj.GetComponent<GriddableObject>();
             GridObstacles.Add(cur_object.GetComponent<GridObstacle>());
         }
-        
         cur_object.ReplaceObject(ID);
+        cur_object.name = cur_object.GetCharacter().name;
         cur_object.GetCharacter().object_ = cur_object.gameObject;
+        Debug.Log(cur_object.gameObject);
+        cur_object.GetCharacter().CreateStatsAccourdingToLevel();
         AddGridObject(X, Y, cur_object);
         GetGridCell(X, Y).SnapObject();
         current_object = cur_object;
@@ -666,7 +674,7 @@ public class GridField : MonoBehaviour
         Queue<GridCell> queue = new Queue<GridCell>();
         queue.Enqueue(start_cell);
         start_cell.visited = true;
-        start_cell.moves = 1;
+        start_cell.moves = 0;
 
         while (queue.Count > 0)
         {
