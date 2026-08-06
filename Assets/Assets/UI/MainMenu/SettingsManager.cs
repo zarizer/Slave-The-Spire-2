@@ -64,4 +64,10 @@ public class SettingsManager : MonoBehaviour
         if (ProfileManager.profile_picture == ProfileManager.DeffaultImage) { ResoursesDict.GetClass<SoundMain>().Restrict(); }
         else { ResoursesDict.GetClass<SoundMain>().Accept(); }
     }
+
+    public void OpenRedactor()
+    {
+        gameObject.SetActive(false);
+        ResoursesDict.GetClass<LevelRedactor>().OpenRedactor();
+    }
 }

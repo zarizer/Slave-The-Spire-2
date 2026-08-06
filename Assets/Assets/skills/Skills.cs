@@ -76,7 +76,15 @@ public class Skills
             roll.rollRadius = GetRadius(roll_obj["rollRadius"].Value<string>());
             roll.rollType = GetType(roll_obj["rollType"].Value<string>());
             roll.element = GetElement(roll_obj["element"].Value<string>());
-            //—ƒ≈À¿“‹ –≈¿À»«¿÷»ﬁ —œ≈÷»¿À‹Õ€’ ›‘‘≈ “Œ¬
+            foreach (JToken effect_obj in roll_obj["specialEffects"] as JArray)
+            {
+                (int, int, int, int) e;
+                e.Item1 = effect_obj["id"].Value<int>();
+                e.Item2 = effect_obj["power"].Value<int>();
+                e.Item3 = effect_obj["duration"].Value<int>();
+                e.Item4 = effect_obj["trigger"].Value<int>();
+                roll.effects.Add(e);
+            }
             roll.MakeDamagePositions();
             skill.rolls.Add(roll);
         }

@@ -58,7 +58,7 @@ public class ObstacleTabController : TabController
         gameObject.SetActive(true);
         name_text.text = character.name;
         lv_text.text = "lv " + character.level;
-        hp_text.text = character.cur_hp + " / " + character.hp;
+        hp_text.text = character.cur_hp + " / " + character.start_hp;
         def_text.text = character.cur_def.ToString();
         
         energy_text.text = character.cur_energy.ToString();

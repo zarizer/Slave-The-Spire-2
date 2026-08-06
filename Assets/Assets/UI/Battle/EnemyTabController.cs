@@ -51,7 +51,7 @@ public class EnemyTabController : TabController
         gameObject.SetActive(true);
         name_text.text = character.name;
         lv_text.text = "lv " + character.level;
-        hp_text.text = character.cur_hp + " / " + character.hp;
+        hp_text.text = character.cur_hp + " / " + character.start_hp;
         def_text.text = character.cur_def.ToString();
         speed_text.text = character.cur_speed.ToString();
         moves_text.text = character.cur_moves.ToString();

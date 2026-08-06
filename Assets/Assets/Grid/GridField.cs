@@ -31,8 +31,8 @@ public class GridField : MonoBehaviour
 
     public List<GriddableObject> GridObjects;
 
-    [SerializeField] private int SizeX_;
-    [SerializeField] private int SizeY_;
+    [SerializeField] public int SizeX_;
+    [SerializeField] public int SizeY_;
 
     public List<GridEnemy> GridEnemies;
     public List<GridCharacter> GridCharacters;
@@ -43,7 +43,8 @@ public class GridField : MonoBehaviour
     public GridObstacle BaseObstacle;
 
     public int character_spawn_num = 0;
-    public GriddableObject current_object = null; 
+    public GriddableObject current_object = null;
+    public bool is_redactor = false;
 
     private BattleMain battleMain;
     void Awake()
@@ -73,6 +74,8 @@ public class GridField : MonoBehaviour
         var level = LevelData.GetLevelData(levelId);
         SizeX_ = level.x_;
         SizeY_ = level.y_;
+        DebugMinLevel = level.minLevel;
+        DebugMaxLevel = level.maxLevel;
         CreateField();
         foreach (var i in level.Objects)
         {
@@ -81,43 +84,35 @@ public class GridField : MonoBehaviour
             GriddableObject cur_obj = null;
             if (obj.type == "Obstacle")
             {
-                cur_obj = CreateGridObject(GriddableObject.GriddableObjectType.Obstacle, obj.id, cords.Item1, cords.Item2);
+                cur_obj = CreateGridObject(GriddableObject.GriddableObjectType.Obstacle, obj.id, cords.Item1, cords.Item2, obj, level);
                 var obstacle = cur_obj.GetComponent<GridObstacle>().GetCharacter();
                 obstacle.CreateStatsAccourdingToLevel();
             }
             else if (obj.type == "Character")
             {
-                cur_obj = CreateGridObject(GriddableObject.GriddableObjectType.Character, obj.id, cords.Item1, cords.Item2);
+                cur_obj = CreateGridObject(GriddableObject.GriddableObjectType.Character, obj.id, cords.Item1, cords.Item2, obj, level);
             }
             else if (obj.type == "Enemy")
             {
-                cur_obj = CreateGridObject(GriddableObject.GriddableObjectType.Enemy, obj.id, cords.Item1, cords.Item2);
-                var enemy = cur_obj.GetComponent<GridEnemy>().GetCharacter();
-                enemy.Init();
-                enemy.CreatePassives();
+                cur_obj = CreateGridObject(GriddableObject.GriddableObjectType.Enemy, obj.id, cords.Item1, cords.Item2, obj, level);
+                var enemy = (EnemyBase)cur_obj.GetComponent<GridEnemy>().GetCharacter();
                 BattleMain.UseBaffs(enemy);
-                enemy.CreateStatsAccourdingToLevel();
+               
             }
-            if (obj.isCustomLevel)
-            {
-                cur_obj.GetCharacter().level = obj.level;
-            }
-            else
-            {
-                cur_obj.GetCharacter().level = UnityEngine.Random.Range(level.minLevel, level.maxLevel);
-            }
-            cur_obj.specialValue = obj.specialValue;
+            
 
         }
         var objs = new List<GriddableObject>();
         objs.AddRange(GridEnemies);
         objs.AddRange(GridObstacles);
         objs.AddRange(GridCharacters);
-        foreach (GriddableObject obj in objs)
+        if (!is_redactor)
         {
-            obj.GetCharacter().OnLevelStart(this);
+            foreach (GriddableObject obj in objs)
+            {
+                obj.GetCharacter().OnLevelStart(this);
+            }
         }
-        
     }
 
     [ContextMenu("SaveLevelData")] 
@@ -209,23 +204,9 @@ public class GridField : MonoBehaviour
         cameraController.prev_cell = Cells_[SizeX_ - 1][SizeY_-1].GetComponent<GridCell>();
     }
 
-    [ContextMenu("CreateRocks")]
-    public void CreateRocks()
-    {
-        for (int i = 0; i<10; i++)
-        {
-            int rx = UnityEngine.Random.Range(0, SizeX_);
-            int ry = UnityEngine.Random.Range(0, SizeY_);
-
-            if (GetGridObject(rx, ry) == null)
-            {
-                CreateGridObject(GriddableObject.GriddableObjectType.Obstacle, 0, rx, ry);
-            }
-        }
-    }
 
 
-    public GriddableObject CreateGridObject(GriddableObject.GriddableObjectType type, int ID, int X, int Y, bool trigger_spawn = true)
+    public GriddableObject CreateGridObject(GriddableObject.GriddableObjectType type, int ID, int X, int Y, LevelObject obj_data, LevelData level_data, bool trigger_spawn = true)
     {
         if (GetGridCell(X, Y) == null)
         {
@@ -238,7 +219,7 @@ public class GridField : MonoBehaviour
             var obj = Instantiate(BaseCharacter, transform);
             cur_object = obj.GetComponent<GriddableObject>();
             GridCharacters.Add(cur_object.GetComponent<GridCharacter>());
-            cur_object.GetComponent<GridCharacter>().TexturePlane.GetComponent<Image>().sprite = IconManager.PlayerIcons[ID];
+            cur_object.GetComponent<GridCharacter>().TexturePlane.GetComponent<RawImage>().texture = IconManager.PlayerIcons[ID].texture;
         }
         else if (type == GriddableObject.GriddableObjectType.Enemy)
         {
@@ -258,7 +239,23 @@ public class GridField : MonoBehaviour
         cur_object.name = cur_object.GetCharacter().name;
         cur_object.GetCharacter().object_ = cur_object.gameObject;
         Debug.Log(cur_object.gameObject);
-        cur_object.GetCharacter().CreateStatsAccourdingToLevel();
+        if (cur_object.GType_ == GriddableObject.GriddableObjectType.Enemy)
+        {
+
+        }
+        if (obj_data.isCustomLevel)
+        {
+            cur_object.GetCharacter().level = obj_data.level;
+        }
+        else
+        {
+            cur_object.GetCharacter().level = UnityEngine.Random.Range(level_data.minLevel, level_data.maxLevel);
+        }
+        cur_object.IsCustomLevel = obj_data.isCustomLevel;
+        cur_object.specialValue = obj_data.specialValue;
+        cur_object.GetCharacter().Init();
+        cur_object.GetCharacter().CreatePassives();
+
         AddGridObject(X, Y, cur_object);
         GetGridCell(X, Y).SnapObject();
         current_object = cur_object;
@@ -269,6 +266,7 @@ public class GridField : MonoBehaviour
 
     public GriddableObject SpawnCharacter(int X, int Y, bool trigger_spawn = true)
     {
+        
         if (GetGridCell(X, Y) == null)
         {
             Debug.Log("ERROR: CREATING OBJECT IN INVALID POSITION");
@@ -586,6 +584,7 @@ public class GridField : MonoBehaviour
         Cells_[x][y].object_ = obj;
         Cells_[x][y].SnapObject();
         GridObjects.Add(obj);
+        obj.GetCharacter().object_ = obj.gameObject;
     }
 
     void AddGridObject(int x, int y, GameObject obj)
@@ -1440,12 +1439,12 @@ public class GridField : MonoBehaviour
         return resultCells;
     }
 
-    public void RemoveObject(GriddableObject griddableObject)
+    public void RemoveObject(GriddableObject griddableObject, bool silent = false)
     {
-        RemoveObject(griddableObject.cell_);
+        RemoveObject(griddableObject.cell_, silent);
     }
 
-    public void RemoveObject(GridCell cell)
+    public void RemoveObject(GridCell cell, bool silent = false)
     {
         var temp = cell.object_;
         cell.object_ = null;
@@ -1467,12 +1466,6 @@ public class GridField : MonoBehaviour
             }
         }
         return result;
-    }
-
-    [ContextMenu("DebugCreateObject")]
-    public void DebugCreateObject()
-    {
-        CreateGridObject(DebugObjectType, DebugObjectId, DebugX, DebugY, false);
     }
 
 }

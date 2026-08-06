@@ -54,4 +54,10 @@ public static class DataDicts
         {3, typeof(PassiveVosh1) },
         {4, typeof(PassiveVosh2) },
     };
+
+    public static Dictionary<int, Type> EffectTypes = new Dictionary<int, Type>()
+    {
+        {0, typeof(EffectPoison) },
+
+    };
 }

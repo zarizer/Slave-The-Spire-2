@@ -12,6 +12,8 @@ public class GridEnemy : GriddableObject
     public RawImage Texture;
     public UnityEngine.UI.Image hp_circle;
     public EnemyBase enemy_;
+    public Transform EffectObject;
+    public GameObject EffectPrefab;
 
     public Transform RollsUI;
     public GameObject RollUIPrefab;
@@ -158,4 +160,17 @@ public class GridEnemy : GriddableObject
     }
 
     public override CharacterBase GetCharacter() { return enemy_; }
+
+    public void UpdateEffectIcons()
+    {
+        StaticFuncs.DestroyChildren(EffectObject);
+        for (int i = 0; i < enemy_.effects.Count; i++)
+        {
+            var effect = Instantiate(EffectPrefab, EffectObject).GetComponent<EffectObject>();
+            effect.effect = enemy_.effects[i];
+            effect.transform.localPosition = new Vector3(0, 0.4f + 0.3f * i, 0);
+            effect.UpdateData();
+
+        }
+    }
 }

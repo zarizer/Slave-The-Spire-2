@@ -80,6 +80,7 @@ public class CharacterSpawn : ObstacleBase
 
     public override void OnSpawn(GridField field_data)
     {
+        if (field_data.is_redactor) return;
         base.OnSpawn(field_data);
         GridCell cell = field_data.current_object.cell_;
         field_data.RemoveObject(field_data.current_object);

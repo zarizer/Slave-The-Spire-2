@@ -17,22 +17,29 @@ public class LevelData
 
     private static Dictionary<int, LevelData> Levels = new Dictionary<int, LevelData>();
     private static string JsonPath;
+    private static string DefaultPath;
 
     public static Dictionary<int, Dictionary<int, List<int>>> LevelAmounts = new Dictionary<int, Dictionary<int, List<int>>>();
 
-    private static void InitializePath()
+    private static void InitializePaths()
     {
-        JsonPath = Path.Combine(Application.streamingAssetsPath, "levels/levels.json");
+        JsonPath = Path.Combine(Application.persistentDataPath, "levels", "levels.json");
+        DefaultPath = Path.Combine(Application.streamingAssetsPath, "levels", "levels.json");
+
+        string directory = Path.GetDirectoryName(JsonPath);
+        if (!Directory.Exists(directory))
+        {
+            Directory.CreateDirectory(directory);
+            Debug.Log($"Создана папка для уровней: {directory}");
+        }
     }
 
     public static void SaveLevel(LevelData levelData)
     {
-#if UNITY_EDITOR
-        InitializePath();
+
+        InitializePaths();
         AddObjectToJson(levelData.DebugSaveId, levelData);
-#else
-        // В билде только чтение
-#endif
+
     }
 
     public static LevelData GetLevelData(int id)
@@ -48,18 +55,49 @@ public class LevelData
 
     public static void Init()
     {
-        InitializePath();
+        InitializePaths();
         LoadLevels();
         UpdateLevelAmounts();
     }
 
     private static void LoadLevels()
     {
-        string json = ReadJsonFile();
+        string json = null;
+
+        // Сначала пробуем загрузить из persistentDataPath
+        if (File.Exists(JsonPath))
+        {
+            try
+            {
+                json = File.ReadAllText(JsonPath);
+                Debug.Log($"Уровни загружены из: {JsonPath}");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"Ошибка загрузки из {JsonPath}: {e.Message}");
+            }
+        }
+
+        // Если в persistentDataPath нет, пробуем из StreamingAssets
+        if (string.IsNullOrWhiteSpace(json) && File.Exists(DefaultPath))
+        {
+            try
+            {
+                json = File.ReadAllText(DefaultPath);
+                Debug.Log($"Уровни загружены из StreamingAssets: {DefaultPath}");
+
+                // Копируем в persistentDataPath для дальнейшей работы
+                File.WriteAllText(JsonPath, json);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"Ошибка загрузки из StreamingAssets: {e.Message}");
+            }
+        }
 
         if (string.IsNullOrWhiteSpace(json))
         {
-            Debug.Log($"Файл уровней пуст или не найден по пути: {JsonPath}. Создаём пустой словарь.");
+            Debug.Log($"Файл уровней не найден. Создаём пустой словарь.");
             Levels = new Dictionary<int, LevelData>();
             return;
         }
@@ -105,26 +143,8 @@ public class LevelData
         }
     }
 
-    private static string ReadJsonFile()
-    {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        return ReadFileFromStreamingAssets(JsonPath);
-#else
-        if (File.Exists(JsonPath))
-        {
-            return File.ReadAllText(JsonPath);
-        }
-        else
-        {
-            Debug.LogWarning($"Файл не найден по пути: {JsonPath}");
-            return null;
-        }
-#endif
-    }
-
     private static void AddObjectToJson(int key, LevelData obj)
     {
-#if UNITY_EDITOR
         string directory = Path.GetDirectoryName(JsonPath);
         if (!Directory.Exists(directory))
         {
@@ -173,7 +193,7 @@ public class LevelData
             Levels[key] = obj;
         else
             Levels.Add(key, obj);
-#endif
+        Debug.Log("Создал уровень");
     }
 
     private static void UpdateLevelAmounts()
@@ -239,7 +259,6 @@ public class LevelData
         {
             if (level_data == null)
             {
-                //Debug.LogError("LevelData is null in LevelDataSerializable constructor");
                 return;
             }
 

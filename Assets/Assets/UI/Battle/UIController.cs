@@ -7,6 +7,8 @@ public class UIController : MonoBehaviour
     public CharacterTabController character_tab_controller;
     public EnemyTabController enemy_tab_controller;
     public ObstacleTabController obstacle_tab_controller;
+    public RedactorObjectTab redactor_object_tab;
+    public RedactorAddTab redactor_add_tab;
 
     public Transform EnemyRollsUI;
 
@@ -16,6 +18,8 @@ public class UIController : MonoBehaviour
         ObjectTabs.Add(character_tab_controller);
         ObjectTabs.Add(enemy_tab_controller);
         ObjectTabs.Add(obstacle_tab_controller);
+        ObjectTabs.Add(redactor_object_tab);
+        ObjectTabs.Add(redactor_add_tab);
     }
 
     void Update()
@@ -44,6 +48,17 @@ public class UIController : MonoBehaviour
     }
 
     public void UpdateTabObstacle(bool is_visible)
+    {
+        CloseAllTabs(ObjectTabs);
+        obstacle_tab_controller.RequestedUpdate(is_visible);
+    }
+
+    public void UpdateRedactorObjectTab(bool is_visible)
+    {
+        CloseAllTabs(ObjectTabs);
+        obstacle_tab_controller.RequestedUpdate(is_visible);
+    }
+    public void UpdateRedactorAddTab(bool is_visible)
     {
         CloseAllTabs(ObjectTabs);
         obstacle_tab_controller.RequestedUpdate(is_visible);

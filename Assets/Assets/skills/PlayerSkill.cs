@@ -134,6 +134,7 @@ public class Roll
     public RollType rollType;
     public RollRadius rollRadius;
     public List<(int, int)> DamagePositions = new List<(int, int)>();
+    public List<(int, int, int, int)> effects = new List<(int, int, int, int)>();
     public Element element;
 
     public int GetRoll()
@@ -183,6 +184,15 @@ public class Roll
         element = other.element;
         skill = other.skill;
         Description = other.Description;
+        foreach ((int, int, int, int) effect in other.effects)
+        {
+            (int, int, int, int) e;
+            e.Item1 = effect.Item1;
+            e.Item2 = effect.Item2;
+            e.Item3 = effect.Item3;
+            e.Item4 = effect.Item4;
+            effects.Add(e);
+        }
         MakeDamagePositions();
     }
 

@@ -29,6 +29,10 @@ public class CameraController : MonoBehaviour
     public float MinDist;
     int cur_skill;
     public GridCell prev_cell = null;
+    public bool is_redactor_moving;
+
+
+
     void Start()
     {
         battleMain = ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>();
@@ -38,8 +42,8 @@ public class CameraController : MonoBehaviour
     {
         field_ = battleMain.current_field;
 
-        XMovement = Input.GetAxis("Horizontal") * CameraSensativity;
-        ZMovement = Input.GetAxis("Mouse ScrollWheel") * CameraSensativity;
+        XMovement = Input.GetAxis("Horizontal") * CameraSensativity * Time.deltaTime;
+        ZMovement = Input.GetAxis("Mouse ScrollWheel") * CameraSensativity * Time.deltaTime;
 
         CameraReposition();
         GetTarget();
@@ -48,6 +52,7 @@ public class CameraController : MonoBehaviour
 
     void CameraReposition()
     {
+        if (Target == null) Target = field_.transform;
         transform.position = Vector3.Lerp(transform.position, Target.position, CameraSpeed * 0.2f);
         DestinationReposition();
         DestinationRepositionZ();
@@ -73,7 +78,67 @@ public class CameraController : MonoBehaviour
             CameraDestination.position = Vector3.Lerp(CameraDestination.position, CameraBack.position, CameraSpeed * 0.1f);
         }
     }
+    
+    void ProcessRedactorMode()
+    {
+        if (IsPointerOverUIElementWithTag("CANTHIT"))
+        {
+            return;
+        }
 
+        Ray ray = Camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+        var cell = GetCellByRayCast(Physics.RaycastAll(ray));
+        Debug.Log(cell);
+
+        if (cell != null)
+        {
+            if (is_redactor_moving)
+            {
+                if (cell.object_ == null)
+                {
+                    GridCell temp = PrevTarget.GetComponent<GriddableObject>().cell_;
+                    temp.object_ = null;
+                    cell.object_ = PrevTarget.GetComponent<GriddableObject>();
+                    PrevTarget.GetComponent<GriddableObject>().cell_ = cell;
+                    cell.SnapObject();
+                }
+                else
+                {
+                    ResoursesDict.GetClass<SoundMain>().Restrict();
+                }
+                is_redactor_moving = false;
+                return;
+            }
+            field_.CellsNullify();
+            cell.ColorCell(GridCell.ColorType.Blue);
+            
+            if (cell.object_ != null)
+            {
+                Target = cell.object_.transform;
+                var obj = cell.object_.GetComponent<GriddableObject>();
+                if (obj.GType_ == GriddableObject.GriddableObjectType.Character)
+                {
+                    UIController.UpdateTabCharacter(true);
+                }
+                else if (obj.GType_ == GriddableObject.GriddableObjectType.Enemy)
+                {
+                    UIController.UpdateTabEnemy(true, obj.GetComponent<GridEnemy>().enemy_);
+                }
+                else if (obj.GType_ == GriddableObject.GriddableObjectType.Obstacle)
+                {
+                    UIController.UpdateTabObstacle(true);
+                }
+                UIController.redactor_object_tab.RequestedUpdate(true);
+            }
+            else
+            {
+                Target = cell.transform;
+                UIController.CloseAllObjectTabs();
+                Debug.Log(888);
+                UIController.redactor_add_tab.RequestedUpdate(true);
+            }
+        }
+    }
     void GetTarget()
     {
         if (Input.GetMouseButtonDown(0))
@@ -83,7 +148,13 @@ public class CameraController : MonoBehaviour
             eventData.position = Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(eventData, results);
-
+            if (field_ == null) return;
+            if (field_.is_redactor)
+            {
+                ProcessRedactorMode();
+                PrevTarget = Target;
+                return;
+            }
 
             if (GetLastUI(results) != null) 
             {
@@ -136,7 +207,7 @@ public class CameraController : MonoBehaviour
                 {
                     field_.CellsNullify();
                     var obj = Target.GetComponent<GridCharacter>();
-                    ResoursesDict.GetClass<BattleMain>().NextCycle();
+                    ResoursesDict.GetClass<BattleMain>().NextTurn();
                 }
                 
                 //ResoursesDict.GetClass<SkillFloatingWindow>().CloseAllWindows();
@@ -174,6 +245,7 @@ public class CameraController : MonoBehaviour
                         PrevTarget = Target;
                         Target = obj.transform;
                         obj.OnTarget();
+                        Debug.Log(obj.GetCharacter().object_);
                         //Debug.Log("Hitted griddable object");
                         if (Target != PrevTarget)
                         {
@@ -306,6 +378,7 @@ public class CameraController : MonoBehaviour
 
         void ProcessCell(GridCell cell, GridCharacter character)
         {
+            if (cell == null) return;
             if (!cell.IsMainTarget && (cell.GetColor() == GridCell.ColorType.Red || cell.GetColor() == GridCell.ColorType.Yellow))
             {
                 prev_cell.IsMainTarget = false;
@@ -336,15 +409,17 @@ public class CameraController : MonoBehaviour
     
     GridCell GetCellByRayCast(RaycastHit[] raycasts)
     {
+        GridCell cell = null;
         foreach(var obj in raycasts)
         {
-            Debug.Log(obj.transform.gameObject);
+            Debug.LogWarning(obj.transform.name);
+            if (obj.transform.tag == "CANTHIT") return null;
             if (obj.transform.gameObject.tag == "cell")
             {
-                return (obj.transform.gameObject.GetComponent<GridCell>());
+                cell = obj.transform.gameObject.GetComponent<GridCell>();
             }
         }
-        return null;
+        return cell;
     }
     GameObject GetLastUI(List<RaycastResult> Hits)
     {
@@ -373,5 +448,23 @@ public class CameraController : MonoBehaviour
             
             return RecursiveGriddableObjectFind(t.parent);
         }
+    }
+
+    bool IsPointerOverUIElementWithTag(string tag)
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = Input.mousePosition;
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        foreach (RaycastResult result in results)
+        {
+            if (result.gameObject.CompareTag(tag))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

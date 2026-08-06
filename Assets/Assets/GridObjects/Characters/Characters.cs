@@ -54,4 +54,9 @@ public class MainCharacter : CharacterBase
         passive_ids.Add(1);
         passive_ids.Add(2);
     }
+
+    public override void CreateStatsAccourdingToLevel()
+    {
+        base.CreateStatsAccourdingToLevel();
+    }
 }

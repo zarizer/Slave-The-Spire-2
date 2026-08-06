@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using static UnityEngine.GraphicsBuffer;
 
 public class GridCharacter : GriddableObject
 {
@@ -13,6 +15,8 @@ public class GridCharacter : GriddableObject
     public UnityEngine.UI.Image hp_circle;
     public CharacterBase character_;
     public int CharacterId_ = 0;
+    public Transform EffectObject;
+    public GameObject EffectPrefab;
     
     public List<Roll> CurrentSkillRolls = new List<Roll>();
     public List<Roll> DefenceRolls = new List<Roll>();
@@ -27,7 +31,7 @@ public class GridCharacter : GriddableObject
     {
         LookAtCamera();
         MoveToDestination();
-        hp_circle.fillAmount = ((float)character_.cur_hp) / character_.hp;
+        hp_circle.fillAmount = ((float)character_.cur_hp) / character_.start_hp;
     }
 
 
@@ -54,6 +58,8 @@ public class GridCharacter : GriddableObject
     public override void ReplaceObject(int id)
     {
         character_ = GetCharacterByID(id);
+        
+
     }
     public static CharacterBase GetCharacterByID(int id)
     {
@@ -110,10 +116,56 @@ public class GridCharacter : GriddableObject
     }
 
     public override CharacterBase GetCharacter() { return character_; }
+
+    public static void ApplyBattleEffect(Type effect_type, int power, int duration, CharacterBase target, CharacterBase source)
+    {
+        BattleEffect effect = BattleEffect.GetEffectInstance(effect_type);
+        effect.power = power;
+        effect.duration = duration;
+        effect.character = target;
+        effect.source = source;
+        effect.Init();
+        bool flag = false;
+        for (int i = 0; i < target.effects.Count; i++)
+        {
+            if (target.effects[i].name == effect.name)
+            {
+                target.effects[i].duration += duration;
+                target.effects[i].power += power;
+                flag = true;
+            }
+        }
+        if (!flag)
+        {
+            target.effects.Add(effect);
+        }
+        TryUpdateEffectIcons(target.object_.GetComponent<GriddableObject>());
+    }
+
+    public static void TryUpdateEffectIcons(GriddableObject obj)
+    {
+        if (obj.GType_ == GriddableObjectType.Character)
+        {
+            obj.GetComponent<GridCharacter>().UpdateEffectIcons();
+        }
+        if (obj.GType_ == GriddableObjectType.Enemy)
+        {
+            obj.GetComponent<GridEnemy>().UpdateEffectIcons();
+        }
+    }
+    public void UpdateEffectIcons()
+    {
+        StaticFuncs.DestroyChildren(EffectObject);
+        for (int i = 0; i < character_.effects.Count; i++)
+        {
+            var effect = Instantiate(EffectPrefab, EffectObject).GetComponent<EffectObject>();
+            effect.effect = character_.effects[i];
+            effect.transform.localPosition = new Vector3(0, 0.4f + 0.3f*i, 0);
+            effect.UpdateData();
+
+        }
+    }
 }
-
-
-
 
 
 

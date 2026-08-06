@@ -14,6 +14,7 @@ TagManager:
   - ATTACK4
   - CreateWindow
   - target
+  - CANTHIT
   layers:
   - Default
   - TransparentFX

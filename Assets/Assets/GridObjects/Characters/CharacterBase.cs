@@ -14,6 +14,7 @@ public class CharacterBase
     public int speed_dif;
     public float dmg_k = 1;
     public int moves;
+    public int start_hp = 0;
 
     public int energy;
     public string name;
@@ -48,6 +49,7 @@ public class CharacterBase
 
     public List<BattleBuff> buffs = new List<BattleBuff>();
     public List<Passive> passives = new List<Passive>();
+    public List<BattleEffect> effects = new List<BattleEffect>();
     public List<int> passive_ids = new List<int>();
     public List<int> passive_levels = new List<int>();
     public GameObject object_;
@@ -93,6 +95,8 @@ public class CharacterBase
         cur_moves = moves;
         cur_dmg_k = dmg_k;
         cur_energy = energy;
+        CreateStatsAccourdingToLevel();
+        start_hp = cur_hp;
     }
 
     public CharacterBase()
@@ -160,7 +164,10 @@ public class CharacterBase
         CreateSkillDescription();
     }
 
-    virtual public void CreateStatsAccourdingToLevel() { }
+    virtual public void CreateStatsAccourdingToLevel() 
+    {
+        
+    }
 
     public virtual CharacterBase Clone()
     {
@@ -199,12 +206,16 @@ public class CharacterBase
             cur_hp -= dmg;
         }
         OnGetDamage(ResoursesDict.GetClass<BattleMain>().current_field, damage);
+        if (cur_hp <= 0)
+        {
+            Death(damage);
+        }
     } 
 
     int GetRealDamage(Damage damage)
     {
         int dmg = damage.damage;
-        dmg = (int)(dmg * damage.from.cur_dmg_k);
+        dmg = (int)(dmg * (damage.from.cur_dmg_k + ((float)(damage.from.level - level))/10));
         if (damage.element == Element.fire) dmg = (int)(dmg * fire_k);
         if (damage.element == Element.water) dmg = (int)(dmg * water_k);
         if (damage.element == Element.dendro) dmg = (int)(dmg * dendro_k);
@@ -227,16 +238,27 @@ public class CharacterBase
     {
         return object_.GetComponent<GriddableObject>().specialValue;
     }
+    
+    public virtual void Death(Damage damage)
+    {
+        OnDeath(ResoursesDict.GetClass<BattleMain>().current_field, damage);
+        //EffectManager.OneTimeBurst(ResoursesDict.ObjectSet["DeathEffect"], object_.transform);
+        object_.GetComponent<GriddableObject>().Death();
 
+    }
     public virtual void OnSpawn(GridField field_data) { }
 
     public virtual void OnRemove(GridField field_data) { }
 
-    public virtual void OnDie(GridField field_data, Damage dmg) 
+    public virtual void OnDeath(GridField field_data, Damage dmg) 
     {
         foreach (var passive in passives)
         {
             passive.OnDeath(field_data, dmg);
+        }
+        foreach (var effect in effects)
+        {
+            effect.OnDeath(field_data, dmg);
         }
     }
 
@@ -246,6 +268,10 @@ public class CharacterBase
         {
             passive.OnGetDamage(field_data, dmg);
         }
+        foreach (var effect in effects)
+        {
+            effect.OnGetDamage(field_data, dmg);
+        }
     }
 
     public virtual void OnAttack(GridField field_data, CharacterBase target, Damage dmg) 
@@ -253,6 +279,33 @@ public class CharacterBase
         foreach (var passive in passives)
         {
             passive.OnAttack(field_data, target, dmg);
+        }
+        foreach (var effect in effects)
+        {
+            effect.OnAttack(field_data, target, dmg);
+        }
+    }
+    public virtual void OnTurnStart(GridField field_data)
+    {
+        foreach (var passive in passives)
+        {
+            passive.OnTurnStart(field_data);
+        }
+        foreach (var effect in effects)
+        {
+            effect.OnTurnStart(field_data);
+        }
+    }
+
+    public virtual void OnTurnEnd(GridField field_data)
+    {
+        foreach (var passive in passives)
+        {
+            passive.OnTurnEnd(field_data);
+        }
+        foreach (var effect in effects)
+        {
+            effect.OnTurnEnd(field_data);
         }
     }
 

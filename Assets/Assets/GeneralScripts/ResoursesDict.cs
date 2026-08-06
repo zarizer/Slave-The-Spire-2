@@ -42,6 +42,9 @@ public class ResoursesDict : MonoBehaviour
     public GameObject cameraController;
     public GameObject trashManager;
     public GameObject iconManager;
+    public GameObject levelRedactor;
+
+    public GameObject death_effect;
 
     public AudioClip restricted_sound;
     public AudioClip accept_sound;
@@ -93,6 +96,7 @@ public class ResoursesDict : MonoBehaviour
         ObjectSet["skill_floating_window"] = skill_floating_window;
         ObjectSet["TrashManager"] = trashManager;
         ObjectSet["IconManager"] = iconManager;
+        ObjectSet["LevelRedactor"] = levelRedactor;
 
         SoundSet["RestrictSound"] = restricted_sound;
         SoundSet["AcceptSound"] = accept_sound;
@@ -101,6 +105,8 @@ public class ResoursesDict : MonoBehaviour
         ObjectSet["Field"] = battleField;
         ObjectSet["Level1.1"] = level1_1;
         ObjectSet["Level0"] = level0;
+
+        ObjectSet["DeathEffect"] = death_effect;
 
         ModelSet.Add(ModelSimpleStone);
         ModelSet.Add(ModelSpawnPoint);

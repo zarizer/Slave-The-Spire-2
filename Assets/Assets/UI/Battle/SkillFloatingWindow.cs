@@ -54,6 +54,7 @@ public class SkillFloatingWindow : MonoBehaviour, IPointerClickHandler
     public void CloseAllWindows()
     {
         StaticFuncs.DestroyChildren(RollsUI);
+        EffectObject.ClearMenus();
         roll_windows.Clear();
     }
 }

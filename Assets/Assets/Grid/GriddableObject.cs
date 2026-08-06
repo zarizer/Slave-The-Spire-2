@@ -18,6 +18,8 @@ public class GriddableObject : MonoBehaviour
     public int CustomLevel = 1;
     public int specialValue = 0;
 
+    public string DeathEffect = null;
+
     void Start()
     {
 
@@ -28,7 +30,9 @@ public class GriddableObject : MonoBehaviour
 
     }
 
-    public virtual void ReplaceObject(int ID) { }
+    public virtual void ReplaceObject(int ID) 
+    { 
+    }
     public void MoveToCell(GridCell cell)
     {
         GridCharacter obj_character = null;
@@ -85,6 +89,14 @@ public class GriddableObject : MonoBehaviour
     Vector3 GetDestinationByCell(GridCell cell)
     {
         return new Vector3(cell.transform.position.x, cell.transform.position.y - 0.5f, cell.transform.position.z);
+    }
+
+    public void Death()
+    {
+        if (GType_ == GriddableObjectType.Enemy) { field_.GridEnemies.Remove((GridEnemy)this); }
+        if (GType_ == GriddableObjectType.Character) { field_.GridCharacters.Remove((GridCharacter)this); }
+        if (GType_ == GriddableObjectType.Obstacle) { field_.GridObstacles.Remove((GridObstacle)this); }
+        Destroy(gameObject);
     }
 
     public virtual Roll GetFirstRoll() { return null; }

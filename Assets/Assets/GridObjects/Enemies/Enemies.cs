@@ -27,7 +27,10 @@ public class TestEnemy : EnemyBase
         return this;
     }
 
-    
+    public override void CreateStatsAccourdingToLevel()
+    {
+        base.CreateStatsAccourdingToLevel();
+    }
 
 }
 
@@ -63,4 +66,8 @@ public class EnemyVosh : EnemyBase
         passive_ids.Add(4);
     }
 
+    public override void CreateStatsAccourdingToLevel()
+    {
+        base.CreateStatsAccourdingToLevel();
+    }
 }

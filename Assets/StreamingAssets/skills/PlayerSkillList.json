@@ -51,9 +51,14 @@
           "rollRadius": "Single",
           "radius": 5,
           "element": "None",
-		  "description": "",
+		  "description": "отравляет с силой 5 на 2 хода при попадании",
           "specialEffects": [
-
+			{
+				"id": 0,
+				"power": 5,
+				"duration": 2,
+				"trigger": 0
+			},
           ]
         }
       ]

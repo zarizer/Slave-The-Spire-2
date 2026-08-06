@@ -64,6 +64,7 @@ public class FloatingInfoMenu : MonoBehaviour, IPointerClickHandler
             obj.GetComponent<FloatingInfoMenu>().visible = false;
             Destroy(obj);
         }
+        EffectObject.ClearMenus();
         visible_others.Clear();
     }
 

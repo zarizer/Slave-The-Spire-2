@@ -80,7 +80,7 @@ public class BattleMain : MonoBehaviour
     }
 
     [ContextMenu("StartBattle")]
-    public void StartBattle()
+    public void StartBattle(bool start_battle = true)
     {
         UpdateCharacters();
         battle_ui.SetActive(true);
@@ -90,14 +90,17 @@ public class BattleMain : MonoBehaviour
         if (current_field != null) Destroy(current_field.gameObject);
         current_field = Instantiate(ResoursesDict.ObjectSet["Field"]).GetComponent<GridField>();
         ResoursesDict.GetClass<CameraController>().Target = current_field.transform;
-        current_field.StartField(this);
-        current_cycle = cycles[0];
-        turn = 0;
-        foreach(var character in current_field.GridCharacters)
+        if (start_battle)
         {
-            character.GetCharacter().OnBattleStart(current_field);
+            current_field.StartField(this);
+            current_cycle = cycles[0];
+            turn = 0;
+            foreach (var character in current_field.GridCharacters)
+            {
+                character.GetCharacter().OnBattleStart(current_field);
+            }
+            NextCycle(0);
         }
-        NextCycle(0);
     }
 
     public void StartLevel(int level_id)
@@ -110,6 +113,19 @@ public class BattleMain : MonoBehaviour
     public void StopCode()
     {
         
+    }
+
+    public void NextTurn()
+    {
+        if (current_field.GridEnemies.Count <= 0 && CurrentLevelId > 20)
+        {
+            NextLevel();
+            return;
+        }
+        else
+        {
+            NextCycle();
+        }
     }
 
     public void NextCycle(int num = 1, bool activate = true)
@@ -127,6 +143,7 @@ public class BattleMain : MonoBehaviour
                 UpdateObstacleSkills();
                 CharacterTabSwitch(true, false);
                 StartCoroutine(EnemyCreateRolls());
+                OnTurnStart();
                 NextCycle();
             }
             else if (current_cycle == BattleCycle.PlayerTurn)
@@ -145,7 +162,7 @@ public class BattleMain : MonoBehaviour
             {
                 StartCoroutine(EnemiesUseRolls());
                 turn++;
-                
+                OnTurnEnd();
                 
                 
             }
@@ -361,6 +378,14 @@ public class BattleMain : MonoBehaviour
     {
         
         Damage damage = new Damage(roll.GetDamage(), roll.element, roll.skill.character);
+        foreach (var effect in roll.effects)
+        {
+            if (effect.Item4 == 0)
+            {
+                GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[effect.Item1], effect.Item2,
+                    effect.Item3, obj.GetCharacter(), roll.skill.character);
+            }
+        }
         obj.GetDamage(damage);
         Debug.Log("Dealed damage!" + damage.damage);
     }
@@ -426,7 +451,7 @@ public class BattleMain : MonoBehaviour
         CurrentLevel = Instantiate(ResoursesDict.ObjectSet[name]);
     }
 
-    void SetBackGroundAccourdingToLevelId(int levelId)
+    public void SetBackGroundAccourdingToLevelId(int levelId)
     {
         LevelId level = new LevelId(levelId);
         if (levelId == 0)
@@ -536,6 +561,23 @@ public class BattleMain : MonoBehaviour
         }
     }
     
+
+    void OnTurnStart()
+    {
+        foreach(var obj in current_field.GridObjects)
+        {
+            obj.GetCharacter().OnTurnStart(current_field);
+        }
+    }
+
+    void OnTurnEnd()
+    {
+        foreach (var obj in current_field.GridObjects)
+        {
+            obj.GetCharacter().OnTurnEnd(current_field);
+        }
+    }
+
 }
 
 
