@@ -1,0 +1,1127 @@
+{
+  "0": {
+    "Id": 0,
+    "x_": 5,
+    "y_": 5,
+    "minLevel": 1,
+    "maxLevel": 1,
+    "Objects": [
+      {
+        "posX": 2,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 0,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 0,
+        "posY": 3,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 0,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 0,
+        "posY": 1,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 0,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 3,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 3,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 1,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 3,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 2,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 2,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 2,
+        "level": 1,
+        "isCustomLevel": true,
+        "specialValue": 0
+      }
+    ]
+  },
+  "520101011": {
+    "Id": 520101011,
+    "x_": 10,
+    "y_": 10,
+    "minLevel": 5,
+    "maxLevel": 0,
+    "Objects": [
+      {
+        "posX": 4,
+        "posY": 6,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 666
+      },
+      {
+        "posX": 4,
+        "posY": 4,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 5,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 2,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 1
+      },
+      {
+        "posX": 6,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 5,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 3,
+        "posY": 1,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 6,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 5,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 9,
+        "posY": 1,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 6,
+        "posY": 9,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 5,
+        "posY": 9,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      }
+    ]
+  },
+  "520101012": {
+    "Id": 520101012,
+    "x_": 10,
+    "y_": 10,
+    "minLevel": 20,
+    "maxLevel": 25,
+    "Objects": [
+      {
+        "posX": 8,
+        "posY": 3,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 24,
+        "isCustomLevel": true,
+        "specialValue": 3
+      },
+      {
+        "posX": 5,
+        "posY": 4,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 2,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 1
+      },
+      {
+        "posX": 4,
+        "posY": 3,
+        "objType": "Obstacle",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 5,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 6,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 7,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 9,
+        "posY": 1,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 5,
+        "posY": 9,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 0,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      }
+    ]
+  },
+  "520101013": {
+    "Id": 520101013,
+    "x_": 10,
+    "y_": 10,
+    "minLevel": 40,
+    "maxLevel": 45,
+    "Objects": [
+      {
+        "posX": 4,
+        "posY": 6,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 666
+      },
+      {
+        "posX": 4,
+        "posY": 5,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 666
+      },
+      {
+        "posX": 4,
+        "posY": 4,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 4,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 5,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 2,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 1
+      },
+      {
+        "posX": 6,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 5,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 3,
+        "posY": 1,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 6,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 5,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 9,
+        "posY": 1,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 6,
+        "posY": 9,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 5,
+        "posY": 9,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      }
+    ]
+  },
+  "520101014": {
+    "Id": 520101014,
+    "x_": 10,
+    "y_": 10,
+    "minLevel": 60,
+    "maxLevel": 65,
+    "Objects": [
+      {
+        "posX": 4,
+        "posY": 6,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 666
+      },
+      {
+        "posX": 4,
+        "posY": 5,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 666
+      },
+      {
+        "posX": 4,
+        "posY": 4,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 4,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 7,
+        "posY": 4,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 8,
+        "posY": 4,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 5,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 2,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 1
+      },
+      {
+        "posX": 6,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 5,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 3,
+        "posY": 1,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 6,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 5,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 9,
+        "posY": 1,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 6,
+        "posY": 9,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 5,
+        "posY": 9,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      }
+    ]
+  },
+  "520101015": {
+    "Id": 520101015,
+    "x_": 10,
+    "y_": 10,
+    "minLevel": 80,
+    "maxLevel": 85,
+    "Objects": [
+      {
+        "posX": 4,
+        "posY": 6,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 666
+      },
+      {
+        "posX": 4,
+        "posY": 5,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 666
+      },
+      {
+        "posX": 4,
+        "posY": 4,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 2,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 2,
+        "posY": 1,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 4,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 7,
+        "posY": 4,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 8,
+        "posY": 4,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 5,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 2,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 1
+      },
+      {
+        "posX": 6,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 5,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 3,
+        "posY": 1,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 6,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 5,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 9,
+        "posY": 1,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 6,
+        "posY": 9,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 5,
+        "posY": 9,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 3,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      }
+    ]
+  },
+  "2": {
+    "Id": 2,
+    "x_": 5,
+    "y_": 5,
+    "minLevel": 0,
+    "maxLevel": 0,
+    "Objects": [
+      {
+        "posX": 2,
+        "posY": 2,
+        "objType": "Character",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 2,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 2,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 3,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 3,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 1,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 3,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 2,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 0,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 0,
+        "posY": 1,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 0,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 1
+      },
+      {
+        "posX": 0,
+        "posY": 3,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 0,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 1,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      }
+    ]
+  },
+  "1": {
+    "Id": 1,
+    "x_": 5,
+    "y_": 5,
+    "minLevel": 0,
+    "maxLevel": 0,
+    "Objects": [
+      {
+        "posX": 0,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 0,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 4,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 2,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 4,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 2,
+        "posY": 0,
+        "objType": "Obstacle",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 2,
+        "posY": 4,
+        "objType": "Obstacle",
+        "id": 2,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 1
+      },
+      {
+        "posX": 4,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      },
+      {
+        "posX": 0,
+        "posY": 2,
+        "objType": "Obstacle",
+        "id": 0,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      }
+    ]
+  },
+  "7": {
+    "Id": 7,
+    "x_": 5,
+    "y_": 5,
+    "minLevel": 1,
+    "maxLevel": 1,
+    "Objects": [
+      {
+        "posX": 2,
+        "posY": 2,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      }
+    ]
+  },
+  "520101016": {
+    "Id": 520101016,
+    "x_": 5,
+    "y_": 5,
+    "minLevel": 1,
+    "maxLevel": 1,
+    "Objects": [
+      {
+        "posX": 2,
+        "posY": 2,
+        "objType": "Enemy",
+        "id": 1,
+        "level": 0,
+        "isCustomLevel": false,
+        "specialValue": 0
+      }
+    ]
+  }
+}

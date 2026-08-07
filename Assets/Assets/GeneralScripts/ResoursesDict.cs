@@ -51,6 +51,7 @@ public class ResoursesDict : MonoBehaviour
     public AudioClip easter_egg_sound1;
 
     public GameObject battleField;
+    public GameObject DamageText;
     public GameObject level1_1;
     public GameObject level0;
 
@@ -97,6 +98,7 @@ public class ResoursesDict : MonoBehaviour
         ObjectSet["TrashManager"] = trashManager;
         ObjectSet["IconManager"] = iconManager;
         ObjectSet["LevelRedactor"] = levelRedactor;
+        ObjectSet["DamageText"] = DamageText;
 
         SoundSet["RestrictSound"] = restricted_sound;
         SoundSet["AcceptSound"] = accept_sound;

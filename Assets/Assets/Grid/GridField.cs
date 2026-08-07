@@ -57,6 +57,12 @@ public class GridField : MonoBehaviour
 
     }
 
+    [ContextMenu("Copy Levels File to Desktop")]
+    public void CopyToDesctop()
+    {
+        LevelData.CopyLevelsToDesktopStatic();
+    }
+
     public void StartField(BattleMain battle_data)
     {
         battleMain = battle_data;

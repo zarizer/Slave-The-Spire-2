@@ -14,7 +14,6 @@ public class GridEnemy : GriddableObject
     public EnemyBase enemy_;
     public Transform EffectObject;
     public GameObject EffectPrefab;
-
     public Transform RollsUI;
     public GameObject RollUIPrefab;
     public int EnemyId_ = -1;

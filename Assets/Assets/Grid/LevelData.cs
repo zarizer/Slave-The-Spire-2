@@ -60,11 +60,94 @@ public class LevelData
         UpdateLevelAmounts();
     }
 
+   
+    
+    public void CopyLevelsToDesktop()
+    {
+        CopyLevelsToDesktopStatic();
+    }
+
+
+    public static void CopyLevelsToDesktopStatic()
+    {
+        try
+        {
+            InitializePaths();
+
+            string desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+
+            string timestamp = System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+            string fileName = $"levels_backup_{timestamp}.json";
+            string destinationPath = Path.Combine(desktopPath, fileName);
+
+            if (!File.Exists(JsonPath))
+            {
+                Debug.LogError($"Файл уровней не найден по пути: {JsonPath}");
+
+                if (File.Exists(DefaultPath))
+                {
+                    Debug.Log($"Копирую из StreamingAssets: {DefaultPath}");
+                    File.Copy(DefaultPath, destinationPath, overwrite: true);
+                    Debug.Log($"Файл скопирован из StreamingAssets на рабочий стол: {destinationPath}");
+                }
+                else
+                {
+                    Debug.LogError("Файл уровней не найден ни в AppData, ни в StreamingAssets");
+                }
+                return;
+            }
+
+            File.Copy(JsonPath, destinationPath, overwrite: true);
+            Debug.Log($"Файл уровней успешно скопирован на рабочий стол: {destinationPath}");
+
+            #if UNITY_EDITOR
+                        UnityEditor.EditorUtility.RevealInFinder(destinationPath);
+            #endif
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Ошибка при копировании файла на рабочий стол: {e.Message}");
+        }
+    }
+
+    public static void SaveLevelsToCustomPath(string directoryPath, string fileName = null)
+    {
+        try
+        {
+            InitializePaths();
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = $"levels_backup_{System.DateTime.Now:yyyy-MM-dd_HH-mm-ss}.json";
+            }
+
+            string destinationPath = Path.Combine(directoryPath, fileName);
+
+            if (!File.Exists(JsonPath))
+            {
+                Debug.LogError($"Файл уровней не найден по пути: {JsonPath}");
+                return;
+            }
+
+            string directory = Path.GetDirectoryName(destinationPath);
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            File.Copy(JsonPath, destinationPath, overwrite: true);
+            Debug.Log($"Файл уровней сохранен по пути: {destinationPath}");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Ошибка при сохранении файла: {e.Message}");
+        }
+    }
+
     private static void LoadLevels()
     {
         string json = null;
 
-        // Сначала пробуем загрузить из persistentDataPath
         if (File.Exists(JsonPath))
         {
             try
@@ -78,7 +161,6 @@ public class LevelData
             }
         }
 
-        // Если в persistentDataPath нет, пробуем из StreamingAssets
         if (string.IsNullOrWhiteSpace(json) && File.Exists(DefaultPath))
         {
             try
@@ -86,7 +168,6 @@ public class LevelData
                 json = File.ReadAllText(DefaultPath);
                 Debug.Log($"Уровни загружены из StreamingAssets: {DefaultPath}");
 
-                // Копируем в persistentDataPath для дальнейшей работы
                 File.WriteAllText(JsonPath, json);
             }
             catch (System.Exception e)

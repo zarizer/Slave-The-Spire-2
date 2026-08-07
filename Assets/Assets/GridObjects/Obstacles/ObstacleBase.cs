@@ -11,7 +11,7 @@ public class ObstacleBase : CharacterBase
     public int use_count = 0;
     public int cur_use_count = 0;
     public bool one_time_use = false;
-
+    public bool is_showing_passives = true;
     void Start()
     {
         

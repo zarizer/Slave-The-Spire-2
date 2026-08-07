@@ -249,7 +249,7 @@ public class GridCell : MonoBehaviour
         {
             Color originalColor = obj.GetComponent<Renderer>().material.color;
             LeanTween.color(obj, flashColor, duration)
-            .setEase(LeanTweenType.easeInQuad)
+            .setEase(LeanTweenType.easeInOutSine)
             .setLoopPingPong(1)
             .setOnComplete(() => {
                 obj.GetComponent<Renderer>().material.color = originalColor;

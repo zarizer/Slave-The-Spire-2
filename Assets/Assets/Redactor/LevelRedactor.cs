@@ -117,6 +117,7 @@ public class LevelRedactor : MonoBehaviour
         if (int.TryParse(SizeX, out int size_x))
         {
             if (size_x < 1) size_x = 1;
+            if (size_x > 30) size_x = 30;
             current_field.SizeX_ = size_x;
             LevelXInput.text = size_x.ToString();
         }
@@ -131,6 +132,7 @@ public class LevelRedactor : MonoBehaviour
         if (int.TryParse(SizeY, out int size_y))
         {
             if (size_y < 1) size_y = 1;
+            if (size_y > 30) size_y = 30;
             current_field.SizeY_ = size_y;
             LevelYInput.text = size_y.ToString();
         }

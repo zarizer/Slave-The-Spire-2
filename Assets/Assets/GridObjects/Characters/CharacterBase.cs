@@ -205,6 +205,7 @@ public class CharacterBase
         {
             cur_hp -= dmg;
         }
+        object_.GetComponent<GriddableObject>().CreateDamageText(dmg, (float)dmg / start_hp, false);
         OnGetDamage(ResoursesDict.GetClass<BattleMain>().current_field, damage);
         if (cur_hp <= 0)
         {

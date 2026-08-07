@@ -71,7 +71,9 @@ public class RedactorObjectTab : TabController
 
     public void DeleteObject()
     {
+        GridCell cell = griddableObject.cell_;
         ResoursesDict.GetClass<CameraController>().field_.RemoveObject(griddableObject, true);
+        ResoursesDict.GetClass<CameraController>().Target = cell.transform;
     }
 
     public void MoveObject()

@@ -70,7 +70,11 @@ public class RedactorAddTab : TabController
         var field = camera.field_;
         LevelObject obj = new LevelObject();
         LevelData data = new LevelData();
-        if (camera.Target.GetComponent<GridCell>().object_ != null) return;
+        if (camera.Target.GetComponent<GridCell>().object_ != null) 
+        {
+            ResoursesDict.GetClass<CameraController>().field_.RemoveObject(camera.Target.GetComponent<GridCell>().object_, true);
+        }
+
         if (TypeListNum == 0)
         {
             field.CreateGridObject(GriddableObject.GriddableObjectType.Enemy, int.Parse(button.name),

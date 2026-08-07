@@ -21,9 +21,12 @@ public class CameraController : MonoBehaviour
     BattleMain battleMain;
     public bool IsTargeted;
     public float XMovement;
+    public float YMovement;
     public float ZMovement;
     public float CameraSpeed = 0.1f;
     public float CameraSensativity;
+    public float CameraSensativityY;
+    public float CameraSensativityYLerp;
     public float CameraY;
     public float MaxDist;
     public float MinDist;
@@ -43,6 +46,7 @@ public class CameraController : MonoBehaviour
         field_ = battleMain.current_field;
 
         XMovement = Input.GetAxis("Horizontal") * CameraSensativity * Time.deltaTime;
+        YMovement = Input.GetAxis("Vertical") * CameraSensativityY * Time.deltaTime;
         ZMovement = Input.GetAxis("Mouse ScrollWheel") * CameraSensativity * Time.deltaTime;
 
         CameraReposition();
@@ -55,6 +59,7 @@ public class CameraController : MonoBehaviour
         if (Target == null) Target = field_.transform;
         transform.position = Vector3.Lerp(transform.position, Target.position, CameraSpeed * 0.2f);
         DestinationReposition();
+        DestinationRepositionY();
         DestinationRepositionZ();
         Camera.position = Vector3.Lerp(Camera.position, CameraDestination.position, CameraSpeed);
         Camera.rotation = Quaternion.Lerp(Camera.rotation, CameraDestination.rotation, CameraSpeed);
@@ -69,6 +74,7 @@ public class CameraController : MonoBehaviour
 
     void DestinationRepositionZ()
     {
+        CameraDestination.transform.position = new Vector3(CameraDestination.transform.position.x, CameraY, CameraDestination.transform.position.z);
         if (ZMovement < 0 && Vector3.Distance(CameraDestination.position, Center.position) > MinDist)
         {
             CameraDestination.position = Vector3.Lerp(CameraDestination.position, Center.position, CameraSpeed * 0.1f);
@@ -78,7 +84,14 @@ public class CameraController : MonoBehaviour
             CameraDestination.position = Vector3.Lerp(CameraDestination.position, CameraBack.position, CameraSpeed * 0.1f);
         }
     }
-    
+
+    void DestinationRepositionY()
+    {
+        if (YMovement < 0 && CameraY < 1.33f) YMovement = 0;
+        if (YMovement > 0 && CameraY > 20f) YMovement = 0;
+        CameraY = Mathf.Lerp(CameraY, CameraY + YMovement, CameraSensativityYLerp);
+    }
+
     void ProcessRedactorMode()
     {
         if (IsPointerOverUIElementWithTag("CANTHIT"))
@@ -359,7 +372,6 @@ public class CameraController : MonoBehaviour
             if (character.TRyingToAttack)
             {
                 var ray = Camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-                
                 if (Physics.Raycast(ray, out RaycastHit hit))
                 {
                     if (hit.collider.gameObject.tag == "cell")
@@ -372,6 +384,13 @@ public class CameraController : MonoBehaviour
                         var cell = hit.collider.gameObject.GetComponent<GriddableObject>().cell_;
                         ProcessCell(cell, character);
                     }
+                    else if (hit.collider.tag == "target")
+                    {
+                        var obj = RecursiveGriddableObjectFind(hit.collider.transform);
+                        var cell = obj.cell_;
+                        ProcessCell(cell, character);
+                    }
+                    Debug.Log(hit.collider.gameObject.name);
                 }
             }
         }

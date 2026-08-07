@@ -45,7 +45,7 @@ public class Chapter1RandomObstacle : ObstacleBase
         energy = 0;
         name = "Обычный камень";
         description = "всё ещё обычный камень";
-        ModelId = Random.Range(3, 6);
+        ModelId = Random.Range(3, 7);
         base.Init();
         return this;
     }
@@ -95,6 +95,7 @@ public class LevelChange : ObstacleBase
 {
     public override CharacterBase Init()
     {
+        is_showing_passives = false;
         id = 2;
         hp = 1;
         def = 0;
@@ -144,6 +145,7 @@ public class BuffAltar : ObstacleBase
     BattleBuff var3;
     public override CharacterBase Init()
     {
+        is_showing_passives = false;
         id = 4;
         hp = 1;
         def = 0;
@@ -153,11 +155,12 @@ public class BuffAltar : ObstacleBase
         moves = 0;
         energy = 0;
         name = "Алтарь силы";
-        description = "Придаёт силы отморозкам";
+        
         CreateRandomBaff(out var1);
         CreateRandomBaff(out var2);
         CreateRandomBaff(out var3);
         skills_description = "Баффы: \n\n" + var1.Name + ":\n" + var1.Description + "\n\n" + var2.Name + ":\n" + var2.Description + "\n\n" + var3.Name + ":\n" + var3.Description;
+        description = skills_description;
         InteractVariants = 3;
         ModelId = 7;
         Interactable = true;

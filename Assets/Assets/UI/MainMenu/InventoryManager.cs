@@ -37,7 +37,7 @@ public class InventoryManager : MonoBehaviour
 
     private void Start()
     {
-        
+
     }
 
     void InitialiveItems()
@@ -80,6 +80,87 @@ public class InventoryManager : MonoBehaviour
     {
         LoadInventory();
         AssignValueItems();
+    }
+
+    [ContextMenu("Copy Inventory File to Desktop")]
+    public void CopyInventoryToDesktop()
+    {
+        CopyInventoryToDesktopStatic();
+    }
+    public static void CopyInventoryToDesktopStatic()
+    {
+        try
+        {
+            InitializePaths();
+
+            string desktopPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+
+            string timestamp = System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+            string fileName = $"inventory_backup_{timestamp}.json";
+            string destinationPath = Path.Combine(desktopPath, fileName);
+
+            if (!File.Exists(SavePath))
+            {
+                Debug.LogError($"Файл инвентаря не найден по пути: {SavePath}");
+
+                if (File.Exists(DefaultPath))
+                {
+                    Debug.Log($"Копирую из StreamingAssets: {DefaultPath}");
+                    File.Copy(DefaultPath, destinationPath, overwrite: true);
+                    Debug.Log($"Файл скопирован из StreamingAssets на рабочий стол: {destinationPath}");
+                }
+                else
+                {
+                    Debug.LogError("Файл инвентаря не найден ни в AppData, ни в StreamingAssets");
+                }
+                return;
+            }
+
+            File.Copy(SavePath, destinationPath, overwrite: true);
+            Debug.Log($"Файл инвентаря успешно скопирован на рабочий стол: {destinationPath}");
+
+            #if UNITY_EDITOR
+                        UnityEditor.EditorUtility.RevealInFinder(destinationPath);
+            #endif
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Ошибка при копировании файла на рабочий стол: {e.Message}");
+        }
+    }
+
+    public static void SaveInventoryToCustomPath(string directoryPath, string fileName = null)
+    {
+        try
+        {
+            InitializePaths();
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = $"inventory_backup_{System.DateTime.Now:yyyy-MM-dd_HH-mm-ss}.json";
+            }
+
+            string destinationPath = Path.Combine(directoryPath, fileName);
+
+            if (!File.Exists(SavePath))
+            {
+                Debug.LogError($"Файл инвентаря не найден по пути: {SavePath}");
+                return;
+            }
+
+            string directory = Path.GetDirectoryName(destinationPath);
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            File.Copy(SavePath, destinationPath, overwrite: true);
+            Debug.Log($"Файл инвентаря сохранен по пути: {destinationPath}");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Ошибка при сохранении файла: {e.Message}");
+        }
     }
 
     private static void InitializePaths()
@@ -192,7 +273,6 @@ public class InventoryManager : MonoBehaviour
             var wrapper = new { inventory = itemsList };
             string json = JsonConvert.SerializeObject(wrapper, Formatting.Indented);
             File.WriteAllText(SavePath, json);
-            //Debug.Log($"Инвентарь сохранён в: {SavePath}");
         }
         catch (System.Exception e)
         {

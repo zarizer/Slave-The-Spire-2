@@ -95,6 +95,7 @@ public class BattleMain : MonoBehaviour
             current_field.StartField(this);
             current_cycle = cycles[0];
             turn = 0;
+            
             foreach (var character in current_field.GridCharacters)
             {
                 character.GetCharacter().OnBattleStart(current_field);

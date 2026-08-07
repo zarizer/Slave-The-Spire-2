@@ -18,6 +18,8 @@ public class GriddableObject : MonoBehaviour
     public int CustomLevel = 1;
     public int specialValue = 0;
 
+    public Transform UICanvas;
+
     public string DeathEffect = null;
 
     void Start()
@@ -122,6 +124,11 @@ public class GriddableObject : MonoBehaviour
         }
     }
 
+    public void CreateDamageText(int damage, float proportion, bool is_heal = false)
+    {
+        var dmg_text = Instantiate(ResoursesDict.ObjectSet["DamageText"], UICanvas);
+        dmg_text.GetComponent<DamageValue>().Init(damage, proportion, is_heal);
+    }
     public enum GriddableObjectType
     {
         Enemy,
