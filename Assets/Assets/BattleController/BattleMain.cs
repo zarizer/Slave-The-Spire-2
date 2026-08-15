@@ -176,6 +176,7 @@ public class BattleMain : MonoBehaviour
 
     IEnumerator EnemyCreateRolls()
     {
+        yield return new WaitForEndOfFrame();
         foreach (var enemy in current_field.GridEnemies)
         {
             enemy.enemy_.CreateSkills(turn);
