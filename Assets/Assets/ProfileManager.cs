@@ -192,6 +192,7 @@ public class Profile
     public string profile_picture_path;
     public List<int> CharacterIds;
     public Dictionary<int, int> PullCounters;
+    public float roll_speed = 1.2f;
 
     public Profile()
     {
@@ -203,5 +204,6 @@ public class Profile
         CharacterIds = new List<int>();
         PullCounters = new Dictionary<int, int>();
         profile_picture_path = "";
+        roll_speed = 1.2f;
     }
 }

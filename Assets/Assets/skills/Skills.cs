@@ -1,9 +1,11 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class Skills
 {
@@ -12,19 +14,18 @@ public class Skills
 
     public static void Init()
     {
-
         string playerPath = Path.Combine(Application.streamingAssetsPath, "skills/PlayerSkillList.json");
         string enemyPath = Path.Combine(Application.streamingAssetsPath, "skills/EnemySkillList.json");
 
         string playerJson, enemyJson;
 
-        #if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
             playerJson = ReadFileFromStreamingAssets(playerPath);
             enemyJson = ReadFileFromStreamingAssets(enemyPath);
-        #else
-            playerJson = File.ReadAllText(playerPath);
-            enemyJson = File.ReadAllText(enemyPath);
-        #endif
+#else
+        playerJson = File.ReadAllText(playerPath);
+        enemyJson = File.ReadAllText(enemyPath);
+#endif
 
         JObject JPlayerSkillsList = JObject.Parse(playerJson);
         JObject JEnemySkillsList = JObject.Parse(enemyJson);
@@ -42,7 +43,7 @@ public class Skills
             enemy_skills.Add(CreateSkill(obj, false));
         }
 
-        foreach(var skill in player_skills)
+        foreach (var skill in player_skills)
         {
             DataDicts.PlayerSkillSet[skill.id] = skill;
         }
@@ -76,67 +77,501 @@ public class Skills
             roll.rollRadius = GetRadius(roll_obj["rollRadius"].Value<string>());
             roll.rollType = GetType(roll_obj["rollType"].Value<string>());
             roll.element = GetElement(roll_obj["element"].Value<string>());
-            foreach (JToken effect_obj in roll_obj["specialEffects"] as JArray)
+
+            // Новая система SpecialEffects
+            if (roll_obj["specialEffects"] != null)
             {
-                (int, int, int, int) e;
-                e.Item1 = effect_obj["id"].Value<int>();
-                e.Item2 = effect_obj["power"].Value<int>();
-                e.Item3 = effect_obj["duration"].Value<int>();
-                e.Item4 = effect_obj["trigger"].Value<int>();
-                roll.effects.Add(e);
+                foreach (JToken effect_obj in roll_obj["specialEffects"] as JArray)
+                {
+                    SkillEffect effect = new SkillEffect();
+
+                    // Базовые параметры эффекта
+                    effect.roll = roll;
+                    effect.id = effect_obj["id"]?.Value<int>() ?? 0;
+                    effect.effectType = GetEffectType(effect_obj["effectType"]?.Value<string>() ?? "ApplyStatus");
+                    effect.targetType = GetTargetType(effect_obj["target"]?.Value<string>() ?? "Self");
+                    effect.triggerType = GetTriggerType(effect_obj["trigger"]?.Value<string>() ?? "OnHit");
+                    effect.value = effect_obj["value"]?.Value<int>() ?? 0;
+                    effect.duration = effect_obj["duration"]?.Value<int>() ?? 0;
+                    effect.chance = effect_obj["chance"]?.Value<float>() ?? 100f;
+                    effect.element = GetElement( effect_obj["element"]?.Value<string>() ?? "None");
+
+
+                    // Дополнительные параметры для разных типов эффектов
+                    if (effect_obj["statusId"] != null)
+                        effect.statusId = effect_obj["statusId"].Value<int>();
+
+                    if (effect_obj["skillId"] != null)
+                        effect.skillId = effect_obj["skillId"].Value<int>();
+
+                    if (effect_obj["modifierType"] != null)
+                        effect.modifierType = effect_obj["modifierType"].Value<string>();
+
+                    if (effect_obj["modifierValue"] != null)
+                        effect.modifierValue = effect_obj["modifierValue"].Value<float>();
+
+                    if (effect_obj["healAmount"] != null)
+                        effect.healAmount = effect_obj["healAmount"].Value<int>();
+
+                    if (effect_obj["shieldAmount"] != null)
+                        effect.shieldAmount = effect_obj["shieldAmount"].Value<int>();
+
+                    if (effect_obj["damageModifier"] != null)
+                        effect.damageModifier = effect_obj["damageModifier"].Value<float>();
+
+                    // Добавляем эффект
+                    roll.effects.Add(effect);
+                }
             }
+
             roll.MakeDamagePositions();
             skill.rolls.Add(roll);
         }
 
-
         return skill;
+    }
+
+    // Новые методы для парсинга
+    static EffectType GetEffectType(string effectType)
+    {
+        return Enum.TryParse(effectType, true, out EffectType result) ? result : EffectType.ApplyStatus;
+    }
+
+    static TargetType GetTargetType(string target)
+    {
+        return Enum.TryParse(target, true, out TargetType result) ? result : TargetType.Self;
+    }
+
+    static TriggerType GetTriggerType(string trigger)
+    {
+        return Enum.TryParse(trigger, true, out TriggerType result) ? result : TriggerType.OnHit;
     }
 
     static RollDist GetDist(string rollDist)
     {
-        RollDist dist = RollDist.Any;
-        if (rollDist == "Any") { dist = RollDist.Any; }
-        else if (rollDist == "StLine") { dist = RollDist.StLine; }
-        else if (rollDist == "DgLine") { dist = RollDist.DgLine; }
-        else if (rollDist == "Radius") { dist = RollDist.Radius; }
-        else if (rollDist == "Other") { dist = RollDist.Other; }
-        return dist;
+        return Enum.TryParse(rollDist, true, out RollDist result) ? result : RollDist.Any;
     }
 
     static RollRadius GetRadius(string rollRadius)
     {
-        RollRadius radius = RollRadius.Field;
-        if (rollRadius == "Field") { radius = RollRadius.Field; }
-        else if (rollRadius == "PlayerRadius") { radius = RollRadius.PlayerRadius; }
-        else if (rollRadius == "TargetRadius") { radius = RollRadius.TargetRadius; }
-        else if (rollRadius == "Single") { radius = RollRadius.Single; }
-        else if (rollRadius == "StLine") { radius = RollRadius.StLine; }
-        else if (rollRadius == "DgLine") { radius = RollRadius.DgLine; }
-        else if (rollRadius == "Other") { radius = RollRadius.Other; }
-        return radius;
+        return Enum.TryParse(rollRadius, true, out RollRadius result) ? result : RollRadius.Field;
     }
 
     static Element GetElement(string rollElement)
     {
-        Element element = Element.None;
-        if (rollElement == "None") { element = Element.None; }
-        else if (rollElement == "Fire") { element = Element.fire; }
-        else if (rollElement == "Water") { element = Element.water; }
-        else if (rollElement == "Dendro") { element = Element.dendro; }
-        else if (rollElement == "Light") { element = Element.light; }
-        else if (rollElement == "Darkness") { element = Element.darkness; }
-        return element;
+        return Enum.TryParse(rollElement, true, out Element result) ? result : Element.None;
     }
 
     static RollType GetType(string rollType)
     {
-        RollType type = RollType.Atk;
-        if (rollType == "Atk") { type = RollType.Atk; }
-        else if (rollType == "Evade") { type = RollType.Evade; }
-        else if (rollType == "Def") { type = RollType.Def; }
-        else if (rollType == "Effect") { type = RollType.Effect; }
-        else if (rollType == "Other") { type = RollType.Other; }
-        return type;
+        return Enum.TryParse(rollType, true, out RollType result) ? result : RollType.Atk;
     }
-};
+}
+
+// ===== НОВЫЕ КЛАССЫ ДЛЯ СИСТЕМЫ ЭФФЕКТОВ =====
+
+/// <summary>
+/// Тип эффекта
+/// </summary>
+public enum EffectType
+{
+    ApplyStatus,        
+    RemoveStatus,       // Снятие статуса
+    Heal,              // Лечение
+    Damage,            // Урон
+    Defence,            // Щит
+    Energy,
+    //ModifyStat,        // Изменение статов
+    ModifyDamage,      // Изменение урона
+    //ModifyCooldown,    // Изменение кулдауна
+    //AddResource,       // Добавление ресурса
+    //RemoveResource,    // Удаление ресурса
+    //Summon,            // Призыв
+    //Teleport,          // Телепортация
+    //Clone,             // Клонирование
+    //ModifySpeed,       // Изменение скорости
+    //Invulnerability,   // Неуязвимость
+    //ReflectDamage,     // Отражение урона
+    //Execute,           // Казнь
+    //Custom             // Пользовательское событие (по ID)
+}
+
+/// <summary>
+/// Тип цели эффекта
+/// </summary>
+public enum TargetType
+{
+    Self,              
+    Target,            
+    AllEnemies,        
+    AllAllies,         
+    RandomEnemy,       
+    RandomAlly,        
+    All,               
+    Custom             // Пользовательский (по ID)
+}
+
+public enum TriggerType
+{
+    OnHit,
+    OnMiss,
+    OnTarget,
+    OnUse,
+    Custom             // Пользовательский (по ID)
+}
+
+/// <summary>
+/// Класс эффекта навыка
+/// </summary>
+[System.Serializable]
+public class SkillEffect
+{
+    public Roll roll;
+    public int id;                      // ID эффекта
+    public EffectType effectType;       // Тип эффекта
+    public TargetType targetType;       // Тип цели
+    public TriggerType triggerType;     // Тип триггера
+    public int value;                   // Основное значение
+    public int duration;                // Длительность (в ходах)
+    public float chance;               // Шанс срабатывания (0-100)
+
+    // Дополнительные параметры для разных типов эффектов
+    public int statusId;               // ID статуса для ApplyStatus/RemoveStatus
+    public int skillId;                // ID навыка для ModifyCooldown или Summon
+    public string modifierType;        // Тип модификации для ModifyStat (health, damage, defense, speed)
+    public float modifierValue;        // Значение модификации
+    public int healAmount;             // Количество лечения
+    public int shieldAmount;           // Количество щита
+    public float damageModifier;       // Модификатор урона (для ModifyDamage)
+    public int customId;              // ID для пользовательских эффектов
+    public Element element;
+
+    // Вызов эффекта
+    public void Execute(CharacterBase caster, CharacterBase target, RollContext context)
+    {
+        // Проверка шанса
+        if (UnityEngine.Random.Range(0f, 100f) > chance)
+            return;
+
+        // Проверка триггера
+        if (!CheckTrigger(context))
+            return;
+
+        // Определяем цель
+        List<CharacterBase> targets = GetTargets(caster, target);
+        // Применяем эффект к каждой цели
+        foreach (var t in targets)
+        {
+            ApplyEffect(caster, t, context);
+        }
+    }
+
+    private bool CheckTrigger(RollContext context)
+    {
+        // Если контекст null, пропускаем
+        if (context == null) return false;
+
+        switch (triggerType)
+        {
+            case TriggerType.OnHit:
+                return context.IsHit;
+
+            case TriggerType.OnMiss:
+                return context.IsMiss;
+
+            case TriggerType.OnTarget:
+                return true;
+
+            case TriggerType.OnUse:
+                return true; // OnUse всегда срабатывает при использовании
+
+            case TriggerType.Custom:
+                // Для пользовательских триггеров проверяем по ID
+                return CheckCustomTrigger(context);
+
+            default:
+                return false;
+        }
+    }
+
+    // Дополнительный метод для пользовательских триггеров
+    private bool CheckCustomTrigger(RollContext context)
+    {
+        // Если есть кастомные данные в контексте
+        if (context.CustomData != null && context.CustomData.ContainsKey("customTriggerId"))
+        {
+            int customId = (int)context.CustomData["customTriggerId"];
+            return customId == this.customId; // Сравниваем с ID эффекта
+        }
+        return false;
+    }
+
+    private List<CharacterBase> GetTargets(CharacterBase caster, CharacterBase target)
+    {
+        List<CharacterBase> targets = new List<CharacterBase>();
+
+        switch (targetType)
+        {
+            case TargetType.Self:
+                targets.Add(caster);
+                break;
+            case TargetType.Target:
+                if (target != null) targets.Add(target);
+                break;
+            case TargetType.AllEnemies:
+                if (caster.object_.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Character)
+                {
+                    foreach (var t in ResoursesDict.GetClass<CameraController>().field_.GridEnemies)
+                    {
+                        targets.Add(t.GetCharacter());
+                    }
+                }
+                if (caster.object_.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Enemy)
+                {
+                    foreach (var t in ResoursesDict.GetClass<CameraController>().field_.GridCharacters)
+                    {
+                        targets.Add(t.GetCharacter());
+                    }
+                }
+                break;
+            case TargetType.AllAllies:
+                if (caster.object_.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Character)
+                {
+                    foreach (var t in ResoursesDict.GetClass<CameraController>().field_.GridCharacters)
+                    {
+                        targets.Add(t.GetCharacter());
+                    }
+                }
+                if (caster.object_.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Enemy)
+                {
+                    foreach (var t in ResoursesDict.GetClass<CameraController>().field_.GridEnemies)
+                    {
+                        targets.Add(t.GetCharacter());
+                    }
+                }
+                break;
+            case TargetType.RandomEnemy:
+                if (caster.object_.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Character)
+                {
+                    int rand = StaticFuncs.RandomRangeInclusive(0, ResoursesDict.GetClass<CameraController>().field_.GridEnemies.Count - 1);
+                    targets.Add((ResoursesDict.GetClass<CameraController>().field_.GridEnemies[rand]).GetCharacter());
+                }
+                if (caster.object_.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Enemy)
+                {
+                    int rand = StaticFuncs.RandomRangeInclusive(0, ResoursesDict.GetClass<CameraController>().field_.GridCharacters.Count - 1);
+                    targets.Add((ResoursesDict.GetClass<CameraController>().field_.GridCharacters[rand]).GetCharacter());
+                }
+                break;
+            case TargetType.RandomAlly:
+                if (caster.object_.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Character)
+                {
+                    int rand = StaticFuncs.RandomRangeInclusive(0, ResoursesDict.GetClass<CameraController>().field_.GridCharacters.Count - 1);
+                    targets.Add((ResoursesDict.GetClass<CameraController>().field_.GridCharacters[rand]).GetCharacter());
+                }
+                if (caster.object_.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Enemy)
+                {
+                    int rand = StaticFuncs.RandomRangeInclusive(0, ResoursesDict.GetClass<CameraController>().field_.GridEnemies.Count - 1);
+                    targets.Add((ResoursesDict.GetClass<CameraController>().field_.GridEnemies[rand]).GetCharacter());
+                }
+                break;
+            case TargetType.All:
+                foreach (var t in ResoursesDict.GetClass<CameraController>().field_.GridEnemies)
+                {
+                    targets.Add(t.GetCharacter());
+                }
+                foreach (var t in ResoursesDict.GetClass<CameraController>().field_.GridCharacters)
+                {
+                    targets.Add(t.GetCharacter());
+                }
+                break;
+            case TargetType.Custom:
+                //CUSTOM
+                break;
+        }
+
+        return targets;
+    }
+
+    private void ApplyEffect(CharacterBase caster, CharacterBase target, RollContext context)
+    {
+        switch (effectType)
+        {
+            case EffectType.ApplyStatus:
+                ApplyStatus(target, caster);
+                break;
+            case EffectType.RemoveStatus:
+                RemoveStatus(target);
+                break;
+            case EffectType.Heal:
+                HealTarget(target);
+                break;
+            case EffectType.Damage:
+                DamageTarget(caster, target);
+                break;
+            case EffectType.Defence:
+                ApplyShield(target);
+                break;
+            case EffectType.Energy:
+                ApplyEnergy(target);
+                break;
+            case EffectType.ModifyDamage:
+                ModifyDamage(target);
+                break;
+                /*case EffectType.ModifyStat:
+                    ModifyStat(target);
+                    break;
+                
+                case EffectType.ModifyCooldown:
+                    ModifyCooldown(target);
+                    break;
+                case EffectType.AddResource:
+                    AddResource(target);
+                    break;
+                case EffectType.RemoveResource:
+                    RemoveResource(target);
+                    break;
+                case EffectType.Summon:
+                    SummonUnit(caster);
+                    break;
+                case EffectType.Teleport:
+                    TeleportUnit(target);
+                    break;
+                case EffectType.Clone:
+                    CloneUnit(caster);
+                    break;
+                case EffectType.ModifySpeed:
+                    ModifySpeed(target);
+                    break;
+                case EffectType.Invulnerability:
+                    ApplyInvulnerability(target);
+                    break;
+                case EffectType.ReflectDamage:
+                    ApplyReflectDamage(target);
+                    break;
+                case EffectType.Execute:
+                    ExecuteTarget(caster, target);
+                    break;
+                case EffectType.Custom:
+                    ExecuteCustomEffect(caster, target, context);
+                    break;*/
+        }
+    }
+
+    // Реализация различных эффектов
+
+    private void ApplyEnergy(CharacterBase target)
+    {
+        // Применяем статус по ID
+        target.GetEnergy(value);
+    }
+    private void ApplyStatus(CharacterBase target, CharacterBase caster)
+    {
+        // Применяем статус по ID
+        GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[statusId], value, duration, target, caster);
+    }
+
+    private void RemoveStatus(CharacterBase target)
+    {
+        // Снимаем статус по ID
+        Debug.Log($"Removing status {statusId} from {target.name}");
+    }
+
+    private void HealTarget(CharacterBase target)
+    {
+        target.Heal(healAmount, roll.skill.character);
+    }
+
+    private void DamageTarget(CharacterBase caster, CharacterBase target)
+    {
+        Damage damage = new Damage(value, element, caster);
+        target.GetDamage(damage);
+    }
+
+    private void ApplyShield(CharacterBase target)
+    {
+        target.GetDefence(value, roll.skill.character);
+    }
+
+    private void ModifyStat(CharacterBase target)
+    {
+        Debug.Log($"Modifying stat {modifierType} by {modifierValue} on {target.name}");
+    }
+
+    private void ModifyDamage(CharacterBase target)
+    {
+        target.GetDamageK(value);
+    }
+
+    private void ModifyCooldown(CharacterBase target)
+    {
+        Debug.Log($"Modifying cooldown of skill {skillId} on {target.name}");
+    }
+
+    private void AddResource(CharacterBase target)
+    {
+        Debug.Log($"Adding {value} resource to {target.name}");
+    }
+
+    private void RemoveResource(CharacterBase target)
+    {
+        Debug.Log($"Removing {value} resource from {target.name}");
+    }
+
+    private void SummonUnit(CharacterBase caster)
+    {
+        Debug.Log($"Summoning unit {skillId} near {caster.name}");
+    }
+
+    private void TeleportUnit(CharacterBase target)
+    {
+        Debug.Log($"Teleporting {target.name}");
+    }
+
+    private void CloneUnit(CharacterBase caster)
+    {
+        Debug.Log($"Cloning {caster.name}");
+    }
+
+    private void ModifySpeed(CharacterBase target)
+    {
+        Debug.Log($"Modifying speed by {modifierValue} on {target.name}");
+    }
+
+    private void ApplyInvulnerability(CharacterBase target)
+    {
+        Debug.Log($"Applying invulnerability to {target.name} for {duration} turns");
+    }
+
+    private void ApplyReflectDamage(CharacterBase target)
+    {
+        Debug.Log($"Applying damage reflection to {target.name} for {duration} turns");
+    }
+
+    private void ExecuteTarget(CharacterBase caster, CharacterBase target)
+    {
+        // Казнь - мгновенное убийство цели с низким HP
+        Debug.Log($"Executing {target.name}");
+    }
+
+    private void ExecuteCustomEffect(CharacterBase caster, CharacterBase target, RollContext context)
+    {
+        // Вызов пользовательского эффекта по ID
+        Debug.Log($"Executing custom effect {customId} on {target.name}");
+        // Здесь можно вызвать делегат или событие
+    }
+}
+
+/// <summary>
+/// Контекст для роллов
+/// </summary>
+public class RollContext
+{
+    public bool IsHit { get; set; }
+    public bool IsCrit { get; set; }
+    public bool IsMiss { get; set; }
+    public int RollValue { get; set; }
+    public CharacterBase Attacker { get; set; }
+    public CharacterBase Defender { get; set; }
+    public SkillEffect TriggerEffect { get; set; }
+    public Dictionary<string, object> CustomData { get; set; } = new Dictionary<string, object>();
+}

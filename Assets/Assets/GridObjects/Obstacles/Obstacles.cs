@@ -96,6 +96,7 @@ public class LevelChange : ObstacleBase
     public override CharacterBase Init()
     {
         is_showing_passives = false;
+        Destroyable = false;
         id = 2;
         hp = 1;
         def = 0;
@@ -125,7 +126,7 @@ public class LevelChange : ObstacleBase
             ResoursesDict.GetClass<BattleMain>().level_num = 1;
         }
         ResoursesDict.GetClass<BattleMain>().NextLevel();
-        Debug.Log("inter1");
+        //Debug.Log("inter1");
     }
 
     public override void OnLevelStart(GridField field_data)
@@ -204,4 +205,50 @@ public class BuffAltar : ObstacleBase
             particles.Stop();
         }
     } 
+};
+
+public class Totem : ObstacleBase
+{
+    public override CharacterBase Init()
+    {
+        is_showing_passives = true;
+        Destroyable = true;
+        id = 5;
+        hp = 30;
+        def = 0;
+        speed = 0;
+        speed_dif = 0;
+        dmg_k = 0f;
+        moves = 0;
+        energy = 0;
+        name = "Оккультный тотем";
+        description = "тотем возведённый культистами даёт им сил";
+        InteractVariants = 0;
+        ModelId = 8;
+        Interactable = true;
+        use_count = 0;
+        base.Init();
+        return this;
+    }
+
+    public override void OnTurnStart(GridField field_data)
+    {
+        base.OnTurnStart(field_data);
+        if (GetSpecialValue() == 0) skills_description = "В начале хода, все вражеские отморозки получают одну силу на один ход";
+        else skills_description = "В начале хода, все союзники отморозки получают одну силу на один ход";
+        if (GetSpecialValue() == 0)
+        {
+            foreach (var c in field_data.GridEnemies)
+            {
+                GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[1001], 1, 1, c.GetCharacter(), this);
+            }
+        }
+        else
+        {
+            foreach (var c in field_data.GridCharacters)
+            {
+                GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[1001], 1, 1, c.GetCharacter(), this);
+            }
+        }
+    }
 };

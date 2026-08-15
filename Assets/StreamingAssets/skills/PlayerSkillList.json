@@ -1,6 +1,5 @@
 {
   "skills": [
-
     {
       "id": 0,
       "name": "TestSkill0",
@@ -18,7 +17,13 @@
           "element": "Fire",
 		  "description": "обычная атака",
           "specialEffects": [
-
+			{
+			"effectType": "Damage",
+			"target": "All",
+			"trigger": "OnHit",
+			"value": 17,
+			"element": "water"
+		  }
           ]
         },
         {
@@ -30,39 +35,178 @@
           "element": "Fire",
 		  "description": "",
           "specialEffects": [
-
+		  
           ]
         }
       ]
     },
-
     {
-      "id": 1,
-      "name": "TestSkill1",
-      "rollDist": "Any",
-      "dist": 3,
-      "energy": -10,
-      "maxUseCount": 1,
-      "rolls": [
-        {
-          "minRoll": 5,
-          "maxRoll": 10,
-          "rollType": "Atk",
-          "rollRadius": "Single",
-          "radius": 5,
-          "element": "None",
+	  "id": 1,
+	  "name": "TestSkill1",
+	  "rollDist": "Any",
+	  "dist": 3,
+	  "energy": -10,
+	  "maxUseCount": 1,
+	  "rolls": [
+		{
+		  "minRoll": 5,
+		  "maxRoll": 10,
+		  "rollType": "Atk",
+		  "rollRadius": "Single",
+		  "radius": 5,
+		  "element": "None",
 		  "description": "отравляет с силой 5 на 2 хода при попадании",
-          "specialEffects": [
+		  "specialEffects": [
 			{
-				"id": 0,
-				"power": 5,
-				"duration": 2,
-				"trigger": 0
+			  "id": 1,
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnHit",
+			  "value": 5,
+			  "duration": 2,
+			  "chance": 100,
+			  "statusId": 0
+			}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "id": 2,
+	  "name": "MainSkill1",
+	  "rollDist": "StLine",
+	  "dist": 3,
+	  "energy": -20,
+	  "maxUseCount": 1,
+	  "rolls": [
+		{
+		  "minRoll": 3,
+		  "maxRoll": 8,
+		  "rollType": "Atk",
+		  "rollRadius": "Single",
+		  "radius": 5,
+		  "element": "None",
+		  "description": "При нанесении урона дополнительно даёт 20 энергии",
+		  "specialEffects": [
+			{
+			  "effectType": "Energy",
+			  "target": "Self",
+			  "trigger": "OnHit",
+			  "value": 20,
+			  "chance": 100,
+			}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "id": 3,
+	  "name": "MainSkill2",
+	  "rollDist": "StLine",
+	  "dist": 2,
+	  "energy": 5,
+	  "maxUseCount": 1,
+	  "rolls": [
+		{
+		  "minRoll": 4,
+		  "maxRoll": 9,
+		  "rollType": "Atk",
+		  "rollRadius": "StLine",
+		  "radius": 3,
+		  "element": "None",
+		  "description": "Все дружественные отморозки получают 0.1 дополнительный коэффицент урона",
+		  "specialEffects": [
+			{
+			  "effectType": "ModifyDamage",
+			  "target": "AllAllies",
+			  "trigger": "OnUse",
+			  "value": 1,
+			  "chance": 100,
+			}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "id": 4,
+	  "name": "MainSkill3",
+	  "rollDist": "Any",
+	  "dist": 2,
+	  "energy": 80,
+	  "maxUseCount": 1,
+	  "rolls": [
+		{
+		  "minRoll": 8,
+		  "maxRoll": 16,
+		  "rollType": "Atk",
+		  "rollRadius": "TargetRadius",
+		  "radius": 2,
+		  "element": "Fire",
+		  "description": "Все отморозки получившие урон от атаки получают горение силы 10 на 2 хода. Этот отморозок получает 20 защиты.",
+		  "specialEffects": [
+			{
+			  "effectType": "Defence",
+			  "target": "Self",
+			  "trigger": "OnUse",
+			  "value": 20,
+			  "chance": 100,
 			},
-          ]
-        }
-      ]
-    }
-
+			{
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnHit",
+			  "value": 10,
+			  "duration": 2,
+			  "chance": 100,
+			  "statusId": 1
+			}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "id": 5,
+	  "name": "MainSkill4",
+	  "rollDist": "Radius",
+	  "dist": 3,
+	  "energy": 0,
+	  "maxUseCount": 1,
+	  "rolls": [
+		{
+		  "minRoll": 0,
+		  "maxRoll": 0,
+		  "rollType": "Atk",
+		  "rollRadius": "TargetRadius",
+		  "radius": 1,
+		  "element": "Fire",
+		  "description": "Выбранные отморозки, восстанавливают 10% здоровья от максимума этого отморозка в конце хода,а также получают 10 энергии и получают 10 защиты",
+		  "specialEffects": [
+			{
+			  "effectType": "Defence",
+			  "target": "Target",
+			  "trigger": "OnTarget",
+			  "value": 10,
+			  "chance": 100,
+			},
+			{
+			  "effectType": "Energy",
+			  "target": "Target",
+			  "trigger": "OnTarget",
+			  "value": 10,
+			  "chance": 100,
+			},
+			{
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnTarget",
+			  "value": 10,
+			  "duration": 1,
+			  "chance": 100,
+			  "statusId": 2
+			}
+		  ]
+		}
+	  ]
+	},
   ]
 }

@@ -10,6 +10,7 @@ public class SettingsManager : MonoBehaviour
     public TextMeshProUGUI placeholder_name;
     public UnityEngine.UI.Slider music_slider;
     public UnityEngine.UI.Slider sound_slider;
+    public UnityEngine.UI.Slider roll_speed_slider;
 
     void Start()
     {
@@ -32,12 +33,20 @@ public class SettingsManager : MonoBehaviour
         placeholder_name.text = profile.name;
         music_slider.value = profile.music_level;
         sound_slider.value = profile.sound_level;
+        roll_speed_slider.value = 6.75f - profile.roll_speed;
     }
 
     public void ApplyMusicLevel(UnityEngine.UI.Slider slider)
     {
         Profile profile = ProfileManager.profile;
         profile.music_level = slider.value;
+        ResoursesDict.GetClass<SoundMain>().Accept();
+    }
+
+    public void ApplyRollSpeed(UnityEngine.UI.Slider slider)
+    {
+        float v = 0.75f + (6 - slider.value);
+        ProfileManager.profile.roll_speed = v;
         ResoursesDict.GetClass<SoundMain>().Accept();
     }
 

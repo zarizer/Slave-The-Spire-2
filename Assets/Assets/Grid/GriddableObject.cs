@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +18,8 @@ public class GriddableObject : MonoBehaviour
     public bool IsCustomLevel = false;
     public int CustomLevel = 1;
     public int specialValue = 0;
+    public Transform RollsUI;
+    public GameObject RollUIPrefab;
 
     public Transform UICanvas;
 
@@ -124,10 +127,10 @@ public class GriddableObject : MonoBehaviour
         }
     }
 
-    public void CreateDamageText(int damage, float proportion, bool is_heal = false)
+    public void CreateDamageText(Damage damage, float proportion, bool is_heal = false, bool is_blocked = false)
     {
         var dmg_text = Instantiate(ResoursesDict.ObjectSet["DamageText"], UICanvas);
-        dmg_text.GetComponent<DamageValue>().Init(damage, proportion, is_heal);
+        dmg_text.GetComponent<DamageValue>().Init(damage, proportion, is_heal, is_blocked);
     }
     public enum GriddableObjectType
     {
@@ -135,5 +138,36 @@ public class GriddableObject : MonoBehaviour
         Character,
         Obstacle,
         Breakable
+    }
+
+    public virtual List<GameObject> UpdateRollsUI(float start_alpha = 1f)
+    {
+        StaticFuncs.DestroyChildren(RollsUI);
+        List<GameObject> rolls_list = new List<GameObject>();
+        foreach (Roll roll in GetCharacter().CurrentRolls)
+        {
+            GameObject menu_roll = Instantiate(RollUIPrefab, RollsUI);
+            menu_roll.GetComponent<CanvasGroup>().alpha = 0f;
+            menu_roll.GetComponent<RollScript>().ShowStats(roll);
+            menu_roll.transform.localScale = (Vector3.one) / 250;
+            menu_roll.transform.Rotate(Vector3.up, 180);
+            rolls_list.Add(menu_roll);
+            //Debug.Log(roll.minRoll + " " + roll.maxRoll);
+        }
+        if (rolls_list.Count > 6)
+        {
+            for (int i = 0; i < rolls_list.Count; i++)
+            {
+                rolls_list[i].transform.localPosition = new Vector3(0.225f * ((float)-Math.Pow(-1f, i + 1)), 0.2f + 0.45f * (i / 2), 0);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < rolls_list.Count; i++)
+            {
+                rolls_list[i].transform.localPosition = new Vector3(0, 0.2f + 0.45f * i, 0);
+            }
+        }
+        return rolls_list;
     }
 }

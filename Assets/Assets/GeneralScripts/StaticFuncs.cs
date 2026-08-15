@@ -8,6 +8,7 @@ class StaticFuncs : MonoBehaviour
     public static void DestroyChildren(Transform obj)
     {
         List<GameObject> children = new List<GameObject>();
+        if (obj == null) return;
         for (int i = 0; i < obj.transform.childCount; i++)
         {
             children.Add(obj.transform.GetChild(i).gameObject);

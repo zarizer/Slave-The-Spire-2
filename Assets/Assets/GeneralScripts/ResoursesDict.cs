@@ -59,6 +59,7 @@ public class ResoursesDict : MonoBehaviour
     public GameObject ModelSpawnPoint;
     public GameObject ModelDoor;
     public GameObject BaffAltar;
+    public GameObject Totem;
 
     public GameObject ModelCh1R1;
     public GameObject ModelCh1R2;
@@ -118,6 +119,7 @@ public class ResoursesDict : MonoBehaviour
         ModelSet.Add(ModelCh1R3);
         ModelSet.Add(ModelCh1R4);
         ModelSet.Add(BaffAltar);
+        ModelSet.Add(Totem);
     }
 
 

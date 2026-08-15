@@ -57,7 +57,7 @@ public class EnemyTabController : TabController
         moves_text.text = character.cur_moves.ToString();
         energy_text.text = character.cur_energy.ToString();
         atk_text.text = character.cur_dmg_k.ToString();
-        description_text.text = character.skills_description;
+        description_text.text = character.description + "\n\n" + character.skills_description;
 
         StaticFuncs.DestroyChildren(MenuUIRolls);
         
@@ -65,7 +65,7 @@ public class EnemyTabController : TabController
         {
             
             GameObject menu_roll = Instantiate(RollPrefab, MenuUIRolls);
-            menu_roll.GetComponent<RollScript>().UpdateRollStats(roll);
+            menu_roll.GetComponent<RollScript>().ShowStats(roll);
         }
 
         None_k_text.text = character.none_k.ToString();

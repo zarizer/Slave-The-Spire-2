@@ -71,3 +71,83 @@ public class EnemyVosh : EnemyBase
         base.CreateStatsAccourdingToLevel();
     }
 }
+
+public class EnemyWitch : EnemyBase
+{
+    public override CharacterBase Init()
+    {
+        id = 2;
+        hp = 50;
+        def = 0;
+        speed = 2;
+        speed_dif = 2;
+        dmg_k = 1f;
+        moves = 4;
+        energy = 0;
+        name = "Ведьма";
+        description = "Наводит порчу на понос, если не купить талисман на удачу";
+        SkillsPerTurn = new List<List<PlayerSkill>> {
+            new List<PlayerSkill>() { DataDicts.EnemySkillSet[9], DataDicts.EnemySkillSet[8] },
+            new List<PlayerSkill>() { DataDicts.EnemySkillSet[9], DataDicts.EnemySkillSet[10] },
+            new List<PlayerSkill>() { DataDicts.EnemySkillSet[9], DataDicts.EnemySkillSet[11] }
+        };
+        none_k = 1.2f;
+        darkness_k = 0.75f;
+        light_k = 1.75f;
+        fire_k = 1.2f;
+        base.Init();
+        return this;
+    }
+
+    public EnemyWitch()
+    {
+        passive_ids = new List<int>();
+        passive_ids.Add(5);
+        passive_ids.Add(6);
+    }
+
+    public override void CreateStatsAccourdingToLevel()
+    {
+        base.CreateStatsAccourdingToLevel();
+    }
+}
+
+public class EnemyCultist : EnemyBase
+{
+    public override CharacterBase Init()
+    {
+        id = 3;
+        hp = 45;
+        def = 0;
+        speed = 2;
+        speed_dif = 2;
+        dmg_k = 1f;
+        moves = 3;
+        energy = 0;
+        name = "культист";
+        description = "член опасного лесного культа, который варит мет из жертв";
+        SkillsPerTurn = new List<List<PlayerSkill>> {
+            //new List<PlayerSkill>() { DataDicts.EnemySkillSet[12], DataDicts.EnemySkillSet[13] },
+            //new List<PlayerSkill>() { DataDicts.EnemySkillSet[12], DataDicts.EnemySkillSet[14] }
+        };
+        none_k = 0.9f;
+        darkness_k = 0.75f;
+        light_k = 1.2f;
+        fire_k = 1f;
+        dendro_k = 0.9f;
+        base.Init();
+        return this;
+    }
+
+    public EnemyCultist()
+    {
+        passive_ids = new List<int>();
+        passive_ids.Add(7);
+        passive_ids.Add(8);
+    }
+
+    public override void CreateStatsAccourdingToLevel()
+    {
+        base.CreateStatsAccourdingToLevel();
+    }
+}

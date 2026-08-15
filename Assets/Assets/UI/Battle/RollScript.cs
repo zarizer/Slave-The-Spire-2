@@ -12,18 +12,40 @@ public class RollScript : MonoBehaviour
 
     public TextMeshProUGUI MinMaxText;
     public RawImage RollImage;
+    public bool is_showing_result = false;
+    public int roll_result;
     void Start()
     {
         rollMenuUI = gameObject;
     }
-    void Update()
+    void FixedUpdate()
     {
-        
+        if (is_showing_result)
+        {
+            ShowRollResult(roll_result);
+        }
+        else
+        {
+            UpdateRollStats(null);
+        }
     }
 
-    public void UpdateRollStats(Roll new_roll)
+    public void ShowStats(Roll roll)
     {
-        roll = new_roll;
+        is_showing_result = false;
+        UpdateRollStats(roll);
+    }
+
+    public void ShowResult(int result)
+    {
+        is_showing_result = true;
+        roll_result = result;
+        ShowRollResult(result);
+    }
+
+    void UpdateRollStats(Roll new_roll, bool is_damage = false)
+    {
+        if (new_roll != null) roll = new_roll;
         if (roll.rollType == RollType.Def)
         {
             MinMaxText.text = roll.maxRoll.ToString();
@@ -33,7 +55,14 @@ public class RollScript : MonoBehaviour
             MinMaxText.text = roll.GetMinRoll().ToString() + "-" + roll.GetMaxRoll().ToString();
         }
         RollImage.color = GetImageColor();
+        MinMaxText.color = Color.black;
         
+    }
+
+    void ShowRollResult(int result)
+    {
+        MinMaxText.text = result.ToString();
+        MinMaxText.color = Color.yellow;
     }
 
     Color GetImageColor()

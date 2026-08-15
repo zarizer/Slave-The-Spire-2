@@ -52,6 +52,7 @@ public class CharacterBase
     public List<BattleEffect> effects = new List<BattleEffect>();
     public List<int> passive_ids = new List<int>();
     public List<int> passive_levels = new List<int>();
+    public List<Roll> CurrentRolls = new List<Roll>();
     public GameObject object_;
 
     public virtual CharacterBase Init() 
@@ -133,9 +134,13 @@ public class CharacterBase
         cur_energy = other.cur_energy;
 
         Skill1 = other.Skill1;
+        Skill1.character = this;
         Skill2 = other.Skill2;
+        Skill2.character = this;
         Skill3 = other.Skill3;
+        Skill3.character = this;
         Skill4 = other.Skill4;
+        Skill4.character = this;
 
         skill_id1 = other.skill_id1;
         skill_id2 = other.skill_id2;
@@ -185,8 +190,10 @@ public class CharacterBase
     }
     public virtual void GetDamage(Damage damage)
     {
+        if (object_ == null) return;
         Debug.Log(object_);
         int dmg = GetRealDamage(damage);
+        damage.damage = dmg;
 
         if (damage.element != Element.True)
         {
@@ -195,17 +202,20 @@ public class CharacterBase
             {
                 cur_hp -= cur_dmg;
                 cur_def = 0;
+                object_.GetComponent<GriddableObject>().CreateDamageText(damage, (float)cur_dmg / start_hp, false);
             }
             else
             {
                 cur_def -= dmg;
+                object_.GetComponent<GriddableObject>().CreateDamageText(damage, (float)dmg / start_hp, false, true);
             }
         }
         else
         {
             cur_hp -= dmg;
+            object_.GetComponent<GriddableObject>().CreateDamageText(damage, (float)dmg / start_hp, false);
         }
-        object_.GetComponent<GriddableObject>().CreateDamageText(dmg, (float)dmg / start_hp, false);
+        
         OnGetDamage(ResoursesDict.GetClass<BattleMain>().current_field, damage);
         if (cur_hp <= 0)
         {
@@ -213,10 +223,23 @@ public class CharacterBase
         }
     } 
 
-    int GetRealDamage(Damage damage)
+    public void GetEnergy(int value)
+    {
+        cur_energy += value;
+    }
+
+    public void GetDamageK(int value)
+    {
+        cur_dmg_k += (float)value/10;
+    }
+
+    public int GetRealDamage(Damage damage)
     {
         int dmg = damage.damage;
-        dmg = (int)(dmg * (damage.from.cur_dmg_k + ((float)(damage.from.level - level))/10));
+        if (damage.from != null)
+        {
+            dmg = (int)(dmg * (damage.from.cur_dmg_k + ((float)(damage.from.level - level)) / 10));
+        }
         if (damage.element == Element.fire) dmg = (int)(dmg * fire_k);
         if (damage.element == Element.water) dmg = (int)(dmg * water_k);
         if (damage.element == Element.dendro) dmg = (int)(dmg * dendro_k);
@@ -224,6 +247,11 @@ public class CharacterBase
         if (damage.element == Element.darkness) dmg = (int)(dmg * darkness_k);
         if (damage.element == Element.None) dmg = (int)(dmg * none_k);
         return dmg;
+    }
+
+    public virtual void GetDefence(int value, CharacterBase source)
+    {
+        cur_def += value;
     }
 
     public virtual void UpdateStatsOnNewTurn()
@@ -292,9 +320,9 @@ public class CharacterBase
         {
             passive.OnTurnStart(field_data);
         }
-        foreach (var effect in effects)
+        for (int i = effects.Count - 1; i >= 0; i--) 
         {
-            effect.OnTurnStart(field_data);
+            effects[i].OnTurnStart(field_data);
         }
     }
 
@@ -322,5 +350,15 @@ public class CharacterBase
 
     public virtual void OnLevelStart(GridField field_data) { }
 
+    public virtual void Heal(int amount, CharacterBase sourse)
+    {
+        cur_hp += amount;
+        if (cur_hp > start_hp) cur_hp = start_hp;
+        if (object_.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Enemy ||
+            object_.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Character)
+        {
+            object_.GetComponent<GriddableObject>().CreateDamageText(new Damage(amount, Element.None, sourse), (float)amount / start_hp, true);
+        }
+    }
 }
 

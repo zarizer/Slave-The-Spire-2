@@ -183,7 +183,7 @@ public class CameraController : MonoBehaviour
                         obj.field_.FindWaysPlayer(obj.cell_.x_, obj.cell_.y_, (obj).character_.cur_moves);
                     }
                 }
-                else  if (UIElem.UIType == "attack1")
+                else if (UIElem.UIType == "attack1")
                 {
                     cur_skill = 1;
                     field_.CellsNullify();
@@ -234,14 +234,14 @@ public class CameraController : MonoBehaviour
                 if (CheckAttack())
                 {
                     var cell = GetCellByRayCast(Physics.RaycastAll(ray));
-                    Debug.Log(cell);
+                    //Debug.Log(cell);
                     if (cell.color_type == GridCell.ColorType.Red)
                     {
                         ret_flag = true;
                         Target.GetComponent<GridCharacter>().MakeCurrentRolls(cur_skill);
-                        ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>().MakeFight(
+                        StartCoroutine( ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>().MakeFight(
                             Target.GetComponent<GridCharacter>(),
-                            ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>().current_field.GetTargetedObjects());
+                            ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>().current_field.GetTargetedObjects()));
                         field_.CellsNullify();
                         field_.GridObjectsActionNullify();
                     }
@@ -258,7 +258,7 @@ public class CameraController : MonoBehaviour
                         PrevTarget = Target;
                         Target = obj.transform;
                         obj.OnTarget();
-                        Debug.Log(obj.GetCharacter().object_);
+                        //Debug.Log(obj.GetCharacter().object_);
                         //Debug.Log("Hitted griddable object");
                         if (Target != PrevTarget)
                         {
@@ -285,7 +285,7 @@ public class CameraController : MonoBehaviour
                             if (obj.GType_ == GriddableObject.GriddableObjectType.Obstacle &&
                                 ((ObstacleBase)(obj.GetComponent<GridObstacle>().GetCharacter())).Interactable)
                             {
-                                Debug.Log(Target);
+                                //Debug.Log(Target);
                                 UIController.UpdateTabObstacle(true);
                             }
                             else
@@ -390,7 +390,6 @@ public class CameraController : MonoBehaviour
                         var cell = obj.cell_;
                         ProcessCell(cell, character);
                     }
-                    Debug.Log(hit.collider.gameObject.name);
                 }
             }
         }
@@ -455,7 +454,7 @@ public class CameraController : MonoBehaviour
 
     GriddableObject RecursiveGriddableObjectFind(Transform t)
     {
-        Debug.Log(t.name);
+        //Debug.Log(t.name);
         GriddableObject g;
         g = t.gameObject.GetComponent<GriddableObject>();
         if (g != null)

@@ -244,7 +244,7 @@ public class GridField : MonoBehaviour
         cur_object.ReplaceObject(ID);
         cur_object.name = cur_object.GetCharacter().name;
         cur_object.GetCharacter().object_ = cur_object.gameObject;
-        Debug.Log(cur_object.gameObject);
+        //Debug.Log(cur_object.gameObject);
         if (cur_object.GType_ == GriddableObject.GriddableObjectType.Enemy)
         {
 
@@ -406,7 +406,8 @@ public class GridField : MonoBehaviour
 
     public void FindAttacksPlayer(int x, int y, PlayerSkill skill)
     {
-        if (skill.energy > cameraController.Target.gameObject.GetComponent<GridCharacter>().character_.energy) return;
+        if (skill.energy > cameraController.Target.gameObject.GetComponent<GridCharacter>().character_.cur_energy) return;
+        //if (skill.cur_use_count < skill.max_use_count) return;
         if (skill.rollDist == RollDist.Any)
         {
             for (int i = 0; i<SizeX_; i++)
@@ -1103,7 +1104,7 @@ public class GridField : MonoBehaviour
 
                 float score = CalculateScore(playersHit, enemiesHit, targetCell, enemy);
 
-                Debug.Log($"Target ({targetCell.x_}, {targetCell.y_}) Dir: {dir} Players: {playersHit}, Enemies: {enemiesHit}, Score: {score}");
+                //Debug.Log($"Target ({targetCell.x_}, {targetCell.y_}) Dir: {dir} Players: {playersHit}, Enemies: {enemiesHit}, Score: {score}");
 
                 if (score > bestScore)
                 {

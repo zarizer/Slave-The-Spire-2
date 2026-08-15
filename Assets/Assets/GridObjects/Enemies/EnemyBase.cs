@@ -9,7 +9,6 @@ public class EnemyBase : CharacterBase
 {
     public List<PlayerSkill> SkillQueue = new List<PlayerSkill>();
     public List<List<PlayerSkill>> SkillsPerTurn; 
-    public List<Roll> CurrentRolls = new List<Roll>();
     public Transform RollsUIMenu;
 
     public int DebugTurn;
@@ -62,7 +61,8 @@ public class EnemyBase : CharacterBase
 
         SkillQueue.Clear();
         CurrentRolls.Clear();
-        Debug.Log(SkillsPerTurn);
+        //Debug.Log(SkillsPerTurn);
+        if (SkillsPerTurn.Count <= 0) return;
         foreach (PlayerSkill skill in SkillsPerTurn[turn % SkillsPerTurn.Count])
         {
             SkillQueue.Add(skill);
@@ -85,7 +85,7 @@ public class EnemyBase : CharacterBase
     public override void CreateStatsAccourdingToLevel()
     {
         base.CreateStatsAccourdingToLevel();
-        Debug.Log("Level:" + level.ToString() + "  k:" + (1 + ((float)level) / 12).ToString());
+        //Debug.Log("Level:" + level.ToString() + "  k:" + (1 + ((float)level) / 12).ToString());
         cur_hp = (int)(cur_hp * (1 + ((float)level) / 12));
         cur_def = (int)(cur_def * (1 + ((float)level) / 12));
         float baff_k = (1 - (float)level / 500);
@@ -93,7 +93,7 @@ public class EnemyBase : CharacterBase
         fire_k = (float)Math.Round(fire_k * baff_k,2);
         water_k = (float)Math.Round(water_k * baff_k, 2);
         dendro_k = (float)Math.Round(dendro_k * baff_k, 2);
-        light_k *= (float)Math.Round(light_k * baff_k, 2);
+        light_k = (float)Math.Round(light_k * baff_k, 2);
         darkness_k = (float)Math.Round(darkness_k * baff_k, 2);
         none_k = (float)Math.Round(none_k * baff_k, 2);
 

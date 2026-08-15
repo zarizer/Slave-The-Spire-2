@@ -25,13 +25,46 @@ public class DamageValue : MonoBehaviour
     private LTDescr _fadeTween;
     private Vector3 _startPosition;
     private float _swingAngleOffset;
-    public void Init(int damage, float proportion, bool is_heal = false)
+    public void Init(Damage damage, float proportion, bool is_heal = false, bool is_blocked = false)
     {
         _startPosition = transform.position;
         _swingAngleOffset = transform.eulerAngles.z;
-        text.text = damage.ToString();
+        text.text = damage.damage.ToString();
         text.fontSize = 0.2f + proportion * 4;
-        if (is_heal) text.color = Color.green;
+        
+
+
+
+        if (damage.element == Element.None)
+        {
+            text.color = new Color(60f / 255f, 60f / 255f, 60f / 255f);
+        }
+        else if (damage.element == Element.fire)
+        {
+            text.color = new Color(255f / 255f, 130f / 255f, 70f / 255f);
+        }
+        else if (damage.element == Element.water)
+        {
+            text.color = new Color(40f / 255f, 40f / 255f, 255f / 255f);
+        }
+        else if (damage.element == Element.dendro)
+        {
+            text.color = new Color(200f / 255f, 255f / 255f, 200f / 255f);
+        }
+        else if (damage.element == Element.light)
+        {
+            text.color = new Color(255f / 255f, 255f / 255f, 200f / 255f);
+        }
+        else if (damage.element == Element.darkness)
+        {
+            text.color = new Color(0f / 255f, 0f / 255f, 40f / 255f);
+        }
+        else
+        {
+            text.color = new Color(20f / 255f, 20f / 255f, 20f / 255f);
+        }
+        if (is_heal) { text.color = Color.green; text.text = "+" + text.text; }
+        if (is_blocked) { text.text = "(" + text.text + ")"; }
         StartFloatingAnimation();
     }
 
@@ -66,7 +99,8 @@ public class DamageValue : MonoBehaviour
                     }
                     else if (hasCanvas)
                     {
-                        canvasGroup.alpha = currentAlpha;
+                        if (canvasGroup != null)  canvasGroup.alpha = currentAlpha;
+                        
                     }
                 });
                 

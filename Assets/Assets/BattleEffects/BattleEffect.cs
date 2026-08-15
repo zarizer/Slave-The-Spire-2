@@ -34,8 +34,10 @@ public class BattleEffect
         duration--;
         if  (duration <= 0)
         {
+            OnEffectEnd(field, this);
             character.effects.Remove(this);
         }
+        if (character.object_ == null) return;
         GridCharacter.TryUpdateEffectIcons(character.object_.GetComponent<GriddableObject>());
     }
 
@@ -55,6 +57,9 @@ public class BattleEffect
 
     virtual public void OnDeath(GridField field, Damage dmg) { }
 
+    virtual public void OnApply(GridField field, BattleEffect effect, int ex_power, int ex_duration, bool is_continue) { }
+
+    virtual public void OnEffectEnd(GridField field, BattleEffect effect) { }
 
     private static Sprite LoadSprite(string fileName)
     {

@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
-using static UnityEngine.GraphicsBuffer;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class GridCharacter : GriddableObject
 {
@@ -17,7 +17,8 @@ public class GridCharacter : GriddableObject
     public int CharacterId_ = 0;
     public Transform EffectObject;
     public GameObject EffectPrefab;
-    
+   
+
     public List<Roll> CurrentSkillRolls = new List<Roll>();
     public List<Roll> DefenceRolls = new List<Roll>();
 
@@ -31,7 +32,7 @@ public class GridCharacter : GriddableObject
     {
         LookAtCamera();
         MoveToDestination();
-        hp_circle.fillAmount = ((float)character_.cur_hp) / character_.start_hp;
+        hp_circle.fillAmount = Mathf.Lerp(hp_circle.fillAmount,((float)character_.cur_hp) / character_.start_hp, 0.05f);
     }
 
 
@@ -88,7 +89,14 @@ public class GridCharacter : GriddableObject
         if (CheckSkillResourses(cur_skill))
         {
             CurrentSkillRolls = cur_skill.GetRolls();
+            CreateCurrentRollsUI(CurrentSkillRolls);
         }
+    }
+
+    public void CreateCurrentRollsUI(List<Roll> rolls)
+    {
+        character_.CurrentRolls.AddRange(rolls);
+        UpdateRollsUI(1f);
     }
 
     bool CheckSkillResourses(PlayerSkill skill)
@@ -117,7 +125,12 @@ public class GridCharacter : GriddableObject
 
     public override CharacterBase GetCharacter() { return character_; }
 
-    public static void ApplyBattleEffect(Type effect_type, int power, int duration, CharacterBase target, CharacterBase source)
+    [ContextMenu("test_effect")]
+    public void TestEffect()
+    {
+        ApplyBattleEffect(DataDicts.EffectTypes[0], 10, 10, character_, character_);
+    }
+    public static void ApplyBattleEffect(Type effect_type, int power, int duration, CharacterBase target, CharacterBase source, bool is_turn_start = false)
     {
         BattleEffect effect = BattleEffect.GetEffectInstance(effect_type);
         effect.power = power;
@@ -137,9 +150,11 @@ public class GridCharacter : GriddableObject
         }
         if (!flag)
         {
+            if (is_turn_start) effect.duration++; //Õ≈Œ¡’Œƒ»ÃŒ »Õ¿◊≈ ›‘‘≈ “ Ã√ÕŒ¬≈ÕÕŒ ”¡≈–®“—ﬂ ¬ Õ¿◊¿À≈ ’Œƒ¿ 
             target.effects.Add(effect);
         }
         TryUpdateEffectIcons(target.object_.GetComponent<GriddableObject>());
+        effect.OnApply(ResoursesDict.GetClass<CameraController>().field_, effect, power, duration, flag);
     }
 
     public static void TryUpdateEffectIcons(GriddableObject obj)
@@ -164,6 +179,38 @@ public class GridCharacter : GriddableObject
             effect.UpdateData();
 
         }
+    }
+
+    public override List<GameObject> UpdateRollsUI(float start_alpha = 1f)
+    {
+        StaticFuncs.DestroyChildren(RollsUI);
+        List<GameObject> rolls_list = new List<GameObject>();
+        foreach (Roll roll in character_.CurrentRolls)
+        {
+            GameObject menu_roll = Instantiate(RollUIPrefab, RollsUI);
+            menu_roll.GetComponent<CanvasGroup>().alpha = 0f;
+            menu_roll.GetComponent<RollScript>().Fade(1f, 0.75f, 0.1f, true);
+            menu_roll.GetComponent<RollScript>().ShowStats(roll);
+            menu_roll.transform.localScale = (Vector3.one) / 250;
+            menu_roll.transform.Rotate(Vector3.up, 180);
+            rolls_list.Add(menu_roll);
+            //Debug.Log(roll.minRoll + " " + roll.maxRoll);
+        }
+        if (rolls_list.Count > 6)
+        {
+            for (int i = 0; i < rolls_list.Count; i++)
+            {
+                rolls_list[i].transform.localPosition = new Vector3(0.225f * ((float)-Math.Pow(-1f, i + 1)), 0.2f + 0.45f * (i / 2), 0);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < rolls_list.Count; i++)
+            {
+                rolls_list[i].transform.localPosition = new Vector3(0, 0.2f + 0.45f * i, 0);
+            }
+        }
+        return rolls_list;
     }
 }
 

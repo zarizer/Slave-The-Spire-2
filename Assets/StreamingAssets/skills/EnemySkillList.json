@@ -177,6 +177,198 @@
         }
       ]
     },
+	{
+      "id": 8,
+      "name": "WitchAttack1",
+      "rollDist": "Stline",
+      "dist": 1,
+      "rolls": [
+        {
+          "minRoll": 4,
+          "maxRoll": 8,
+          "rollType": "Ark",
+          "rollRadius": "Single",
+          "radius": 1,
+          "element": "dendro",
+		  "description": "При использовании, получает 20 энергии",
+          "specialEffects": [
+			{
+				"effectType": "Energy",
+				"target": "Self",
+				"trigger": "OnUse",
+				"value": 20,
+				"chance": 100,
+			}
+          ]
+        }
+      ]
+    },
+	{
+      "id": 9,
+      "name": "WitchAttack2",
+      "rollDist": "Stline",
+      "dist": 1,
+      "rolls": [
+        {
+          "minRoll": 7,
+          "maxRoll": 7,
+          "rollType": "Evade",
+          "rollRadius": "Single",
+          "radius": 1,
+          "element": "dendro",
+		  "description": "",
+          "specialEffects": [
+			
+          ]
+        }
+      ]
+    },
+	{
+      "id": 10,
+      "name": "WitchAttack3",
+      "rollDist": "Stline",
+      "dist": 1,
+      "rolls": [
+        {
+          "minRoll": 4,
+          "maxRoll": 8,
+          "rollType": "Atk",
+          "rollRadius": "Single",
+          "radius": 1,
+          "element": "dendro",
+		  "description": "При использовании накладывает яд силы 8 на 2 хода",
+          "specialEffects": [
+			{
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnTarget",
+			  "value": 8,
+			  "duration": 2,
+			  "chance": 100,
+			  "statusId": 0
+			}
+          ]
+        }
+      ]
+    },
+	{
+      "id": 11,
+      "name": "WitchAttack4",
+      "rollDist": "Any",
+      "dist": 1,
+      "rolls": [
+        {
+          "minRoll": 1,
+          "maxRoll": 1,
+          "rollType": "Atk",
+          "rollRadius": "Field",
+          "radius": 1,
+          "element": "dendro",
+		  "description": "При использовании накладывает 20 яда на 3 хода",
+          "specialEffects": [
+			{
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnTarget",
+			  "value": 20,
+			  "duration": 3,
+			  "chance": 100,
+			  "statusId": 0
+			}
+          ]
+        }
+      ]
+    },
+	{
+      "id": 12,
+      "name": "OccultistAttack1",
+      "rollDist": "radius",
+      "dist": 1,
+      "rolls": [
+        {
+          "minRoll": 1,
+          "maxRoll": 4,
+          "rollType": "Atk",
+          "rollRadius": "Single",
+          "radius": 1,
+          "element": "None",
+		  "description": "обычная атака ритуальным ножом",
+          "specialEffects": [
+          ]
+        }
+      ]
+    },
+	{
+      "id": 13,
+      "name": "OccultistAttack2",
+      "rollDist": "radius",
+      "dist": 4,
+      "rolls": [
+        {
+          "minRoll": 0,
+          "maxRoll": 4,
+          "rollType": "Atk",
+          "rollRadius": "Single",
+          "radius": 1,
+          "element": "Darkness",
+		  "description": "при использовании даёт себе силу мощности 1 на 1 ход, если эта атака наносит урон, получает 20 энергии",
+          "specialEffects": [
+		  {
+			  "effectType": "ApplyStatus",
+			  "target": "Self",
+			  "trigger": "OnUse",
+			  "value": 1,
+			  "duration": 1,
+			  "chance": 100,
+			  "statusId": 1001
+			},
+			{
+			  "effectType": "Energy",
+			  "target": "Self",
+			  "trigger": "OnHit",
+			  "value": 20,
+			  "chance": 100,
+			}
+          ]
+        }
+      ]
+    },
+	{
+      "id": 14,
+      "name": "OccultistAttack3",
+      "rollDist": "radius",
+      "dist": 3,
+      "rolls": [
+        {
+          "minRoll": 0,
+          "maxRoll": 3,
+          "rollType": "Atk",
+          "rollRadius": "Single",
+          "radius": 1,
+          "element": "Darkness",
+		  "description": "при использовании даёт себе остроту мощности 1 на 1 ход, если эта атака наносит урон, дополнительно наносит 5 пиро урона",
+          "specialEffects": [
+		  {
+			  "effectType": "ApplyStatus",
+			  "target": "Self",
+			  "trigger": "OnUse",
+			  "value": 1,
+			  "duration": 1,
+			  "chance": 100,
+			  "statusId": 1003
+			},
+			{
+			  "effectType": "Damage",
+			  "target": "Target",
+			  "trigger": "OnHit",
+			  "value": 5,
+			  "element": "fire",
+			  "chance": 100,
+			}
+          ]
+        }
+      ]
+    },
 
   ]
 }

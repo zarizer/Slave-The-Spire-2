@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.TextCore.Text;
+using UnityEngine.UI;
 using static UnityEngine.EventSystems.EventTrigger;
 
 public class PlayerSkill
@@ -134,21 +135,53 @@ public class Roll
     public RollType rollType;
     public RollRadius rollRadius;
     public List<(int, int)> DamagePositions = new List<(int, int)>();
-    public List<(int, int, int, int)> effects = new List<(int, int, int, int)>();
+    public List<SkillEffect> effects = new List<SkillEffect>();
     public Element element;
 
     public int GetRoll()
     {
         int min_plus = 0;
         int max_plus = 0;
+        int ex_power = 0;
 
-        /*
-        «ƒ≈—‹ —ƒ≈À¿“‹ œ–Œ¬≈– ” Õ¿ ¡¿‘‘€ »√–Œ ¿ 
-        */
+        CheckPowerBuffs(out ex_power, out min_plus, out max_plus);
 
-        int power = Random.Range(GetMinRoll() + min_plus, GetMaxRoll() + max_plus);
+        int power = Random.Range(GetMinRoll() + min_plus, GetMaxRoll() + max_plus) + ex_power;
 
         return power;
+    }
+    int CheckBuff(System.Type type)
+    {
+        int ret_value = 0;
+
+        foreach(var e in skill.character.effects)
+        {
+            if (e.GetType() == type)
+            {
+                ret_value = e.power;
+            }
+        }
+
+        return ret_value;
+    }
+    public void CheckPowerBuffs(out int power, out int min_plus, out int max_plus)
+    {
+        power = 0;
+        min_plus = 0;
+        max_plus = 0;
+
+        power += CheckBuff(typeof(EffectPowerUp));
+        power -= CheckBuff(typeof(EffectPowerDown));
+    }
+
+    public void CheckAtkBuffs(out int power, out int min_plus, out int max_plus)
+    {
+        power = 0;
+        min_plus = 0;
+        max_plus = 0;
+
+        power += CheckBuff(typeof(EffectAtkUp));
+        power -= CheckBuff(typeof(EffectAtkDown));
     }
 
     public int GetMaxRoll()
@@ -165,11 +198,11 @@ public class Roll
     {
         int min_plus = 0;
         int max_plus = 0;
+        int ex_power = 0;
 
-        /*
-        «ƒ≈—‹ —ƒ≈À¿“‹ œ–Œ¬≈– ” Õ¿ ¡¿‘‘€ »√–Œ ¿ 
-        */
-        int power = Random.Range(GetMinRoll() + min_plus, GetMaxRoll() + max_plus);
+        CheckAtkBuffs(out ex_power, out min_plus, out max_plus);
+
+        int power = Random.Range(GetMinRoll() + min_plus, GetMaxRoll() + max_plus) + ex_power;
 
         return power;
     }
@@ -184,14 +217,9 @@ public class Roll
         element = other.element;
         skill = other.skill;
         Description = other.Description;
-        foreach ((int, int, int, int) effect in other.effects)
+        foreach (var effect in other.effects)
         {
-            (int, int, int, int) e;
-            e.Item1 = effect.Item1;
-            e.Item2 = effect.Item2;
-            e.Item3 = effect.Item3;
-            e.Item4 = effect.Item4;
-            effects.Add(e);
+            effects.Add(effect);
         }
         MakeDamagePositions();
     }
@@ -260,6 +288,39 @@ public class Roll
                         DamagePositions.Add((i, j));
                     }
                 }
+            }
+        }
+    }
+
+    public void ProcessEffects(CharacterBase caster, CharacterBase target, RollContext context)
+    {
+        foreach (var effect in effects)
+        {
+            if (effect.triggerType == TriggerType.OnUse)
+                continue;
+
+            bool shouldExecute = false;
+
+            switch (effect.triggerType)
+            {
+                case TriggerType.OnHit:
+                    shouldExecute = context.IsHit;
+                    break;
+
+                case TriggerType.OnMiss:
+                    shouldExecute = context.IsMiss;
+                    break;
+
+                case TriggerType.OnTarget:
+                    shouldExecute = true;
+                    break;
+
+                    // ƒÓ·‡‚¸ÚÂ ‰Û„ËÂ ÚË„„Â˚ ÔÓ ÌÂÓ·ıÓ‰ËÏÓÒÚË
+            }
+
+            if (shouldExecute)
+            {
+                effect.Execute(caster, target, context);
             }
         }
     }

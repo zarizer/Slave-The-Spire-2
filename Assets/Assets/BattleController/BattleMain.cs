@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
+using static UnityEngine.GraphicsBuffer;
 
 public class BattleMain : MonoBehaviour
 {
@@ -100,7 +103,7 @@ public class BattleMain : MonoBehaviour
             {
                 character.GetCharacter().OnBattleStart(current_field);
             }
-            NextCycle(0);
+            StartCoroutine(NextCycle(0));
         }
     }
 
@@ -125,11 +128,11 @@ public class BattleMain : MonoBehaviour
         }
         else
         {
-            NextCycle();
+            StartCoroutine(NextCycle());
         }
     }
 
-    public void NextCycle(int num = 1, bool activate = true)
+    public IEnumerator NextCycle(int num = 1, bool activate = true)
     {
         var next_cycle = cycles[(cycles.IndexOf(current_cycle) + num) % cycles.Count];
         Debug.Log("NextCycle: " + next_cycle);
@@ -145,7 +148,7 @@ public class BattleMain : MonoBehaviour
                 CharacterTabSwitch(true, false);
                 StartCoroutine(EnemyCreateRolls());
                 OnTurnStart();
-                NextCycle();
+                StartCoroutine(NextCycle());
             }
             else if (current_cycle == BattleCycle.PlayerTurn)
             {
@@ -161,11 +164,12 @@ public class BattleMain : MonoBehaviour
             }
             else if (current_cycle == BattleCycle.EnemyTurn2)
             {
-                StartCoroutine(EnemiesUseRolls());
+                yield return StartCoroutine(EnemiesUseRolls());
+                
                 turn++;
                 OnTurnEnd();
-                
-                
+
+
             }
         }
     }
@@ -176,7 +180,7 @@ public class BattleMain : MonoBehaviour
         {
             enemy.enemy_.CreateSkills(turn);
             while (enemy.enemy_.CreateNextRolls()) { }
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.2f * ProfileManager.profile.roll_speed);
             enemy.UpdateRollsUI(1f);
             for (int i = 0; i < enemy.enemy_.CurrentRolls.Count; i++)
             {
@@ -226,134 +230,466 @@ public class BattleMain : MonoBehaviour
         return counter;
     }
 
-    public void MakeFight(GridCharacter character, List<GriddableObject> Targets)
+    private IEnumerator MakeFightInternal(GriddableObject attacker, Roll roll, List<GriddableObject> Targets, bool isEnemyAttacker)
     {
-        //Debug.Log("ATTACK!");
-        for (int i = 0; i<character.CurrentSkillRolls.Count; i += 0)
+        ProcessOnUseEffects(roll.skill, attacker.GetCharacter(), null);
+
+        int attackerRollValue = roll.GetRoll();
+
+        int maxTargetLevel = 0;
+        foreach (var target in Targets)
         {
-            var char_roll = character.CurrentSkillRolls[0];
-            for (int j = 0; j < Targets.Count; j++) {
-                var target_roll = Targets[i].GetFirstRoll();
-                if (target_roll == null) { DealDamageByRoll(char_roll, Targets[i]); }
+            if (target == attacker) continue;
+            int targetLevel = target.GetCharacter().level;
+            if (targetLevel > maxTargetLevel)
+                maxTargetLevel = targetLevel;
+        }
+
+        bool hasAnyTargetRoll = false;
+        foreach (var target in Targets)
+        {
+            if (target == attacker) continue;
+            var target_roll = target.GetFirstRoll();
+            if (target_roll != null)
+            {
+                hasAnyTargetRoll = true;
+                break;
+            }
+        }
+
+        List<FightResult> results = new List<FightResult>();
+
+        for (int j = 0; j < Targets.Count; j++)
+        {
+            var target = Targets[j];
+
+            FightResult result = new FightResult();
+            result.target = target;
+            result.context = new RollContext();
+            result.context.Attacker = attacker.GetCharacter();
+            result.context.Defender = target.GetCharacter();
+            result.context.RollValue = attackerRollValue;
+            result.isSelfAttack = (target == attacker);
+            result.attackerRollValue = attackerRollValue;
+            result.hasTargetRoll = false;
+
+            var target_roll = target.GetFirstRoll();
+            result.targetRoll = target_roll;
+            result.attackerRoll = roll;
+
+            if (target_roll != null)
+                result.hasTargetRoll = true;
+
+            if (target == attacker)
+            {
+                if (target_roll != null && target_roll.rollType == RollType.Def)
+                {
+                    int char_power = roll.GetDamage();
+                    int target_defense = target_roll.maxRoll;
+
+                    result.charPower = char_power;
+                    result.targetPower = target_defense;
+                    result.targetRollValue = target_defense;
+
+                    Damage dmg_obj = new Damage(char_power, roll.element, attacker.GetCharacter());
+                    char_power = target.GetCharacter().GetRealDamage(dmg_obj);
+                    dmg_obj.damage = char_power;
+                    result.damage = dmg_obj;
+
+                    target_roll.maxRoll -= char_power;
+
+                    if (target_roll.maxRoll <= 0)
+                    {
+                        result.isHit = true;
+                        result.isMiss = false;
+                        result.shouldRemoveTargetRoll = true;
+
+                        int remaining_damage = char_power - target_defense;
+                        roll.maxRoll = remaining_damage;
+                        roll.minRoll = remaining_damage;
+                    }
+                    else
+                    {
+                        result.isHit = false;
+                        result.isMiss = true;
+                        result.shouldRemoveTargetRoll = false;
+                    }
+                }
                 else
                 {
-                    if (target_roll.rollType == RollType.Def)
+                    int res = roll.GetDamage();
+                    result.damage = new Damage(res, roll.element, attacker.GetCharacter());
+                    result.charPower = res;
+                    result.targetPower = 0;
+                    result.isHit = true;
+                    result.isMiss = false;
+                    result.shouldRemoveTargetRoll = false;
+                }
+
+                result.context.IsHit = result.isHit;
+                result.context.IsMiss = result.isMiss;
+
+                results.Add(result);
+                continue;
+            }
+
+            if (target_roll == null)
+            {
+                int res = roll.GetDamage();
+                result.damage = new Damage(res, roll.element, attacker.GetCharacter());
+                result.charPower = res;
+                result.targetPower = 0;
+                result.isHit = true;
+                result.isMiss = false;
+                result.shouldRemoveTargetRoll = false;
+            }
+            else if (target_roll.rollType == RollType.Def)
+            {
+                int char_power = roll.GetDamage();
+                int target_defense = target_roll.maxRoll;
+
+                result.charPower = char_power;
+                result.targetPower = target_defense;
+                result.targetRollValue = target_defense;
+
+                Damage dmg_obj = new Damage(char_power, roll.element, attacker.GetCharacter());
+                char_power = target.GetCharacter().GetRealDamage(dmg_obj);
+                dmg_obj.damage = char_power;
+                result.damage = dmg_obj;
+
+                target_roll.maxRoll -= char_power;
+
+                if (target_roll.maxRoll <= 0)
+                {
+                    result.isHit = true;
+                    result.isMiss = false;
+                    result.shouldRemoveTargetRoll = true;
+
+                    int remaining_damage = char_power - target_defense;
+                    roll.maxRoll = remaining_damage;
+                    roll.minRoll = remaining_damage;
+                }
+                else
+                {
+                    result.isHit = false;
+                    result.isMiss = true;
+                    result.shouldRemoveTargetRoll = false;
+                }
+            }
+            else
+            {
+                int target_power = target_roll.GetRoll();
+
+                int levelBonus = (attacker.GetCharacter().level - maxTargetLevel) / 4;
+                int finalAttackerPower = attackerRollValue + levelBonus;
+
+                result.charPower = finalAttackerPower;
+                result.targetPower = target_power;
+
+                if (finalAttackerPower >= target_power)
+                {
+                    result.isHit = true;
+                    result.isMiss = false;
+                    result.shouldRemoveTargetRoll = true;
+                }
+                else
+                {
+                    result.isHit = false;
+                    result.isMiss = true;
+                    result.shouldRemoveTargetRoll = false;
+                }
+            }
+
+            result.context.IsHit = result.isHit;
+            result.context.IsMiss = result.isMiss;
+
+            results.Add(result);
+        }
+
+        if (hasAnyTargetRoll)
+        {
+            for (int i = 0; i < results.Count; i++)
+            {
+                var result = results[i];
+                var target = result.target;
+
+                if (!result.hasTargetRoll) continue;
+
+                if (result.isSelfAttack)
+                {
+                    if (result.targetRoll != null && result.targetRoll.rollType == RollType.Def)
                     {
-                        int char_power;
-                        int target_power;
-                        GetRolls(out char_power, out target_power, char_roll, target_roll);
-                        int init_roll = target_roll.maxRoll;
-                        target_roll.maxRoll -= char_power;
-                        if (target_roll.maxRoll < 0)
+                        attacker.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.charPower);
+                        if (!result.shouldRemoveTargetRoll)
                         {
-                            int dmg = char_power - init_roll;
-                            char_roll.maxRoll = dmg;
-                            char_roll.minRoll = dmg;
-                            DealDamageByRoll(char_roll, Targets[i]);
-                            Targets[i].RemoveFirstRoll(0.3f);
-                            if (Targets[i].GType_ == GriddableObject.GriddableObjectType.Enemy)
+                            var enemy = attacker.GetComponent<GridEnemy>();
+                            if (enemy != null)
                             {
-                                var enemy = Targets[i].GetComponent<GridEnemy>();
-
                                 for (int k = 0; k < enemy.RollsUI.childCount; k++)
                                 {
-                                    enemy.RollsUI.GetChild(k).GetComponent<RollScript>().Fade(0f, 0.3f, 0, true);
-                                }
-                                LeanTween.delayedCall(0.4f, () => { EnemyUpdateRolls(enemy); });
-                            }
-                        }
-                        else
-                        {
-                            if (Targets[i].GType_ == GriddableObject.GriddableObjectType.Enemy)
-                            {
-                                var enemy = Targets[i].GetComponent<GridEnemy>();
-
-                                for (int k = 0; k < enemy.RollsUI.childCount; k++)
-                                {
-                                    enemy.RollsUI.GetChild(k).GetComponent<RollScript>().MinMaxText.text = enemy.RollsUI.GetChild(k).GetComponent<RollScript>().roll.maxRoll.ToString();
+                                    enemy.RollsUI.GetChild(k).GetComponent<RollScript>().ShowResult(result.targetRollValue);
                                 }
                             }
                         }
                     }
                     else
                     {
-                        int char_power;
-                        int target_power;
-                        GetRolls(out char_power, out target_power, char_roll, target_roll);
-                        Debug.Log("Fighting: " + char_power + " / " + target_power);
-                        while (char_power == target_power)
-                        {
-                            Debug.Log("Tie: " + char_power + " | " + target_power);
-                            GetRolls(out char_power, out target_power, char_roll, target_roll);
-                            Debug.Log("Fighting: " + char_power + " / " + target_power);
-                        }
-                        if (char_power > target_power)
-                        {
-                            DealDamageByRoll(char_roll, Targets[i]);
-                            Targets[i].RemoveFirstRoll(0.3f);
-                            if (Targets[i].GType_ == GriddableObject.GriddableObjectType.Enemy)
-                            {
-                                var enemy = Targets[i].GetComponent<GridEnemy>();
+                        attacker.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.targetRollValue);
+                    }
+                }
+                else if (isEnemyAttacker)
+                {
+                    if (result.targetRoll == null)
+                    {
+                        attacker.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.targetRollValue);
+                    }
+                    else if (result.targetRoll.rollType == RollType.Def)
+                    {
+                        attacker.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.targetRollValue);
+                    }
+                    else
+                    {
+                        var enemy = attacker.GetComponent<GridEnemy>();
+                        enemy.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.targetRollValue);
+                    }
+                }
+                else
+                {
+                    if (result.targetRoll == null)
+                    {
+                        attacker.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.charPower);
+                    }
+                    else if (result.targetRoll.rollType == RollType.Def)
+                    {
+                        attacker.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.charPower);
 
+                        if (!result.shouldRemoveTargetRoll)
+                        {
+                            if (target.GType_ == GriddableObject.GriddableObjectType.Enemy)
+                            {
+                                var enemy = target.GetComponent<GridEnemy>();
                                 for (int k = 0; k < enemy.RollsUI.childCount; k++)
                                 {
-                                    enemy.RollsUI.GetChild(k).GetComponent<RollScript>().Fade(0f, 0.3f, 0, true);
+                                    enemy.RollsUI.GetChild(k).GetComponent<RollScript>().MinMaxText.text =
+                                        enemy.RollsUI.GetChild(k).GetComponent<RollScript>().roll.maxRoll.ToString();
                                 }
-                                LeanTween.delayedCall(0.4f, () => { EnemyUpdateRolls(enemy); });
                             }
                         }
-                    }    
-                } 
-            }
-            character.CurrentSkillRolls.RemoveAt(0);
-        }
-    }
-
-
-    public void MakeFightEnemy(GridEnemy enemy, Roll roll, List<GriddableObject> Targets)
-    {
-        //Debug.Log("ATTACK!");
-
-
-        for (int j = 0; j < Targets.Count; j++)
-        {
-            var target = Targets[j];
-            var target_roll = target.GetFirstRoll();
-            if (target == enemy) continue;
-            if (target_roll == null) { DealDamageByRoll(roll, target); }
-            else
-            {
-                int char_power;
-                int target_power;
-                GetRolls(out char_power, out target_power, roll, target_roll);
-                Debug.Log("Fighting: " + char_power + " / " + target_power);
-                while (char_power == target_power)
-                {
-                    Debug.Log("Tie: " + char_power + " | " + target_power);
-                    GetRolls(out char_power, out target_power, roll, target_roll);
-                    Debug.Log("Fighting: " + char_power + " / " + target_power);
-                }
-                if (char_power > target_power)
-                {
-                    DealDamageByRoll(roll, target);
-                    target.RemoveFirstRoll(0.3f);
-                    if (target.GType_ == GriddableObject.GriddableObjectType.Enemy)
+                    }
+                    else
                     {
-                        var cur_enemy = target.GetComponent<GridEnemy>();
-
-                        for (int k = 0; k < cur_enemy.RollsUI.childCount; k++)
-                        {
-                            cur_enemy.RollsUI.GetChild(k).GetComponent<RollScript>().Fade(0f, 0.3f, 0, true);
-                        }
-                        LeanTween.delayedCall(0.4f, () => { EnemyUpdateRolls(cur_enemy); });
+                        var enemy = target.GetComponent<GridEnemy>();
+                        enemy.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.targetPower);
+                        attacker.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.charPower);
                     }
                 }
             }
+
+            yield return new WaitForSeconds(0.33f * ProfileManager.profile.roll_speed);
+
+            for (int i = 0; i < results.Count; i++)
+            {
+                var result = results[i];
+                var target = result.target;
+
+                if (!result.hasTargetRoll) continue;
+
+                if (result.isHit && result.shouldRemoveTargetRoll && result.targetRoll != null)
+                {
+                    if (result.targetRoll.rollType != RollType.Def)
+                    {
+                        target.RemoveFirstRoll(0.3f);
+
+                        if (target.GType_ == GriddableObject.GriddableObjectType.Enemy)
+                        {
+                            var enemy = target.GetComponent<GridEnemy>();
+                            for (int k = 0; k < enemy.RollsUI.childCount; k++)
+                            {
+                                enemy.RollsUI.GetChild(k).GetComponent<RollScript>().Fade(0f, 0.3f, 0, true);
+                            }
+                            LeanTween.delayedCall(0.4f, () => { EnemyUpdateRolls(enemy); });
+                        }
+                    }
+                }
+
+                if (result.isHit && result.shouldRemoveTargetRoll && result.targetRoll != null && result.targetRoll.rollType == RollType.Def)
+                {
+                    target.RemoveFirstRoll(0.3f);
+
+                    if (target.GType_ == GriddableObject.GriddableObjectType.Enemy)
+                    {
+                        var enemy = target.GetComponent<GridEnemy>();
+                        for (int k = 0; k < enemy.RollsUI.childCount; k++)
+                        {
+                            enemy.RollsUI.GetChild(k).GetComponent<RollScript>().Fade(0f, 0.3f, 0, true);
+                        }
+                        LeanTween.delayedCall(0.4f, () => { EnemyUpdateRolls(enemy); });
+                    }
+                }
+            }
+
+            yield return new WaitForSeconds(0.2f * ProfileManager.profile.roll_speed);
+
+            for (int i = 0; i < results.Count; i++)
+            {
+                var result = results[i];
+                var target = result.target;
+
+                if (!result.hasTargetRoll) continue;
+
+                if (attacker.RollsUI != null && attacker.RollsUI.childCount > 0)
+                {
+                    var attackerRollScript = attacker.RollsUI.GetChild(0).GetComponent<RollScript>();
+                    attackerRollScript.is_showing_result = false;
+                    attackerRollScript.ShowStats(null);
+                }
+
+                if (result.targetRoll != null && result.isHit == false)
+                {
+                    if (target.GType_ == GriddableObject.GriddableObjectType.Enemy)
+                    {
+                        var enemy = target.GetComponent<GridEnemy>();
+                        if (enemy != null && enemy.RollsUI != null && enemy.RollsUI.childCount > 0)
+                        {
+                            var targetRollScript = enemy.RollsUI.GetChild(0).GetComponent<RollScript>();
+                            targetRollScript.is_showing_result = false;
+                            targetRollScript.ShowStats(null);
+                        }
+                    }
+                    else if (target.GType_ == GriddableObject.GriddableObjectType.Character)
+                    {
+                        if (target.RollsUI != null && target.RollsUI.childCount > 0)
+                        {
+                            var targetRollScript = target.RollsUI.GetChild(0).GetComponent<RollScript>();
+                            targetRollScript.is_showing_result = false;
+                            targetRollScript.ShowStats(null);
+                        }
+                    }
+                }
+            }
+
+            yield return new WaitForSeconds(0.2f * ProfileManager.profile.roll_speed);
         }
 
-        
+        bool hasAnyHit = false;
+        for (int i = 0; i < results.Count; i++)
+        {
+            var result = results[i];
+            var target = result.target;
+
+            if (result.isHit)
+            {
+                hasAnyHit = true;
+                int damageRollValue = roll.GetDamage();
+                int levelBonus = (attacker.GetCharacter().level - maxTargetLevel) / 4;
+                result.damageRollValue = damageRollValue + levelBonus;
+
+                var roll_ui = attacker.RollsUI.GetChild(0).GetComponent<RollScript>();
+                roll_ui.roll_result = result.damageRollValue;
+                roll_ui.is_showing_result = true;
+
+                result.damage = new Damage(damageRollValue, roll.element, attacker.GetCharacter());
+            }
+        }
+
+        if (hasAnyHit)
+        {
+            yield return new WaitForSeconds(0.33f * ProfileManager.profile.roll_speed);
+        }
+
+        for (int i = 0; i < results.Count; i++)
+        {
+            var result = results[i];
+            var target = result.target;
+
+            if (result.isHit)
+            {
+                int finalDamage = result.damage.damage;
+
+                target.GetCharacter().GetDamage(result.damage);
+            }
+            else if (result.isMiss && result.targetRoll != null && result.targetRoll.rollType != RollType.Def)
+            {
+                if (!isEnemyAttacker)
+                {
+                    if (target.GType_ == GriddableObject.GriddableObjectType.Enemy)
+                    {
+                        var enemy = target.GetComponent<GridEnemy>();
+                        enemy.RollsUI.GetChild(0).GetComponent<RollScript>().ShowStats(null);
+                    }
+                }
+            }
+
+            roll.ProcessEffects(attacker.GetCharacter(), target.GetCharacter(), result.context);
+        }
     }
 
+    private class FightResult
+    {
+        public GriddableObject target;
+        public RollContext context;
+        public Roll targetRoll;
+        public Roll attackerRoll;
+        public Damage damage;
+        public int charPower;
+        public int targetPower;
+        public int targetRollValue;
+        public int attackerRollValue;
+        public int damageRollValue;
+        public bool isHit;
+        public bool isMiss;
+        public bool shouldRemoveTargetRoll;
+        public bool isSelfAttack;
+        public bool hasTargetRoll;
+    }
+
+    public IEnumerator MakeFight(GridCharacter character, List<GriddableObject> Targets)
+    {
+        yield return new WaitForSeconds(1f * ProfileManager.profile.roll_speed);
+
+        for (int i = 0; i < character.CurrentSkillRolls.Count; i += 0)
+        {
+            var char_roll = character.CurrentSkillRolls[0];
+            char_roll.skill.character = character.GetCharacter();
+
+            yield return MakeFightInternal(character, char_roll, Targets, false);
+
+            if (character.CurrentSkillRolls.Count == 1)
+            {
+
+            }
+            character.CurrentSkillRolls.RemoveAt(0);
+            character.GetCharacter().CurrentRolls.RemoveAt(0);
+            character.UpdateRollsUI();
+        }
+    }
+    public IEnumerator MakeFightEnemy(GridEnemy enemy, Roll roll, List<GriddableObject> Targets)
+    {
+        yield return MakeFightInternal(enemy, roll, Targets, true);
+        yield return new WaitForSeconds(0.33f * ProfileManager.profile.roll_speed);
+    }
+    private void ProcessOnUseEffects(PlayerSkill skill, CharacterBase caster, CharacterBase target)
+    {
+        if (skill == null) return;
+
+        foreach (Roll roll in skill.rolls)
+        {
+            RollContext context = new RollContext();
+            context.Attacker = caster;
+            context.Defender = target;
+            context.IsHit = false;
+            context.IsMiss = false;
+            context.IsCrit = false;
+
+            foreach (var effect in roll.effects)
+            {
+                if (effect.triggerType == TriggerType.OnUse)
+                {
+                    effect.Execute(caster, target, context);
+                }
+            }
+        }
+    }
     void GetRolls(out int p1, out int p2, Roll roll1, Roll roll2)
     {
         int pow1 = roll1.GetRoll();
@@ -370,23 +706,17 @@ public class BattleMain : MonoBehaviour
         {
             var cell = current_field.EnemyFindBestCell(enemy);
             enemy.MoveToCell(cell);
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(1.5f * ProfileManager.profile.roll_speed);
         }
-        NextCycle();
+        StartCoroutine(NextCycle());
     }
 
-    public void DealDamageByRoll(Roll roll, GriddableObject obj)
+    public IEnumerator DealDamageByRoll(Roll roll, GriddableObject obj, RollScript roll_ui = null)
     {
         
         Damage damage = new Damage(roll.GetDamage(), roll.element, roll.skill.character);
-        foreach (var effect in roll.effects)
-        {
-            if (effect.Item4 == 0)
-            {
-                GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[effect.Item1], effect.Item2,
-                    effect.Item3, obj.GetCharacter(), roll.skill.character);
-            }
-        }
+        if (roll_ui != null) roll_ui.ShowResult(damage.damage);
+        yield return new WaitForSeconds(0.5f * ProfileManager.profile.roll_speed);
         obj.GetDamage(damage);
         Debug.Log("Dealed damage!" + damage.damage);
     }
@@ -406,28 +736,28 @@ public class BattleMain : MonoBehaviour
                 {
                     dist_cell.FlashColor(Color.yellow, 1f);
                 }
-                yield return new WaitForSeconds(2.1f);
+                yield return new WaitForSeconds(2.1f * ProfileManager.profile.roll_speed);
 
                 var target_cells = current_field.GetDamageCellsFromTargetCell(cell, roll, dir);
                 foreach (var target_cell in target_cells)
                 {
                     target_cell.FlashColor(Color.red, 1f);
                 }
-                yield return new WaitForSeconds(2.1f);
+                yield return new WaitForSeconds(2.1f * ProfileManager.profile.roll_speed);
 
                 var objects = new List<GriddableObject>();
                 foreach (var obj in target_cells)
                 {
                     if (obj.object_ != null) objects.Add(obj.object_);
                 }
-                MakeFightEnemy(enemy, roll, objects);
+                yield return StartCoroutine(MakeFightEnemy(enemy, roll, objects));
                 enemy.RemoveRoll(roll);
                 EnemyUpdateRolls(enemy);
             }
             
             
         }
-        NextCycle();
+        StartCoroutine(NextCycle());
     }
 
     void UpdatePlayerSkills()

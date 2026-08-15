@@ -42,4 +42,9 @@ public class GridObstacle : GriddableObject
     }
 
     public override CharacterBase GetCharacter() { return obstacle_; }
+    public override void GetDamage(Damage damage)
+    {
+        obstacle_.GetDamage(damage);
+    }
+
 }

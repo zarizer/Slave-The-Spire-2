@@ -14,8 +14,6 @@ public class GridEnemy : GriddableObject
     public EnemyBase enemy_;
     public Transform EffectObject;
     public GameObject EffectPrefab;
-    public Transform RollsUI;
-    public GameObject RollUIPrefab;
     public int EnemyId_ = -1;
     void Awake()
     {
@@ -27,7 +25,7 @@ public class GridEnemy : GriddableObject
     {
         LookAtCamera();
         MoveToDestination();
-        hp_circle.fillAmount = ((float)enemy_.cur_hp) / enemy_.hp;
+        hp_circle.fillAmount = Mathf.Lerp(hp_circle.fillAmount, ((float)enemy_.cur_hp) / enemy_.start_hp, 0.05f);
     }
 
 
@@ -78,10 +76,9 @@ public class GridEnemy : GriddableObject
     public void UseNextSkill()
     {
         enemy_.CreateNextRolls();
-        UpdateRollsUI();
     }
 
-    public List<GameObject> UpdateRollsUI(float start_alpha = 1f)
+    public override List<GameObject> UpdateRollsUI(float start_alpha = 1f)
     {
         StaticFuncs.DestroyChildren(RollsUI);
         List<GameObject> rolls_list = new List<GameObject>();
@@ -89,11 +86,11 @@ public class GridEnemy : GriddableObject
         {
             GameObject menu_roll = Instantiate(RollUIPrefab, RollsUI);
             menu_roll.GetComponent<CanvasGroup>().alpha = 0f;
-            menu_roll.GetComponent<RollScript>().UpdateRollStats(roll);
+            menu_roll.GetComponent<RollScript>().ShowStats(roll);
             menu_roll.transform.localScale = (Vector3.one) / 250;
             menu_roll.transform.Rotate(Vector3.up, 180);
             rolls_list.Add(menu_roll);
-            Debug.Log(roll.minRoll + " " + roll.maxRoll);
+            //Debug.Log(roll.minRoll + " " + roll.maxRoll);
         }
         if (rolls_list.Count > 6)
         {

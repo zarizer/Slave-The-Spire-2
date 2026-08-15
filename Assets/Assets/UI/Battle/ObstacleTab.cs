@@ -44,7 +44,7 @@ public class ObstacleTabController : TabController
 
     public override void RequestedUpdate(bool is_visible)
     {
-        Debug.Log(is_visible);
+        //Debug.Log(is_visible);
         if (IsLocked) return;
         IsVisible = is_visible;
 
@@ -53,6 +53,7 @@ public class ObstacleTabController : TabController
             gameObject.SetActive(false);
             return;
         }
+        if (CameraController.Target.gameObject.GetComponent<GriddableObject>() == null) return;
         CharacterBase character = CameraController.Target.gameObject.GetComponent<GriddableObject>().GetCharacter();
         if (character == null) return;
         gameObject.SetActive(true);

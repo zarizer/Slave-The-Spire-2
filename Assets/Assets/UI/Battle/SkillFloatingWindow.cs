@@ -22,7 +22,7 @@ public class SkillFloatingWindow : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log(gameObject.name + transform.parent.name);
+        //Debug.Log(gameObject.name + transform.parent.name);
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             StaticFuncs.DestroyChildren(RollsUI);

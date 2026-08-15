@@ -26,6 +26,8 @@ public static class DataDicts
     {
         {  0, typeof(TestEnemy) },
         {  1, typeof(EnemyVosh) },
+        {  2, typeof(EnemyWitch) },
+        {  3, typeof(EnemyCultist) },
     };
 
     public static Dictionary<int, Type> ObstacleTypes = new Dictionary<int, Type>()
@@ -35,6 +37,7 @@ public static class DataDicts
         { 2, typeof(LevelChange) },
         { 3, typeof(Chapter1RandomObstacle) },
         { 4, typeof(BuffAltar) },
+        { 5, typeof(Totem) },
     };
 
     public static Dictionary<int, Type> BaffTypes = new Dictionary<int, Type>()
@@ -53,11 +56,21 @@ public static class DataDicts
         {2, typeof(PassiveMain3) },
         {3, typeof(PassiveVosh1) },
         {4, typeof(PassiveVosh2) },
+        {5, typeof(PassiveWitch1) },
+        {6, typeof(PassiveWitch2) },
+        {7, typeof(PassiveCultist1) },
+        {8, typeof(PassiveCultist2) },
     };
 
     public static Dictionary<int, Type> EffectTypes = new Dictionary<int, Type>()
     {
         {0, typeof(EffectPoison) },
+        {1, typeof(EffectBurn) },
+        {2, typeof(EffectHealProcentBySource) },
+        {1001, typeof(EffectPowerUp) },
+        {1002, typeof(EffectPowerDown) },
+        {1003, typeof(EffectAtkUp) },
+        {1004, typeof(EffectAtkDown) }
 
     };
 }

@@ -128,7 +128,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 99.249725, y: 24.282328, z: 98.99976, w: 23.665592}
+  m_margin: {x: 50.00058, y: 24.282328, z: 50.005013, w: 23.665592}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -188,7 +188,7 @@ MonoBehaviour:
   _moveUpDistance: 2
   _moveDuration: 2.5
   _swingSpeed: 0.3
-  _swingAmount: 12
+  _swingAmount: 2
   _fadeDuration: 0.1
   _fadeStart: 0.7
   _randomizeOnStart: 1
