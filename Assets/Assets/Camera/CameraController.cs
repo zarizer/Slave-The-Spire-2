@@ -421,7 +421,13 @@ public class CameraController : MonoBehaviour
             if (character.TRyingToAttack)
             {
                 var ray = Camera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out RaycastHit hit))
+                var ray_all = Physics.RaycastAll(ray);
+                var cell = GetCellByRayCast(ray_all);
+                if (cell != null)
+                {
+                    if (cell.GetColor() == GridCell.ColorType.Yellow) ProcessCell(cell, character);
+                }
+                /*if (Physics.Raycast(ray, out RaycastHit hit))
                 {
                     if (hit.collider.gameObject.tag == "cell")
                     {
@@ -439,7 +445,7 @@ public class CameraController : MonoBehaviour
                         var cell = obj.cell_;
                         ProcessCell(cell, character);
                     }
-                }
+                }*/
             }
         }
 

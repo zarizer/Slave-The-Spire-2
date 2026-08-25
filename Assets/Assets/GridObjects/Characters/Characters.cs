@@ -74,7 +74,7 @@ public class Shaman : CharacterBase
         speed_dif = 2;
         dmg_k = 0.9f;
         moves = 3;
-        energy = 100;
+        energy = 15;
         name = "шаман";
         description = "обычный колтушский шаман\n\nспециализируется на тёмных(пивных) искусствах";
         skill_id1 = 6;
