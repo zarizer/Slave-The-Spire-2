@@ -12,7 +12,7 @@ public class MainMenuManager : MonoBehaviour
     public bool EnableOnStart = false;
 
     public GameObject CurrentMenu;
-    Stack<GameObject> MenuStack = new Stack<GameObject>();
+    [SerializeField] Stack<GameObject> MenuStack = new Stack<GameObject>();
 
 
     private void Awake()
@@ -40,6 +40,21 @@ public class MainMenuManager : MonoBehaviour
         CurrentMenu.SetActive(true);
     }
 
+    public void SetMenuAndClearStack(GameObject menu)
+    {
+        MenuStack.Clear();
+        MenuStack.Push(CurrentMenu);
+        if (CurrentMenu != null) CurrentMenu.SetActive(false);
+        CurrentMenu = menu;
+        CurrentMenu.SetActive(true);
+    }
+
+    public void ClearStack()
+    {
+        MenuStack.Clear();
+    }
+
+
     public void ReturnMenu()
     {
         if (MenuStack.Count == 0) return;
@@ -47,6 +62,23 @@ public class MainMenuManager : MonoBehaviour
         CurrentMenu.SetActive(false);
         CurrentMenu = MenuStack.Pop();
         CurrentMenu.SetActive(true);
+    }
+
+    public void CloseCurrentMenu()
+    {
+        CurrentMenu.SetActive(false);
+        MenuStack.Pop();
+    }
+
+    public void ToMainMenu()
+    {
+        CurrentMenu.SetActive(false);
+        SetMenu(StartMenu);
+        MenuStack.Clear();
+        ResoursesDict.GetClass<BattleMain>().SetMenuCamera();
+        ResoursesDict.GetClass<BattleMain>().DisassambleScene();
+        battleMain.IsInBattle = false;
+
     }
 
     public void ExitGame()
@@ -60,5 +92,16 @@ public class MainMenuManager : MonoBehaviour
         SetMenu(battleMain.gameObject);
         battleMain.CurrentLevelId = prepareBattleScrit.LevelId;
         battleMain.StartGame();
+    }
+
+    public void GiveUp()
+    {
+        ToMainMenu();
+        ResoursesDict.GetClass<BattleMain>().GiveUp();
+    }
+
+    public void ToSettingsMenuFromBattle()
+    {
+        SetMenu(ResoursesDict.GetClass<UIController>().SettingsMenu);
     }
 }

@@ -119,6 +119,12 @@ public class Skills
                     if (effect_obj["damageModifier"] != null)
                         effect.damageModifier = effect_obj["damageModifier"].Value<float>();
 
+                    if (effect_obj["SummonObjectType"] != null)
+                        effect.SummonObjectType = effect_obj["SummonObjectType"].Value<int>();
+
+                    if (effect_obj["SummonObjectId"] != null)
+                        effect.SummonObjectId = effect_obj["SummonObjectId"].Value<int>();
+
                     // Добавляем эффект
                     roll.effects.Add(effect);
                 }
@@ -177,16 +183,18 @@ public enum EffectType
 {
     ApplyStatus,        
     RemoveStatus,       // Снятие статуса
-    Heal,              // Лечение
-    Damage,            // Урон
-    Defence,            // Щит
-    Energy,
+    Heal,               // Лечение
+    HealPercent,        // Лечение в процентах от здоровья цели
+    Damage,            // Наносит урон
+    Defence,            // Даёт статическую защиту
+    Energy,             // Даёт эренгию
+    Moves,              // Даёт скорость
     //ModifyStat,        // Изменение статов
     ModifyDamage,      // Изменение урона
     //ModifyCooldown,    // Изменение кулдауна
     //AddResource,       // Добавление ресурса
     //RemoveResource,    // Удаление ресурса
-    //Summon,            // Призыв
+    Summon,            // Призыв
     //Teleport,          // Телепортация
     //Clone,             // Клонирование
     //ModifySpeed,       // Изменение скорости
@@ -207,7 +215,8 @@ public enum TargetType
     AllAllies,         
     RandomEnemy,       
     RandomAlly,        
-    All,               
+    All,       
+    Cells,
     Custom             // Пользовательский (по ID)
 }
 
@@ -217,6 +226,7 @@ public enum TriggerType
     OnMiss,
     OnTarget,
     OnUse,
+    OnEmptyCell,
     Custom             // Пользовательский (по ID)
 }
 
@@ -244,6 +254,8 @@ public class SkillEffect
     public int shieldAmount;           // Количество щита
     public float damageModifier;       // Модификатор урона (для ModifyDamage)
     public int customId;              // ID для пользовательских эффектов
+    public int SummonObjectType; //0 - character, 1 - enemy, 2 - obstacle
+    public int SummonObjectId; // ID для призыва объекта
     public Element element;
 
     // Вызов эффекта
@@ -258,7 +270,7 @@ public class SkillEffect
             return;
 
         // Определяем цель
-        List<CharacterBase> targets = GetTargets(caster, target);
+        List<CharacterBase> targets = GetTargets(caster, target, context);
         // Применяем эффект к каждой цели
         foreach (var t in targets)
         {
@@ -273,6 +285,8 @@ public class SkillEffect
 
         switch (triggerType)
         {
+            case TriggerType.OnEmptyCell:
+                return context.TargetCell.object_ == null ;
             case TriggerType.OnHit:
                 return context.IsHit;
 
@@ -306,12 +320,15 @@ public class SkillEffect
         return false;
     }
 
-    private List<CharacterBase> GetTargets(CharacterBase caster, CharacterBase target)
+    private List<CharacterBase> GetTargets(CharacterBase caster, CharacterBase target, RollContext context)
     {
         List<CharacterBase> targets = new List<CharacterBase>();
 
         switch (targetType)
         {
+            case TargetType.Cells:
+                targets.Add(caster);//при наведении на клетки не используется
+                break;
             case TargetType.Self:
                 targets.Add(caster);
                 break;
@@ -408,11 +425,17 @@ public class SkillEffect
             case EffectType.Damage:
                 DamageTarget(caster, target);
                 break;
+            case EffectType.HealPercent:
+                HealPercent(caster, target);
+                break;
             case EffectType.Defence:
                 ApplyShield(target);
                 break;
             case EffectType.Energy:
                 ApplyEnergy(target);
+                break;
+            case EffectType.Moves:
+                ApplyMoves(caster, target);
                 break;
             case EffectType.ModifyDamage:
                 ModifyDamage(target);
@@ -430,9 +453,11 @@ public class SkillEffect
                 case EffectType.RemoveResource:
                     RemoveResource(target);
                     break;
+                */
                 case EffectType.Summon:
-                    SummonUnit(caster);
+                    SummonUnit(caster, context);
                     break;
+                /*
                 case EffectType.Teleport:
                     TeleportUnit(target);
                     break;
@@ -487,9 +512,19 @@ public class SkillEffect
         target.GetDamage(damage);
     }
 
+    private void HealPercent(CharacterBase caster, CharacterBase target)
+    {
+        target.Heal((int)(((float)target.start_hp/100)*value), caster);
+    }
+   
     private void ApplyShield(CharacterBase target)
     {
         target.GetDefence(value, roll.skill.character);
+    }
+
+    private void ApplyMoves(CharacterBase caster, CharacterBase target)
+    {
+        target.GetMoves(value, caster);
     }
 
     private void ModifyStat(CharacterBase target)
@@ -517,9 +552,36 @@ public class SkillEffect
         Debug.Log($"Removing {value} resource from {target.name}");
     }
 
-    private void SummonUnit(CharacterBase caster)
+    private void SummonUnit(CharacterBase caster, RollContext context)
     {
-        Debug.Log($"Summoning unit {skillId} near {caster.name}");
+        if (context.TargetCell.object_ == null)
+        {
+            LevelObject obj_data = new LevelObject();
+            obj_data.isCustomLevel = true;
+            obj_data.level = caster.level;
+            LevelData level_data = new LevelData();
+            level_data.minLevel = caster.level;
+            level_data.maxLevel = caster.level;
+            GriddableObject obj = null;
+            if (SummonObjectType == 0) { 
+                obj = ResoursesDict.GetClass<CameraController>().field_.CreateGridObject(GriddableObject.GriddableObjectType.Character,
+                SummonObjectId, context.TargetCell.x_, context.TargetCell.y_, obj_data, level_data);
+            }
+            if (SummonObjectType == 1)
+            {
+                obj = ResoursesDict.GetClass<CameraController>().field_.CreateGridObject(GriddableObject.GriddableObjectType.Enemy,
+                    SummonObjectId, context.TargetCell.x_, context.TargetCell.y_, obj_data, level_data);
+            }
+            if (SummonObjectType == 2)
+            {
+                obj = ResoursesDict.GetClass<CameraController>().field_.CreateGridObject(GriddableObject.GriddableObjectType.Obstacle,
+                     SummonObjectId, context.TargetCell.x_, context.TargetCell.y_, obj_data, level_data);
+            }
+            if (obj != null) {
+                if (caster.object_.GetComponent<GriddableObject>().player_) obj.specialValue = 1;
+                else obj.specialValue = 0;
+            }
+        }
     }
 
     private void TeleportUnit(CharacterBase target)
@@ -574,4 +636,7 @@ public class RollContext
     public CharacterBase Defender { get; set; }
     public SkillEffect TriggerEffect { get; set; }
     public Dictionary<string, object> CustomData { get; set; } = new Dictionary<string, object>();
+    public bool IsEmptyCell { get; set; }
+    public List<GridCell> Cells { get; set; }
+    public GridCell TargetCell { get; set; }
 }

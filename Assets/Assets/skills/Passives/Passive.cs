@@ -40,4 +40,6 @@ public class Passive
     virtual public void OnBattleStart(GridField field) { }
 
     virtual public void OnDeath(GridField field, Damage dmg) { }
+
+    virtual public void OnGetEnergy(GridField field, int value) { }
 }

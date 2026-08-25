@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -22,6 +23,15 @@ public class CameraController : MonoBehaviour
     public bool IsTargeted;
     public float XMovement;
     public float YMovement;
+    public float FMovement;
+    public float SMovement;
+    public float FMovement_speed;
+    public float SMovement_speed;
+    public float MXMovement;
+    public float MYMovement;
+    public float MXMovement_speed;
+    public float MYMovement_speed;
+    public bool Shift;
     public float ZMovement;
     public float CameraSpeed = 0.1f;
     public float CameraSensativity;
@@ -30,10 +40,13 @@ public class CameraController : MonoBehaviour
     public float CameraY;
     public float MaxDist;
     public float MinDist;
+    public float CameraXSave;
     int cur_skill;
     public GridCell prev_cell = null;
     public bool is_redactor_moving;
-
+    public GameObject SubSettingMenu;
+    public bool lock_navigation = false;
+    public bool freecam_mode = false;
 
 
     void Start()
@@ -43,17 +56,43 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
+        if (!ResoursesDict.GetClass<BattleMain>().IsInBattle) return;
         field_ = battleMain.current_field;
+        CheckHotKeys();
 
-        XMovement = Input.GetAxis("Horizontal") * CameraSensativity * Time.deltaTime;
-        YMovement = Input.GetAxis("Vertical") * CameraSensativityY * Time.deltaTime;
-        ZMovement = Input.GetAxis("Mouse ScrollWheel") * CameraSensativity * Time.deltaTime;
-
-        CameraReposition();
+        if (lock_navigation) return;
+        if (!freecam_mode)
+        {
+            XMovement = Input.GetAxis("Horizontal") * CameraSensativity * Time.deltaTime;
+            YMovement = Input.GetAxis("Vertical") * CameraSensativityY * Time.deltaTime;
+            ZMovement = Input.GetAxis("Mouse ScrollWheel") * CameraSensativity * Time.deltaTime;
+            CameraReposition();
+        }
+        else
+        {
+            Shift = Input.GetKey(KeyCode.LeftShift);
+            FMovement = Input.GetAxis("Vertical") * Time.deltaTime;
+            SMovement = Input.GetAxis("Horizontal") * Time.deltaTime;
+            MXMovement = Input.GetAxis("Mouse Y") * MXMovement_speed * Time.deltaTime;
+            MYMovement = Input.GetAxis("Mouse X") * MYMovement_speed * Time.deltaTime;
+            CameraRotation();
+            CameraMovement();
+        }
+       
         GetTarget();
         ShowDamageCells();
+       
     }
 
+    void CameraRotation()
+    {
+        Camera.transform.Rotate(new Vector3(MXMovement , MYMovement , 0));
+    }
+    void CameraMovement()
+    {
+        Camera.transform.position += FMovement * FMovement_speed * Camera.transform.forward * (Shift ? 3 : 1);
+        Camera.transform.position += SMovement * SMovement_speed * Camera.transform.right * (Shift ? 3 : 1); 
+    }
     void CameraReposition()
     {
         if (Target == null) Target = field_.transform;
@@ -154,6 +193,7 @@ public class CameraController : MonoBehaviour
     }
     void GetTarget()
     {
+        if (lock_navigation) return;
         if (Input.GetMouseButtonDown(0))
         {
             bool ret_flag = false;
@@ -238,10 +278,19 @@ public class CameraController : MonoBehaviour
                     if (cell.color_type == GridCell.ColorType.Red)
                     {
                         ret_flag = true;
+                        var rolls = Target.GetComponent<GridCharacter>().GetCurrentRolls(cur_skill);
                         Target.GetComponent<GridCharacter>().MakeCurrentRolls(cur_skill);
                         StartCoroutine( ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>().MakeFight(
                             Target.GetComponent<GridCharacter>(),
                             ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>().current_field.GetTargetedObjects()));
+                        var cells = field_.GetTargetedCells();
+                        RollContext context = new RollContext();
+                        context.Attacker = Target.GetComponent<GridCharacter>().GetCharacter();
+                        context.Cells = cells;
+                        foreach (var roll in rolls) 
+                        {
+                            roll.ProcessOnCellEffects(Target.GetComponent<GridCharacter>().GetCharacter(), null, context);
+                        }
                         field_.CellsNullify();
                         field_.GridObjectsActionNullify();
                     }
@@ -430,7 +479,7 @@ public class CameraController : MonoBehaviour
         GridCell cell = null;
         foreach(var obj in raycasts)
         {
-            Debug.LogWarning(obj.transform.name);
+            //Debug.LogWarning(obj.transform.name);
             if (obj.transform.tag == "CANTHIT") return null;
             if (obj.transform.gameObject.tag == "cell")
             {
@@ -484,5 +533,42 @@ public class CameraController : MonoBehaviour
             }
         }
         return false;
+    }
+
+    void CheckHotKeys()
+    {
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            UIController.CloseTabs();
+            UIController.CloseAllObjectTabs();
+            if (!SubSettingMenu.activeSelf)
+            {
+                lock_navigation = true;
+                ResoursesDict.GetClass<MainMenuManager>().SetMenuAndClearStack(SubSettingMenu);
+            }
+            else
+            {
+                lock_navigation = false;
+                ResoursesDict.GetClass<MainMenuManager>().CloseCurrentMenu();
+            }
+        }
+        else if (Input.GetKeyUp(KeyCode.R))
+        {
+            UIController.CloseAllObjectTabs();
+            UIController.CloseTabs();
+        }
+        else if (Input.GetKeyUp(KeyCode.T))
+        {
+            freecam_mode = !freecam_mode;
+            if (freecam_mode)
+            {
+                CameraXSave = Camera.transform.localRotation.x;
+            }
+            else
+            {
+                Camera.transform.localRotation = new Quaternion(CameraXSave, 0, 0, 0);
+            }
+        }
+
     }
 }

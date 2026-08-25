@@ -222,11 +222,14 @@ public class Totem : ObstacleBase
         moves = 0;
         energy = 0;
         name = "Оккультный тотем";
-        description = "тотем возведённый культистами даёт им сил";
+        description = "тотем возведённый шизами даёт им сил";
         InteractVariants = 0;
         ModelId = 8;
         Interactable = true;
         use_count = 0;
+        fire_k = 5f;
+        none_k = 3f;
+        light_k = 2f;
         base.Init();
         return this;
     }
@@ -251,4 +254,6 @@ public class Totem : ObstacleBase
             }
         }
     }
+
+
 };

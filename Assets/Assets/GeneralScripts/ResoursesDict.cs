@@ -43,6 +43,8 @@ public class ResoursesDict : MonoBehaviour
     public GameObject trashManager;
     public GameObject iconManager;
     public GameObject levelRedactor;
+    public GameObject MainMenuManager;
+    public GameObject UIController;
 
     public GameObject death_effect;
 
@@ -90,6 +92,8 @@ public class ResoursesDict : MonoBehaviour
 
         ObjectSet["UICanvas"] = UICanvas;
         ObjectSet["BattleMain"] = battle_main;
+        ObjectSet["UIController"] = UIController;
+        ObjectSet["MainMenuManager"] = MainMenuManager;
         ObjectSet["CharacterTab"] = character_tab;
         ObjectSet["SoundMain"] = SoundMain;
         ObjectSet["ProfileManager"] = profileManager;

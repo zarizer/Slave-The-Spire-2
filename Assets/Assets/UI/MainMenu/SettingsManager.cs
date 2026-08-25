@@ -11,6 +11,8 @@ public class SettingsManager : MonoBehaviour
     public UnityEngine.UI.Slider music_slider;
     public UnityEngine.UI.Slider sound_slider;
     public UnityEngine.UI.Slider roll_speed_slider;
+    public TextMeshProUGUI graphics_text;
+    int current_graphics_tier;
 
     void Start()
     {
@@ -34,6 +36,8 @@ public class SettingsManager : MonoBehaviour
         music_slider.value = profile.music_level;
         sound_slider.value = profile.sound_level;
         roll_speed_slider.value = 6.75f - profile.roll_speed;
+        current_graphics_tier = ProfileManager.profile.graphics_settings;
+        ChangeGraphicsName();
     }
 
     public void ApplyMusicLevel(UnityEngine.UI.Slider slider)
@@ -78,5 +82,26 @@ public class SettingsManager : MonoBehaviour
     {
         gameObject.SetActive(false);
         ResoursesDict.GetClass<LevelRedactor>().OpenRedactor();
+    }
+
+    public void OnGraphicsPress()
+    {
+        int tier = current_graphics_tier + 1;
+        if (tier == 4) tier = 1;
+        if (tier == 1) Graphics.activeTier = UnityEngine.Rendering.GraphicsTier.Tier1;
+        if (tier == 2) Graphics.activeTier = UnityEngine.Rendering.GraphicsTier.Tier2;
+        if (tier == 3) Graphics.activeTier = UnityEngine.Rendering.GraphicsTier.Tier3;
+        ProfileManager.profile.graphics_settings = tier;
+        current_graphics_tier = tier;
+        ChangeGraphicsName();
+        Shader.WarmupAllShaders();
+        Debug.Log("Shaders");
+    }
+
+    void ChangeGraphicsName()
+    {
+        if (current_graphics_tier == 1) { graphics_text.text = "позорные"; }
+        if (current_graphics_tier == 2) { graphics_text.text = "нормич"; }
+        if (current_graphics_tier == 3) { graphics_text.text = "гуд"; }
     }
 }

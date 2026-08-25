@@ -780,15 +780,16 @@ MonoBehaviour:
   IsCustomLevel: 0
   CustomLevel: 1
   specialValue: 0
+  RollsUI: {fileID: 4353272431977098642}
+  RollUIPrefab: {fileID: 5077785896994590603, guid: 27a9d0141ef6fbb41a509caa7b089f63, type: 3}
   UICanvas: {fileID: 749563790239467033}
   DeathEffect: 
   TexturePlane: {fileID: 2455641938371664382}
+  Texture: {fileID: 7985448043380276094}
   hp_circle: {fileID: 6057086036640516372}
   CharacterId_: 0
   EffectObject: {fileID: 8497360438063193888}
   EffectPrefab: {fileID: 3030697907586480863, guid: 6367d3a5a107e124093d5c349a193152, type: 3}
-  RollsUI: {fileID: 4353272431977098642}
-  RollUIPrefab: {fileID: 5077785896994590603, guid: 27a9d0141ef6fbb41a509caa7b089f63, type: 3}
 --- !u!65 &8503215599278561149
 BoxCollider:
   m_ObjectHideFlags: 0

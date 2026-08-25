@@ -12,7 +12,7 @@ public class BattleMain : MonoBehaviour
     [SerializeField] private Camera ui_camera;
     [SerializeField] private GameObject battle_ui;
     [SerializeField] private GameObject ui_ui;
-    public bool IsInBattle = true;
+    public bool IsInBattle = false;
     public bool PlayerCanAttack = false;
     public int turn = 0;
     public bool lock_cycle = false;
@@ -69,6 +69,7 @@ public class BattleMain : MonoBehaviour
     void DebugAddPlayCharacters()
     {
         play_characters.Add(GridCharacter.GetCharacterByID(0));
+        play_characters.Add(GridCharacter.GetCharacterByID(1));
         //play_characters.Add(GridCharacter.GetCharacterByID(0));
         //play_characters.Add(GridCharacter.GetCharacterByID(0));
         //play_characters.Add(GridCharacter.GetCharacterByID(0));
@@ -77,6 +78,7 @@ public class BattleMain : MonoBehaviour
 
     public void StartGame()
     {
+        IsInBattle = true;
         play_characters.Clear();
         DebugAddPlayCharacters();
         StartBattle();
@@ -85,6 +87,7 @@ public class BattleMain : MonoBehaviour
     [ContextMenu("StartBattle")]
     public void StartBattle(bool start_battle = true)
     {
+        ResoursesDict.GetClass<CameraController>().lock_navigation = false;
         UpdateCharacters();
         battle_ui.SetActive(true);
         ui_camera.gameObject.SetActive(false);
@@ -910,6 +913,30 @@ public class BattleMain : MonoBehaviour
         }
     }
 
+    public void GiveUp()
+    {
+
+    }
+
+    public void SetMenuCamera()
+    {
+        ui_camera.gameObject.SetActive(true);
+        battle_camera.gameObject.SetActive(false);
+    }
+
+    public void SetBattleCamera()
+    {
+        ui_camera.gameObject.SetActive(false);
+        battle_camera.gameObject.SetActive(true);
+    }
+
+    public void DisassambleScene()
+    {
+        StaticFuncs.DestroySingle(current_field.transform);
+        StaticFuncs.DestroySingle(CurrentLevel.transform);
+        turn = 0;
+        CurrentLevelId = 0;
+    }
 }
 
 

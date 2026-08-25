@@ -9,6 +9,7 @@ public class UIController : MonoBehaviour
     public ObstacleTabController obstacle_tab_controller;
     public RedactorObjectTab redactor_object_tab;
     public RedactorAddTab redactor_add_tab;
+    public GameObject SettingsMenu;
 
     public Transform EnemyRollsUI;
 
@@ -20,6 +21,12 @@ public class UIController : MonoBehaviour
         ObjectTabs.Add(obstacle_tab_controller);
         ObjectTabs.Add(redactor_object_tab);
         ObjectTabs.Add(redactor_add_tab);
+        SettingsMenu = Instantiate(SettingsMenu, transform.GetChild(0));
+        SettingsMenu.transform.localScale = Vector3.one;
+        foreach(Transform obj in SettingsMenu.transform)
+        {
+            if (obj.name == "redactor_button") obj.gameObject.SetActive(false);
+        }
     }
 
     void Update()

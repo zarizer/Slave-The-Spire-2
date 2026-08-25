@@ -111,16 +111,19 @@ public class PlayerSkill
         }
     }
 
-    public virtual List<Roll> GetRolls()
+    public virtual List<Roll> GetRolls(bool silent = false)
     {
         var ret_list = new List<Roll>();
         foreach (Roll roll in rolls)
         {
             ret_list.Add(new Roll(roll));
         }
-        cur_use_count++;
-        character.cur_energy -= energy;
-        ResoursesDict.GetClass<CharacterTabController>().RequestedUpdate(true);
+        if (!silent)
+        {
+            cur_use_count++;
+            character.cur_energy -= energy;
+            ResoursesDict.GetClass<CharacterTabController>().RequestedUpdate(true);
+        }
         return ret_list;
     }
 }
@@ -321,6 +324,31 @@ public class Roll
             if (shouldExecute)
             {
                 effect.Execute(caster, target, context);
+            }
+        }
+    }
+
+    public void ProcessOnCellEffects(CharacterBase caster, CharacterBase target, RollContext context)
+    {
+        foreach (var effect in effects)
+        {
+            foreach (GridCell cell in context.Cells)
+            {
+                bool shouldExecute = false;
+
+                switch (effect.triggerType)
+                {
+                    case TriggerType.OnEmptyCell:
+                        shouldExecute = (cell.object_ == null);
+                        break;
+
+                }
+
+                if (shouldExecute)
+                {
+                    context.TargetCell = cell;
+                    effect.Execute(caster, target, context);
+                }
             }
         }
     }

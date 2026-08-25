@@ -193,6 +193,12 @@ public class Profile
     public List<int> CharacterIds;
     public Dictionary<int, int> PullCounters;
     public float roll_speed = 1.2f;
+    public int graphics_settings = 1;
+    public int CurrentLevelId = 0;
+    public int level_num;
+    public int compaign_num;
+    public int chapter_num;
+    public bool is_in_game;
 
     public Profile()
     {
@@ -205,5 +211,11 @@ public class Profile
         PullCounters = new Dictionary<int, int>();
         profile_picture_path = "";
         roll_speed = 1.2f;
+        graphics_settings = 3;
+        CurrentLevelId = 0;
+        level_num = 0;
+        compaign_num = 0;
+        chapter_num = 0;
+        is_in_game = false;
     }
 }

@@ -238,3 +238,55 @@ public class PassiveCultist2 : Passive
         Value = 2 * level;
     }
 };
+
+public class PassiveShaman2 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Подзакинуться пивом";
+        Description = $"При получении урона у этого отморозка есть {Value}% вероятность восстановить 3% здоровья";
+    }
+
+    public override void OnGetDamage(GridField field, Damage dmg)
+    {
+        base.OnGetDamage(field, dmg);
+
+        if (StaticFuncs.RandomRangeInclusive(1, 100) < Value)
+        {
+            character.Heal(((int)((float)character.start_hp/100)*3), character);
+        }
+    }
+
+    public override void UpdateAccourdingToLevel()
+    { 
+        base.UpdateAccourdingToLevel();
+        Value = 19 + level * 6;
+    }
+};
+
+public class PassiveShaman3 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Тёмные пивные искусства";
+        Description = $"Когда этот отморозок получает энергию, он получает дополнительно ещё 3 энергии и восстанавливает {Value}% здоровья";
+    }
+
+    public override void OnGetEnergy(GridField field, int value)
+    {
+        base.OnGetEnergy(field, value);
+
+
+        character.Heal(((int)((float)character.start_hp / 100) * value), character);
+        character.cur_energy += 3;
+
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = 0 + level;
+    }
+};

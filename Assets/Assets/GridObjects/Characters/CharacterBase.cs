@@ -55,6 +55,9 @@ public class CharacterBase
     public List<Roll> CurrentRolls = new List<Roll>();
     public GameObject object_;
 
+    public List<GridCell> TargetedCells;
+    
+
     public virtual CharacterBase Init() 
     {
         init_time = Time.realtimeSinceStartup;
@@ -226,6 +229,7 @@ public class CharacterBase
     public void GetEnergy(int value)
     {
         cur_energy += value;
+        OnGetEnergy(ResoursesDict.GetClass<BattleMain>().current_field, value);
     }
 
     public void GetDamageK(int value)
@@ -253,6 +257,10 @@ public class CharacterBase
     {
         cur_def += value;
     }
+    public virtual void GetMoves(int value, CharacterBase source)
+    {
+        cur_moves += value;
+    }
 
     public virtual void UpdateStatsOnNewTurn()
     {
@@ -260,7 +268,7 @@ public class CharacterBase
         Skill2.cur_use_count = 0;
         Skill3.cur_use_count = 0;
         Skill4.cur_use_count = 0;
-        cur_moves += moves;
+        GetMoves(moves, this);
     }
 
     public int GetSpecialValue()
@@ -275,9 +283,24 @@ public class CharacterBase
         object_.GetComponent<GriddableObject>().Death();
 
     }
-    public virtual void OnSpawn(GridField field_data) { }
+    public virtual void OnSpawn(GridField field_data)
+    {
+        if (object_ != null && object_.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Character)
+        {
+            object_.GetComponent<GridCharacter>().Texture.texture = IconManager.PlayerIcons[id].texture;
+        }
+    }
+    
 
     public virtual void OnRemove(GridField field_data) { }
+
+    public virtual void OnGetEnergy(GridField field_data, int value) 
+    {
+        foreach (var passive in passives)
+        {
+            passive.OnGetEnergy(field_data, value);
+        }
+    }
 
     public virtual void OnDeath(GridField field_data, Damage dmg) 
     {

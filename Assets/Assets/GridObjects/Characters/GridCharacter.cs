@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using static UnityEngine.EventSystems.EventTrigger;
@@ -12,6 +13,7 @@ public class GridCharacter : GriddableObject
 
 
     public GameObject TexturePlane;
+    public RawImage Texture;
     public UnityEngine.UI.Image hp_circle;
     public CharacterBase character_;
     public int CharacterId_ = 0;
@@ -92,6 +94,24 @@ public class GridCharacter : GriddableObject
             CreateCurrentRollsUI(CurrentSkillRolls);
         }
     }
+
+    public List<Roll> GetCurrentRolls(int skill_num)
+    {
+        List<Roll> res = new List<Roll>();
+        PlayerSkill cur_skill = null;
+        if (skill_num == 1) cur_skill = character_.Skill1;
+        if (skill_num == 2) cur_skill = character_.Skill2;
+        if (skill_num == 3) cur_skill = character_.Skill3;
+        if (skill_num == 4) cur_skill = character_.Skill4;
+
+        if (CheckSkillResourses(cur_skill))
+        {
+            res.AddRange((new PlayerSkill(cur_skill).rolls));
+        }
+        return res;
+    }
+
+
 
     public void CreateCurrentRollsUI(List<Roll> rolls)
     {

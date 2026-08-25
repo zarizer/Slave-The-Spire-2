@@ -20,6 +20,7 @@ public static class DataDicts
     public static Dictionary<int, Type> CharacterTypes = new Dictionary<int, Type>()
     {
         { 0, typeof(MainCharacter) },
+        { 1, typeof(Shaman) },
     };
 
     public static Dictionary<int, Type> EnemyTypes = new Dictionary<int, Type>()
@@ -60,6 +61,8 @@ public static class DataDicts
         {6, typeof(PassiveWitch2) },
         {7, typeof(PassiveCultist1) },
         {8, typeof(PassiveCultist2) },
+        {9, typeof(PassiveShaman2) },
+        {10, typeof(PassiveShaman3) },
     };
 
     public static Dictionary<int, Type> EffectTypes = new Dictionary<int, Type>()

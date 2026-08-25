@@ -225,7 +225,7 @@ public class GridField : MonoBehaviour
             var obj = Instantiate(BaseCharacter, transform);
             cur_object = obj.GetComponent<GriddableObject>();
             GridCharacters.Add(cur_object.GetComponent<GridCharacter>());
-            cur_object.GetComponent<GridCharacter>().TexturePlane.GetComponent<RawImage>().texture = IconManager.PlayerIcons[ID].texture;
+            cur_object.GetComponent<GridCharacter>().Texture.texture = IconManager.PlayerIcons[ID].texture;
         }
         else if (type == GriddableObject.GriddableObjectType.Enemy)
         {
@@ -283,8 +283,8 @@ public class GridField : MonoBehaviour
         var obj = Instantiate(BaseCharacter, transform);
         cur_object = obj.GetComponent<GridCharacter>();
         GridCharacters.Add(cur_object);
+        if (battleMain.play_characters.Count >= character_spawn_num) { }
         cur_object.character_ = battleMain.play_characters[character_spawn_num];
-        character_spawn_num++;
         AddGridObject(X, Y, cur_object);
         GetGridCell(X, Y).SnapObject();
         current_object = cur_object;
@@ -661,6 +661,22 @@ public class GridField : MonoBehaviour
                 if (cell.color_type == GridCell.ColorType.Red)
                 {
                     if (cell.object_ != null) list.Add(cell.object_);
+                }
+            }
+        }
+        return list;
+    }
+
+    public List<GridCell> GetTargetedCells()
+    {
+        var list = new List<GridCell>();
+        foreach (var row in Cells_)
+        {
+            foreach (var cell in row)
+            {
+                if (cell.color_type == GridCell.ColorType.Red)
+                {
+                    list.Add(cell);
                 }
             }
         }

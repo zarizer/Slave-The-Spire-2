@@ -127,8 +127,8 @@ public class EnemyCultist : EnemyBase
         name = "культист";
         description = "член опасного лесного культа, который варит мет из жертв";
         SkillsPerTurn = new List<List<PlayerSkill>> {
-            //new List<PlayerSkill>() { DataDicts.EnemySkillSet[12], DataDicts.EnemySkillSet[13] },
-            //new List<PlayerSkill>() { DataDicts.EnemySkillSet[12], DataDicts.EnemySkillSet[14] }
+            new List<PlayerSkill>() { DataDicts.EnemySkillSet[12], DataDicts.EnemySkillSet[13] },
+            new List<PlayerSkill>() { DataDicts.EnemySkillSet[12], DataDicts.EnemySkillSet[14] }
         };
         none_k = 0.9f;
         darkness_k = 0.75f;
