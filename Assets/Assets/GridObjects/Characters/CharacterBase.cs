@@ -187,6 +187,8 @@ public class CharacterBase
         skills_description = "";
         foreach (var passive in passives)
         {
+            passive.UpdateAccourdingToLevel();
+            passive.Init();
             skills_description += passive.Name + ":\n";
             skills_description += passive.Description + "\n\n";
         }

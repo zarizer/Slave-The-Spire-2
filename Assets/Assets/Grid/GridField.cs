@@ -232,8 +232,8 @@ public class GridField : MonoBehaviour
             var obj = Instantiate(BaseEnemy, transform);
             cur_object = obj.GetComponent<GriddableObject>();
             GridEnemies.Add(cur_object.GetComponent<GridEnemy>());
-            Debug.Log(IconManager.EnemyIcons[ID]);
             cur_object.GetComponent<GridEnemy>().Texture.texture = IconManager.EnemyIcons[ID].texture;
+
         }
         else if (type == GriddableObject.GriddableObjectType.Obstacle)
         {

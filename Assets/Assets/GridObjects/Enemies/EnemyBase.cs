@@ -17,6 +17,7 @@ public class EnemyBase : CharacterBase
     {
         InitCurStats();
         CreateSkills(0);
+        CreateStatsAccourdingToLevel();
         
         return this;
     }
@@ -89,7 +90,7 @@ public class EnemyBase : CharacterBase
         cur_hp = (int)(cur_hp * (1 + ((float)level) / 12));
         cur_def = (int)(cur_def * (1 + ((float)level) / 12));
         float baff_k = (1 - (float)level / 500);
-        cur_dmg_k += (level / 4) / 10f;
+        cur_dmg_k += (float)Math.Round((level / 4) / 10f, 2);
         fire_k = (float)Math.Round(fire_k * baff_k,2);
         water_k = (float)Math.Round(water_k * baff_k, 2);
         dendro_k = (float)Math.Round(dendro_k * baff_k, 2);
@@ -98,13 +99,13 @@ public class EnemyBase : CharacterBase
         none_k = (float)Math.Round(none_k * baff_k, 2);
 
 
-        for (int i = 0; i < level / 40; i++)
+
+        for( int i = 0; i< passive_levels.Count; i++)
         {
-            foreach (var passive in passives)
-            {
-                passive.level++;
-            }
+            passive_levels[i] = 1 + level / 40;
         }
+
+
     }
 
 }
