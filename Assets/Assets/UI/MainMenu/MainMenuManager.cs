@@ -93,6 +93,8 @@ public class MainMenuManager : MonoBehaviour
 
     public void StartBattle()
     {
+        if (CharacterMenuController.selected_characters.Count <= 0) { ResoursesDict.GetClass<SoundMain>().Restrict(); return; }
+        ResoursesDict.GetClass<SoundMain>().Accept();
         SetMenu(battleMain.gameObject);
         battleMain.CurrentLevelId = prepareBattleScrit.LevelId;
         battleMain.StartGame();

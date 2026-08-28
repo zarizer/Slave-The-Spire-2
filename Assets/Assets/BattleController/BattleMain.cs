@@ -98,6 +98,7 @@ public class BattleMain : MonoBehaviour
     [ContextMenu("StartBattle")]
     public void StartBattle(bool start_battle = true)
     {
+
         ResoursesDict.GetClass<CameraController>().lock_navigation = false;
         UpdateCharacters();
         battle_ui.SetActive(true);

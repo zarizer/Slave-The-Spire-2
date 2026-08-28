@@ -280,7 +280,7 @@ public class Chest1 : ObstacleBase
         ModelId = 9;
         Interactable = true;
         one_time_use = true;
-        use_count = 100;
+        use_count = 1;
         base.Init();
         return this;
     }
@@ -288,13 +288,18 @@ public class Chest1 : ObstacleBase
     public override void OnInteract1(GridField field_data)
     {
         base.OnInteract1(field_data);
-        //field_data.RemoveObject(object_.GetComponent<GriddableObject>().cell_);
+        field_data.RemoveObject(object_.GetComponent<GriddableObject>().cell_);
+
         List<Loot> loot = ResoursesDict.GetClass<LootGenerator>().GenerateLoot(field_data.battleMain, 1);
-        foreach(var l in loot)
+
+        foreach (var l in loot)
         {
             Debug.LogWarning(l.item + " " + l.count.ToString());
             InventoryManager.AddItem(l.item, "", "", l.count);
         }
+
+        LootDropAnimationWorld.ShowLootDrop(object_.transform.position, loot);
+
         Debug.Log("opened");
     }
 

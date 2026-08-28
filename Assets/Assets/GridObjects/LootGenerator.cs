@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
+using static InventoryManager;
 using static UnityEditor.Progress;
 
 public class LootGenerator : MonoBehaviour
@@ -417,3 +419,4 @@ new Dictionary<Loot, int>
         Kach5 += XPTickets53;
     }
 }
+

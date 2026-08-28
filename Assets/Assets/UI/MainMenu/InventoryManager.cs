@@ -398,11 +398,11 @@ public class InventoryManager : MonoBehaviour
         }
         return "";
     }
-    public static ItemData GetItemData(Item itemType)
+    public static ItemSO GetItemData(Item itemType)
     {
-        if (inventory.ContainsKey(itemType))
+        if (itemDatabase.ContainsKey(itemType))
         {
-            return inventory[itemType];
+            return itemDatabase[itemType];
         }
         return null;
     }
@@ -410,6 +410,8 @@ public class InventoryManager : MonoBehaviour
     {
         return GetItemCount(itemType) >= count;
     }
+
+
     public static Dictionary<Item, ItemData> GetAllItems()
     {
         Dictionary<Item, ItemData> result = new Dictionary<Item, ItemData>();
