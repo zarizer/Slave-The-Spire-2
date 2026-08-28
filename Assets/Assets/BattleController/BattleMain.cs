@@ -56,7 +56,7 @@ public class BattleMain : MonoBehaviour
 
     private void Awake()
     {
-        Skills.Init();
+        
         //Debug.Log(Application.companyName + " " + Application.productName + " " + Application.persistentDataPath);
     }
 
@@ -76,11 +76,22 @@ public class BattleMain : MonoBehaviour
         //play_characters.Add(GridCharacter.GetCharacterByID(0));
     }
 
+    void GetPlayCharacters()
+    {
+        foreach (CharacterCard card in CharacterMenuController.selected_characters)
+        {
+            var c = GridCharacter.GetCharacterByID(card.character.id, card.character);
+            
+            play_characters.Add(c);
+        }
+        
+    }
+
     public void StartGame()
     {
         IsInBattle = true;
         play_characters.Clear();
-        DebugAddPlayCharacters();
+        GetPlayCharacters();
         StartBattle();
     }
 

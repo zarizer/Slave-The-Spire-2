@@ -311,14 +311,14 @@
           "rollRadius": "Single",
           "radius": 1,
           "element": "Darkness",
-		  "description": "при использовании даёт себе силу мощности 1 на 1 ход, если эта атака наносит урон, получает 20 энергии",
+		  "description": "при использовании даёт себе силу мощности 1, если эта атака наносит урон, получает 20 энергии",
           "specialEffects": [
 		  {
 			  "effectType": "ApplyStatus",
 			  "target": "Self",
 			  "trigger": "OnUse",
 			  "value": 1,
-			  "duration": 1,
+			  "duration": 0,
 			  "chance": 100,
 			  "statusId": 1001
 			},
@@ -346,14 +346,14 @@
           "rollRadius": "Single",
           "radius": 1,
           "element": "Darkness",
-		  "description": "при использовании даёт себе остроту мощности 1 на 1 ход, если эта атака наносит урон, дополнительно наносит 5 пиро урона",
+		  "description": "при использовании даёт себе остроту мощности 1, если эта атака наносит урон, дополнительно наносит 5 пиро урона",
           "specialEffects": [
 		  {
 			  "effectType": "ApplyStatus",
 			  "target": "Self",
 			  "trigger": "OnUse",
 			  "value": 1,
-			  "duration": 1,
+			  "duration": 0,
 			  "chance": 100,
 			  "statusId": 1003
 			},

@@ -64,11 +64,13 @@ public class GridCharacter : GriddableObject
         
 
     }
-    public static CharacterBase GetCharacterByID(int id)
+    public static CharacterBase GetCharacterByID(int id, CharacterBase parent = null)
     {
         Type type = DataDicts.CharacterTypes[id];
         CharacterBase result = (CharacterBase)Activator.CreateInstance(type);
+        
         result.Init();
+        if (parent != null) { result.is_custom_secondary_stats = true; parent.WriteSecondaryData(result); }
         result.InitCurStats();
         result.InitSkills();
         return result;
@@ -170,6 +172,7 @@ public class GridCharacter : GriddableObject
         }
         if (!flag)
         {
+            if (duration <= 0) effect.duration = 1;
             if (is_turn_start) effect.duration++; //ÍÅÎÁÕÎÄÈÌÎ ÈÍÀ×Å ÝÔÔÅÊÒ ÌÃÍÎÂÅÍÍÎ ÓÁÅÐ¨ÒÑß Â ÍÀ×ÀËÅ ÕÎÄÀ 
             target.effects.Add(effect);
         }

@@ -17,6 +17,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void Awake()
     {
+        Skills.Init();
         CurrentDebugMenu.SetActive(false);        
     }
 

@@ -10,6 +10,8 @@ public class PrepareBattleScript : MonoBehaviour
     [SerializeField] private TextMeshProUGUI DifficultyName;
     [SerializeField] private Slider difficulty_slider;
     [SerializeField] private TextMeshProUGUI LevelIdText;
+    [SerializeField] private CharacterMenuController character_menu;
+    [SerializeField] private GameObject CharactersList;
     public int LevelId;
     public int difficulty;
     public int max_difficulty;
@@ -30,17 +32,32 @@ public class PrepareBattleScript : MonoBehaviour
         ProfileManager.LoadProfile();
         max_difficulty = ProfileManager.profile.max_difficulty;
         difficulty_slider.maxValue = max_difficulty;
+        character_menu.is_picking = true;
+        CharactersList.transform.SetParent(this.transform);
+        character_menu.LoadData();
+        CharacterMenuController.selected_characters.Clear();
+
         OnDifficultyChange();
+    }
+
+    private void OnDisable()
+    {
+        LeanTween.delayedCall(0.1f, () =>
+        {
+            CharactersList.transform.SetParent(character_menu.transform);
+        });
+        character_menu.is_picking = false;
+
     }
 
     public void OnDifficultyChange() {
         Dictionary<int, string> dif_names = new Dictionary<int, string>
         {
-            { 1, "нормис" },
-            { 2, "слон" },
-            { 3, "легенда" },
-            { 4, "мастер качалки" },
-            { 5, "шизоид" },
+            { 1, "РќРѕСЂРјРёСЃ" },
+            { 2, "РЎР»РѕРЅ" },
+            { 3, "Р›РµРіРµРЅРґР°" },
+            { 4, "РјР°СЃС‚РµСЂ РєР°С‡Р°Р»РєРё" },
+            { 5, "С€РёР·РѕРёРґ" },
         };
         difficulty = (int)difficulty_slider.value;
         ResoursesDict.GetClass<BattleMain>().difficulty = difficulty;
@@ -57,7 +74,6 @@ public class PrepareBattleScript : MonoBehaviour
         }
         else 
         {
-            Debug.Log("Не парситься");
             LevelId = 0; 
         }
     }

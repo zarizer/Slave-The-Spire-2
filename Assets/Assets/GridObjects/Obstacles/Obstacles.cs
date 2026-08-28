@@ -84,8 +84,9 @@ public class CharacterSpawn : ObstacleBase
         base.OnSpawn(field_data);
         GridCell cell = field_data.current_object.cell_;
         field_data.RemoveObject(field_data.current_object);
-        field_data.SpawnCharacter(cell.x_, cell.y_);
+        var c = field_data.SpawnCharacter(cell.x_, cell.y_).GetCharacter();
         field_data.character_spawn_num++;
+        c.level = ProfileManager.GetLevelById(c.id);
     }
 
 

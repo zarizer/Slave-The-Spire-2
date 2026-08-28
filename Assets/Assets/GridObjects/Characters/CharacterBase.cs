@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UIElements;
@@ -54,6 +55,7 @@ public class CharacterBase
     public List<int> passive_levels = new List<int>();
     public List<Roll> CurrentRolls = new List<Roll>();
     public GameObject object_;
+    public bool is_custom_secondary_stats = false;
 
     public List<GridCell> TargetedCells;
     
@@ -124,7 +126,8 @@ public class CharacterBase
         dmg_k = other.dmg_k;
         moves = other.moves;
         energy = other.energy;
-        level = other.level;
+        if (!is_custom_secondary_stats) level = other.level;
+
         name = other.name;
         description = other.description;
 
@@ -158,6 +161,15 @@ public class CharacterBase
         none_k = other.none_k;
     }
 
+    public void WriteSecondaryData(CharacterBase obj)
+    {
+        obj.level = level;
+        obj.skill_id1 = skill_id1;
+        obj.skill_id2 = skill_id2;
+        obj.skill_id3 = skill_id3;
+        obj.skill_id4 = skill_id4;
+        obj.passive_ids = new List<int>(passive_ids);
+    }
     public void CreatePassives()
     { 
         passives.Clear();

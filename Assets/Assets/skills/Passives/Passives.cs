@@ -173,7 +173,7 @@ public class PassiveCultist1 : Passive
     {
         base.Init();
         Name = "Связь с культом";
-        Description = $"В начале хода, этот отморозок получает {Value} остроты на 1 ход, за каждый(в том числе и вражеский) тотем на поле";
+        Description = $"В начале хода, этот отморозок получает {Value} остроты, за каждый(в том числе и вражеский) тотем на поле";
     }
 
     public override void OnTurnStart(GridField field)
@@ -189,7 +189,7 @@ public class PassiveCultist1 : Passive
 
         if (p == 0) return;
 
-        GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[1003], p * (int)Value, 1, character, character);
+        GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[1003], p * (int)Value, 0, character, character);
     }
 
     public override void UpdateAccourdingToLevel()
@@ -205,7 +205,7 @@ public class PassiveCultist2 : Passive
     {
         base.Init();
         Name = "настоящая порча на понос";
-        Description = $"В начале хода случайный вражеский отморозок получает {Value} тупости на 1 ход, за каждые 20 энергии у этого отморозка";
+        Description = $"В начале хода случайный вражеский отморозок получает {Value}, за каждые 20 энергии у этого отморозка";
     }
 
     public override void OnTurnStart(GridField field)
@@ -216,7 +216,7 @@ public class PassiveCultist2 : Passive
             {
                 int k = ResoursesDict.GetClass<CameraController>().field_.GridCharacters.Count;
                 int j = StaticFuncs.RandomRangeInclusive(0, k - 1);
-                GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[1004], (int)Value, 1,
+                GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[1004], (int)Value, 0,
                     ResoursesDict.GetClass<CameraController>().field_.GridCharacters[j].GetCharacter(), character, true);
             }
         }

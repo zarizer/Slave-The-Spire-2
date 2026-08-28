@@ -223,7 +223,7 @@
 		  "rollRadius": "TargetRadius",
 		  "radius": 1,
 		  "element": "Dendro",
-		  "description": "При нанесении урона восстанавливает себе 4% здоровья, с вероятносью 20% получает 1 силу на 1 ход",
+		  "description": "При нанесении урона восстанавливает себе 4% здоровья, с вероятносью 20% получает 1 силу",
 		  "specialEffects": [
 			{
 			  "effectType": "HealPercent",
@@ -237,7 +237,7 @@
 			  "target": "Self",
 			  "trigger": "OnHit",
 			  "value": 1,
-			  "duration": 1,
+			  "duration": 0,
 			  "chance": 20,
 			  "statusId": 1001
 			},

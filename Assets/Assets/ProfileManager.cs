@@ -87,6 +87,17 @@ public class ProfileManager : MonoBehaviour
         SaveProfile();
     }
 
+    public static int GetLevelById(int id)
+    {
+        for(int i = 0; i < profile.CharacterIds.Count; i++)
+        {
+            if (id == profile.CharacterIds[i])
+            {
+                return profile.CharacterLevels[i];
+            }
+        }
+        return 1;
+    }
     static public void SaveProfile()
     {
         if (profile == null)
@@ -190,6 +201,7 @@ public class Profile
     public int budget = 0;
     public int max_difficulty = 1;
     public string profile_picture_path;
+    public List<int> CharacterLevels;
     public List<int> CharacterIds;
     public Dictionary<int, int> PullCounters;
     public float roll_speed = 1.2f;
@@ -207,6 +219,7 @@ public class Profile
         sound_level = 1.0f;
         budget = 0;
         max_difficulty = 1;
+        CharacterLevels = new List<int>();
         CharacterIds = new List<int>();
         PullCounters = new Dictionary<int, int>();
         profile_picture_path = "";

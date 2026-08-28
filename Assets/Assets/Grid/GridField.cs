@@ -272,7 +272,7 @@ public class GridField : MonoBehaviour
 
     public GriddableObject SpawnCharacter(int X, int Y, bool trigger_spawn = true)
     {
-        
+        if (battleMain.play_characters.Count <= character_spawn_num) return null;
         if (GetGridCell(X, Y) == null)
         {
             Debug.Log("ERROR: CREATING OBJECT IN INVALID POSITION");
