@@ -7,6 +7,7 @@ public class CharacterMenuController : MonoBehaviour
 {
     [SerializeField] GameObject CharacterCard;
     [SerializeField] GameObject View;
+    public GameObject CharacterMenu;
     HashSet<int> character_ids = new HashSet<int>();
     List<CharacterCard> cards = new List<CharacterCard>();
     public bool is_picking = false;

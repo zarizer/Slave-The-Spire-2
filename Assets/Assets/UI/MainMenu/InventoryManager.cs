@@ -23,21 +23,36 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI itemNameText;
     [SerializeField] private TextMeshProUGUI itemDescriptionText;
 
+    public void Init()
+    {
+        InitializePaths();
+        InitialiveItems();
+    }
     void Awake()
     {
         InitializePaths();
         InitialiveItems();
-        foreach (var pos in ItemSpawnPoints)
+
+        if (ItemSpawnPoints != null && ItemSpawnPoints.Count > 0)
         {
-            var obj = Instantiate(ItemPrefab, pos);
-            ItemUIs.Add(obj);
+            foreach (var pos in ItemSpawnPoints)
+            {
+                if (pos != null)
+                {
+                    var obj = Instantiate(ItemPrefab, pos);
+                    ItemUIs.Add(obj);
+                }
+            }
         }
-        ItemPrefab.SetActive(false);
+
+        if (ItemPrefab != null)
+            ItemPrefab.SetActive(false);
     }
 
     private void Start()
     {
-
+        LoadInventory();
+        AssignValueItems();
     }
 
     void InitialiveItems()
@@ -56,17 +71,24 @@ public class InventoryManager : MonoBehaviour
         int i = 0;
         foreach (var item in inventory)
         {
-            var obj = ItemUIs[i].GetComponent<ItemUIScript>();
-            obj.SetName(item.Value.name);
-            obj.SetCount(item.Value.count);
-            obj.SetTexture(itemDatabase[item.Key].icon);
-            obj.item = item.Key;
-            i++;
+            if (i < ItemUIs.Count)
+            {
+                var obj = ItemUIs[i].GetComponent<ItemUIScript>();
+                if (obj != null)
+                {
+                    obj.SetName(item.Value.name);
+                    obj.SetCount(item.Value.count);
+                    obj.SetTexture(itemDatabase[item.Key].icon);
+                    obj.item = item.Key;
+                }
+                i++;
+            }
         }
 
         itemNameText.text = "";
         itemDescriptionText.text = "";
     }
+
     public static GameObject GetItemPrefab(Item itemType)
     {
         if (itemDatabase.ContainsKey(itemType))
@@ -78,7 +100,6 @@ public class InventoryManager : MonoBehaviour
 
     void OnEnable()
     {
-        LoadInventory();
         AssignValueItems();
     }
 
@@ -87,6 +108,7 @@ public class InventoryManager : MonoBehaviour
     {
         CopyInventoryToDesktopStatic();
     }
+
     public static void CopyInventoryToDesktopStatic()
     {
         try
@@ -119,9 +141,9 @@ public class InventoryManager : MonoBehaviour
             File.Copy(SavePath, destinationPath, overwrite: true);
             Debug.Log($"Файл инвентаря успешно скопирован на рабочий стол: {destinationPath}");
 
-            #if UNITY_EDITOR
-                        UnityEditor.EditorUtility.RevealInFinder(destinationPath);
-            #endif
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.RevealInFinder(destinationPath);
+#endif
         }
         catch (System.Exception e)
         {
@@ -172,6 +194,7 @@ public class InventoryManager : MonoBehaviour
         if (!Directory.Exists(directory))
         {
             Directory.CreateDirectory(directory);
+            Debug.Log($"Создана папка для инвентаря: {directory}");
         }
     }
 
@@ -185,12 +208,12 @@ public class InventoryManager : MonoBehaviour
             {
                 string json = File.ReadAllText(SavePath);
                 LoadFromJson(json);
-                Debug.Log($"Инвентарь загружен из: {SavePath}");
+                Debug.Log($"Инвентарь загружен из AppData: {SavePath}");
                 return;
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"Ошибка загрузки из {SavePath}: {e.Message}");
+                Debug.LogError($"Ошибка загрузки из AppData: {e.Message}");
             }
         }
 
@@ -200,7 +223,7 @@ public class InventoryManager : MonoBehaviour
             {
                 string json = File.ReadAllText(DefaultPath);
                 LoadFromJson(json);
-                //Debug.Log($"Инвентарь загружен из StreamingAssets: {DefaultPath}");
+                Debug.Log($"Инвентарь загружен из StreamingAssets: {DefaultPath}");
                 SaveInventory();
                 return;
             }
@@ -211,42 +234,54 @@ public class InventoryManager : MonoBehaviour
         }
 
         Debug.Log("Файл инвентаря не найден. Создаём пустой инвентарь.");
+        SaveInventory();
     }
 
     private static void LoadFromJson(string json)
     {
-        JObject jsonObject = JObject.Parse(json);
-        JArray itemsArray = jsonObject["inventory"] as JArray;
-
-        if (itemsArray == null)
+        try
         {
-            Debug.LogWarning("В JSON нет поля 'inventory'");
-            return;
-        }
+            JObject jsonObject = JObject.Parse(json);
+            JArray itemsArray = jsonObject["inventory"] as JArray;
 
-        foreach (JToken itemToken in itemsArray)
-        {
-            string itemType = itemToken["item"].ToString();
-            string name = itemToken["name"].ToString();
-            string description = itemToken["description"].ToString();
-            int count = itemToken["count"].Value<int>();
-
-            if (System.Enum.TryParse<Item>(itemType, true, out Item itemEnum))
+            if (itemsArray == null)
             {
-                if (inventory.ContainsKey(itemEnum))
+                Debug.LogWarning("В JSON нет поля 'inventory'");
+                return;
+            }
+
+            foreach (JToken itemToken in itemsArray)
+            {
+                string itemType = itemToken["item"].ToString();
+                string name = itemToken["name"].ToString();
+                string description = itemToken["description"].ToString();
+                int count = itemToken["count"].Value<int>();
+
+                if (System.Enum.TryParse<Item>(itemType, true, out Item itemEnum))
                 {
-                    inventory[itemEnum].count += count;
+                    if (inventory.ContainsKey(itemEnum))
+                    {
+                        inventory[itemEnum].count += count;
+                    }
+                    else
+                    {
+                        inventory[itemEnum] = new ItemData
+                        {
+                            name = name,
+                            description = description,
+                            count = count
+                        };
+                    }
                 }
                 else
                 {
-                    inventory[itemEnum] = new ItemData
-                    {
-                        name = name,
-                        description = description,
-                        count = count
-                    };
+                    Debug.LogWarning($"Неизвестный тип предмета: {itemType}");
                 }
             }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Ошибка парсинга JSON инвентаря: {e.Message}");
         }
     }
 
@@ -255,24 +290,39 @@ public class InventoryManager : MonoBehaviour
         try
         {
             List<ItemDTO> itemsList = new List<ItemDTO>();
-
-            foreach (var kvp in inventory)
+            foreach (var itemType in itemDatabase.Keys)
             {
-                if (kvp.Value.count > 0)
+                int count = 0;
+                string name = "";
+                string description = "";
+
+                if (inventory.ContainsKey(itemType))
                 {
-                    itemsList.Add(new ItemDTO
-                    {
-                        item = kvp.Key.ToString(),
-                        name = kvp.Value.name,
-                        description = kvp.Value.description,
-                        count = kvp.Value.count
-                    });
+                    count = inventory[itemType].count;
+                    name = inventory[itemType].name;
+                    description = inventory[itemType].description;
                 }
+                else
+                {
+                    var itemSO = itemDatabase[itemType];
+                    name = itemSO.itemName;
+                    description = itemSO.description;
+                    count = 0;
+                }
+
+                itemsList.Add(new ItemDTO
+                {
+                    item = itemType.ToString(),
+                    name = name,
+                    description = description,
+                    count = count
+                });
             }
 
             var wrapper = new { inventory = itemsList };
             string json = JsonConvert.SerializeObject(wrapper, Formatting.Indented);
             File.WriteAllText(SavePath, json);
+            Debug.Log($"Инвентарь сохранён в AppData: {SavePath}");
         }
         catch (System.Exception e)
         {

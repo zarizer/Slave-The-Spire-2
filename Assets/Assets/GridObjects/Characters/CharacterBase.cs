@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -38,6 +39,13 @@ public class CharacterBase
     public float darkness_k = 1f;
     public float none_k = 1f;
 
+    public float init_fire_k = 1f;
+    public float init_water_k = 1f;
+    public float init_dendro_k = 1f;
+    public float init_light_k = 1f;
+    public float init_darkness_k = 1f;
+    public float init_none_k = 1f;
+
     public PlayerSkill Skill1;
     public PlayerSkill Skill2;
     public PlayerSkill Skill3;  
@@ -63,8 +71,15 @@ public class CharacterBase
     public virtual CharacterBase Init() 
     {
         init_time = Time.realtimeSinceStartup;
+        init_fire_k = fire_k;
+        init_water_k = water_k;
+        init_dendro_k = dendro_k;
+        init_light_k = light_k;
+        init_darkness_k = darkness_k;
+        init_none_k = none_k;
         InitSkills();
         InitCurStats();
+
         return this;
     }
 
@@ -94,6 +109,7 @@ public class CharacterBase
 
     public void InitCurStats()
     {
+        
         cur_hp = hp;
         cur_def = def;
         cur_speed = speed;
@@ -159,6 +175,13 @@ public class CharacterBase
         light_k = other.light_k;
         darkness_k = other.darkness_k;
         none_k = other.none_k;
+
+        init_fire_k = other.init_fire_k;
+        init_water_k = other.init_water_k;
+        init_dendro_k = other.init_dendro_k;
+        init_light_k = other.init_light_k;
+        init_darkness_k = other.init_darkness_k;
+        init_none_k = other.init_none_k;
     }
 
     public void WriteSecondaryData(CharacterBase obj)
@@ -186,7 +209,19 @@ public class CharacterBase
 
     virtual public void CreateStatsAccourdingToLevel() 
     {
-        
+        start_hp = hp +(int)(((float)hp / 100) * 1.2f * level);
+        cur_hp = hp +(int)(((float)hp / 100) * 1.2f * level);
+        cur_dmg_k = (float)Math.Round(dmg_k + (0.05f*(level/4)), 2);
+        cur_def = def + (int)(((float)def / 100) * 1.8f * level);
+        float baff_k = (level / 25);
+        fire_k = (float)Math.Round(init_fire_k - baff_k/10,2);
+        water_k = (float)Math.Round(init_water_k - baff_k / 10, 2);
+        dendro_k = (float)Math.Round(init_dendro_k - baff_k / 10, 2);
+        light_k = (float)Math.Round(init_light_k - baff_k / 10, 2);
+        darkness_k = (float)Math.Round(init_darkness_k - baff_k / 10, 2);
+        none_k = (float)Math.Round(init_none_k - baff_k / 10, 2);
+        cur_moves = moves + (level / 50);
+        cur_energy += level / 10;
     }
 
     public virtual CharacterBase Clone()
@@ -396,6 +431,11 @@ public class CharacterBase
         {
             object_.GetComponent<GriddableObject>().CreateDamageText(new Damage(amount, Element.None, sourse), (float)amount / start_hp, true);
         }
+    }
+
+    public virtual int GetXpTicketAmountToUpgrade()
+    {
+        return level / 20 + 1;
     }
 }
 

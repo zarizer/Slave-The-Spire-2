@@ -18,6 +18,7 @@ public class MainMenuManager : MonoBehaviour
     private void Awake()
     {
         Skills.Init();
+        
         CurrentDebugMenu.SetActive(false);        
     }
 
@@ -25,6 +26,8 @@ public class MainMenuManager : MonoBehaviour
     {
         if (EnableOnStart) { SetMenu(StartMenu); BackGroundRoom.SetActive(true); }
         LevelData.Init();
+        ResoursesDict.GetClass<InventoryManager>().Init();
+        InventoryManager.LoadInventory();
     }
 
     void Update()

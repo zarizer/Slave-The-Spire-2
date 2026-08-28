@@ -10,7 +10,7 @@ public class MainCharacter : CharacterBase
     public override CharacterBase Init()
     {
         id = 0;
-        hp = 167;
+        hp = 100;
         def = 7;
         speed = 10;
         level = 1;
@@ -67,7 +67,7 @@ public class Shaman : CharacterBase
     public override CharacterBase Init()
     {
         id = 1;
-        hp = 100;
+        hp = 167;
         def = 0;
         speed = 10;
         level = 1;

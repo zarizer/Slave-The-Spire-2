@@ -13,6 +13,7 @@ public class CharacterCard : MonoBehaviour
     [SerializeField] TextMeshProUGUI character_name;
     [SerializeField] GameObject SelectionStamp;
     [SerializeField] TextMeshProUGUI SelectionNum;
+    
 
     public CharacterMenuController menu;
     void Start()
@@ -37,8 +38,15 @@ public class CharacterCard : MonoBehaviour
 
     public void OnSelected()
     {
-        if (!is_picking) return;
-        menu.OnSelect(this);
+        if (!is_picking)
+        {
+            menu.CharacterMenu.GetComponent<CharacterPageScript>().character = character;
+            ResoursesDict.GetClass<MainMenuManager>().SetMenu(menu.CharacterMenu);
+        }
+        else
+        {
+            menu.OnSelect(this);
+        }
     }
     public void UpdateInfo()
     {

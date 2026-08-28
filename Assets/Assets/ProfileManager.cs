@@ -190,6 +190,14 @@ public class ProfileManager : MonoBehaviour
     {
         return SavePath;
     }
+    public static int GetJSONIdByCharacterId(int id)
+    {
+        for (int i = 0; i < ProfileManager.profile.CharacterIds.Count; i++)
+        {
+            if (id == ProfileManager.profile.CharacterIds[i]) return i;
+        }
+        return -1;
+    }
 }
 
 [System.Serializable]
@@ -231,4 +239,6 @@ public class Profile
         chapter_num = 0;
         is_in_game = false;
     }
+
+
 }

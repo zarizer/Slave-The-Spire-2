@@ -45,6 +45,7 @@ public class ResoursesDict : MonoBehaviour
     public GameObject levelRedactor;
     public GameObject MainMenuManager;
     public GameObject UIController;
+    public GameObject inventoryManager;
 
     public GameObject death_effect;
 
@@ -103,6 +104,7 @@ public class ResoursesDict : MonoBehaviour
         ObjectSet["TrashManager"] = trashManager;
         ObjectSet["IconManager"] = iconManager;
         ObjectSet["LevelRedactor"] = levelRedactor;
+        ObjectSet["InventoryManager"] = inventoryManager;
         ObjectSet["DamageText"] = DamageText;
 
         SoundSet["RestrictSound"] = restricted_sound;

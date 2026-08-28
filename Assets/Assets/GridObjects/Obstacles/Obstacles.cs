@@ -87,6 +87,7 @@ public class CharacterSpawn : ObstacleBase
         var c = field_data.SpawnCharacter(cell.x_, cell.y_).GetCharacter();
         field_data.character_spawn_num++;
         c.level = ProfileManager.GetLevelById(c.id);
+        c.CreateStatsAccourdingToLevel();
     }
 
 
