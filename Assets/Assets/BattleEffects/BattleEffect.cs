@@ -61,6 +61,8 @@ public class BattleEffect
 
     virtual public void OnEffectEnd(GridField field, BattleEffect effect) { }
 
+    virtual public void OnKill(GridField field, CharacterBase target) { }
+
     private static Sprite LoadSprite(string fileName)
     {
         string filePath = Path.Combine(Application.streamingAssetsPath, "character_icons", fileName);

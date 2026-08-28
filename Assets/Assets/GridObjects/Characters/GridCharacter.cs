@@ -176,6 +176,7 @@ public class GridCharacter : GriddableObject
             if (is_turn_start) effect.duration++; //менаундхлн хмюве щттейр лцмнбеммн саеп╗ряъ б мювюке ундю 
             target.effects.Add(effect);
         }
+        if (target.object_ == null) return;
         TryUpdateEffectIcons(target.object_.GetComponent<GriddableObject>());
         effect.OnApply(ResoursesDict.GetClass<CameraController>().field_, effect, power, duration, flag);
     }

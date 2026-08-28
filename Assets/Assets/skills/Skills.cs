@@ -70,8 +70,17 @@ public class Skills
         {
             Roll roll = new Roll();
             roll.minRoll = roll_obj["minRoll"].Value<int>();
+            
             roll.maxRoll = roll_obj["maxRoll"].Value<int>();
             roll.skill = skill;
+            if (roll_obj["selfDamage"] == null || roll_obj["selfDamage"].Value<int>() == 1)
+            {
+                roll.selfDamage = true;
+            }
+            else
+            {
+                roll.selfDamage = false;
+            }
             roll.Description = roll_obj["description"].Value<string>();
             roll.radius = roll_obj["radius"].Value<int>();
             roll.rollRadius = GetRadius(roll_obj["rollRadius"].Value<string>());

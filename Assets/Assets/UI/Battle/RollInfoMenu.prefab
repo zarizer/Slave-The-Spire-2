@@ -81,6 +81,7 @@ MonoBehaviour:
   MaxRollText: {fileID: 8614375175432604214}
   RollDistText: {fileID: 2955225900144255073}
   RollRadiusText: {fileID: 7219466490468049481}
+  selfDamage: {fileID: 0}
   TextSize: 18
 --- !u!114 &305184632086804707
 MonoBehaviour:

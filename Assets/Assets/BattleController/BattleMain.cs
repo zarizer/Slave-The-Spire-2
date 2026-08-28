@@ -279,6 +279,11 @@ public class BattleMain : MonoBehaviour
         {
             var target = Targets[j];
 
+            if (target.GetCharacter() == attacker.GetCharacter() && !roll.selfDamage)
+            {
+                continue;
+            }
+
             FightResult result = new FightResult();
             result.target = target;
             result.context = new RollContext();
@@ -534,6 +539,7 @@ public class BattleMain : MonoBehaviour
 
                     if (target.GType_ == GriddableObject.GriddableObjectType.Enemy)
                     {
+                        if (target == null) { continue; }
                         var enemy = target.GetComponent<GridEnemy>();
                         for (int k = 0; k < enemy.RollsUI.childCount; k++)
                         {

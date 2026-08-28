@@ -59,7 +59,7 @@ public class PlayerSkill
     public virtual bool CheckSkillResourses()
     {
         if (cur_use_count < max_use_count &&
-            energy < character.cur_energy &&
+            energy <= character.cur_energy &&
             CheckSkillRestrictions())
         {
             return true;
@@ -137,6 +137,7 @@ public class Roll
     public int maxRoll;
     public RollType rollType;
     public RollRadius rollRadius;
+    public bool selfDamage = true;
     public List<(int, int)> DamagePositions = new List<(int, int)>();
     public List<SkillEffect> effects = new List<SkillEffect>();
     public Element element;
@@ -220,6 +221,7 @@ public class Roll
         element = other.element;
         skill = other.skill;
         Description = other.Description;
+        selfDamage = other.selfDamage;
         foreach (var effect in other.effects)
         {
             effects.Add(effect);

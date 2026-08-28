@@ -344,6 +344,137 @@
 		}
 	  ]
 	},
+	{
+	  "id": 10,
+	  "name": "пощёчина",
+	  "rollDist": "StLine",
+	  "dist": 2,
+	  "energy": -5,
+	  "maxUseCount": 1,
+	  "rolls": [
+		{
+		  "minRoll": 6,
+		  "maxRoll": 9,
+		  "rollType": "Atk",
+		  "rollRadius": "Single",
+		  "radius": 1,
+		  "element": "None",
+		  "description": "",
+		  
+		}
+	  ]
+	},
+	{
+	  "id": 11,
+	  "name": "бросить окурок",
+	  "rollDist": "StLine",
+	  "dist": 3,
+	  "energy": 6,
+	  "maxUseCount": 1,
+	  "rolls": [
+		{
+		  "minRoll": 3,
+		  "maxRoll": 8,
+		  "rollType": "Atk",
+		  "rollRadius": "Single",
+		  "radius": 5,
+		  "element": "Fire",
+		  "description": "При нанесении урона накладывает горение 4 длительности 1",
+		  "specialEffects": [
+			{
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnHit",
+			  "value": 4,
+			  "duration": 1,
+			  "chance": 100,
+			  "statusId": 1
+			}
+			]
+		
+		}
+	  ]
+	},
+	{
+	  "id": 12,
+	  "name": "Надымить",
+	  "rollDist": "Radius",
+	  "dist": 3,
+	  "energy": 66,
+	  "maxUseCount": 1,
+	  "rolls": [
+		{
+		  "minRoll": 4,
+		  "maxRoll": 17,
+		  "rollType": "Atk",
+		  "rollRadius": "PlayerRadius",
+		  "radius": 3,
+		  "element": "Water",
+		  "selfDamage": 0,
+		  "description": "Все получившие урон, получают слабость 3",
+		  "specialEffects": [
+			{
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnHit",
+			  "value": 3,
+			  "duration": 0,
+			  "chance": 100,
+			  "statusId": 1002
+			}]
+		},
+		{
+		  "minRoll": 2,
+		  "maxRoll": 10,
+		  "rollType": "Atk",
+		  "rollRadius": "PlayerRadius",
+		  "radius": 2,
+		  "element": "Water",
+		  "selfDamage": 0,
+		  "description": "Все получившие урон, получают слабость 1 длительности 2",
+		  "specialEffects": [
+			{
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnHit",
+			  "value": 1,
+			  "duration": 2,
+			  "chance": 100,
+			  "statusId": 1002
+			}]
+		}
+	  ]
+	},
+	{
+	  "id": 13,
+	  "name": "обдать дымком",
+	  "rollDist": "StLine",
+	  "dist": 4,
+	  "energy": 3,
+	  "maxUseCount": 1,
+	  "rolls": [
+		{
+		  "minRoll": 1,
+		  "maxRoll": 5,
+		  "rollType": "Atk",
+		  "rollRadius": "StLine",
+		  "radius": 4,
+		  "element": "Water",
+		  "description": "При нанесении урона накладывает 7 дыма на персонажей в области поражения",
+		  "specialEffects": [
+			{
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnTarget",
+			  "value": 7,
+			  "duration": 0,
+			  "chance": 100,
+			  "statusId": 3
+			}]
+		  
+		}
+	  ]
+	},
 	
   ]
 }

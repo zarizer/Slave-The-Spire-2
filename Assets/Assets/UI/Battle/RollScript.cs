@@ -9,7 +9,7 @@ public class RollScript : MonoBehaviour
     public Roll roll;
     public GameObject rollMenuUI;
     public CharacterBase character;
-
+    public bool selfDamage = true;
     public TextMeshProUGUI MinMaxText;
     public RawImage RollImage;
     public bool is_showing_result = false;

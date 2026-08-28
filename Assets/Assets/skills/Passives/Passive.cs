@@ -42,4 +42,6 @@ public class Passive
     virtual public void OnDeath(GridField field, Damage dmg) { }
 
     virtual public void OnGetEnergy(GridField field, int value) { }
+
+    virtual public void OnKill(GridField field, CharacterBase target) { }
 }

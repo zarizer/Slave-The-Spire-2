@@ -221,7 +221,7 @@ public class CharacterBase
         darkness_k = (float)Math.Round(init_darkness_k - baff_k / 10, 2);
         none_k = (float)Math.Round(init_none_k - baff_k / 10, 2);
         cur_moves = moves + (level / 50);
-        cur_energy += level / 10;
+        cur_energy = energy + level / 10;
     }
 
     public virtual CharacterBase Clone()
@@ -240,7 +240,7 @@ public class CharacterBase
             skills_description += passive.Description + "\n\n";
         }
     }
-    public virtual void GetDamage(Damage damage)
+    public virtual void GetDamage(Damage damage, bool silent = true)
     {
         if (object_ == null) return;
         Debug.Log(object_);
@@ -267,8 +267,7 @@ public class CharacterBase
             cur_hp -= dmg;
             object_.GetComponent<GriddableObject>().CreateDamageText(damage, (float)dmg / start_hp, false);
         }
-        
-        OnGetDamage(ResoursesDict.GetClass<BattleMain>().current_field, damage);
+        if (!silent) OnGetDamage(ResoursesDict.GetClass<BattleMain>().current_field, damage);
         if (cur_hp <= 0)
         {
             Death(damage);
@@ -356,11 +355,33 @@ public class CharacterBase
         foreach (var passive in passives)
         {
             passive.OnDeath(field_data, dmg);
+            if (dmg.from != null)
+            {
+                dmg.from.OnKill(field_data, this);
+            }
         }
         foreach (var effect in effects)
         {
             effect.OnDeath(field_data, dmg);
+            if (dmg.from != null)
+            {
+                effect.OnKill(field_data, this);
+            }
         }
+
+    }
+
+    public virtual void OnKill(GridField field_data, CharacterBase target)
+    {
+        foreach (var passive in passives)
+        {
+            passive.OnKill(field_data, target);
+        }
+        foreach (var effect in effects)
+        {
+            effect.OnKill(field_data, target);
+        }
+
     }
 
     public virtual void OnGetDamage(GridField field_data, Damage dmg) 

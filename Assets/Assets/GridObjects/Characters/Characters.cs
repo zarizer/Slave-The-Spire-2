@@ -108,3 +108,49 @@ public class Shaman : CharacterBase
         base.CreateStatsAccourdingToLevel();
     }
 }
+
+public class Salty : CharacterBase
+{
+
+    public override CharacterBase Init()
+    {
+        id = 2;
+        hp = 75;
+        def = 0;
+        speed = 2;
+        level = 1;
+        speed_dif = 2;
+        dmg_k = 1.4f;
+        moves = 2;
+        energy = 0;
+        name = "Солевой";
+        description = "Обычный колтушский упырь, который согласился отправится в приключение, в Питер, так как в Колтушах кончились закладки";
+        skill_id1 = 10;
+        skill_id2 = 11;
+        skill_id3 = 12;
+        skill_id4 = 13;
+        none_k = 1.5f;
+        fire_k = 0.8f;
+        water_k = 0.8f;
+        dendro_k = 0.8f;
+        light_k = 1.3f;
+        darkness_k = 1;
+        base.Init();
+        return this;
+    }
+
+
+    public Salty()
+    {
+        base.Init();
+        passive_ids = new List<int>();
+        passive_ids.Add(11);
+        passive_ids.Add(12);
+        passive_ids.Add(13);
+    }
+
+    public override void CreateStatsAccourdingToLevel()
+    {
+        base.CreateStatsAccourdingToLevel();
+    }
+}

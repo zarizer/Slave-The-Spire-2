@@ -166,3 +166,22 @@ public class EffectSpeedSown : BattleEffect
     }
 
 };
+
+public class EffectSteam : BattleEffect
+{
+    public override void Init()
+    {
+        image_name = "steam_effect.png"; //важно чтобы было раньше чем base.Init()
+        base.Init();
+        name = "пар";
+        description = $"При получении урона этот отморозок ещё получает {power} гидро урона, если изначальный урон превышает {power}, то длительность эффекта снижается на 1";
+    }
+
+    public override void OnGetDamage(GridField field, Damage dmg)
+    {
+        base.OnGetDamage(field, dmg);
+        character.GetDamage(new Damage(power, Element.water, source), true);
+        if (dmg.damage > power) { duration--; GridCharacter.TryUpdateEffectIcons(character.object_.GetComponent<GriddableObject>()); }
+    }
+
+};

@@ -428,7 +428,7 @@ public class GridField : MonoBehaviour
     }
     public void ShowDamagePlayer(int x, int y, PlayerSkill skill, int px = 0, int py = 0)
     {
-        if (skill.energy > cameraController.Target.gameObject.GetComponent<GridCharacter>().character_.energy) return;
+        if (skill.energy > cameraController.Target.gameObject.GetComponent<GridCharacter>().character_.cur_energy) return;
         (int, int) p_pos = (cameraController.Target.gameObject.GetComponent<GridCharacter>().cell_.x_,
                             cameraController.Target.gameObject.GetComponent<GridCharacter>().cell_.y_);
         List<(int, int)> damage_cells = new List<(int, int)>();

@@ -290,3 +290,70 @@ public class PassiveShaman3 : Passive
         Value = 0 + level;
     }
 };
+
+public class PassiveSalty1 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "В поисках дозы";
+        Description = $"Каждые {Value} ходов повышает свою скорость на 1";
+    }
+
+    public override void OnTurnStart(GridField field)
+    {
+        base.OnTurnStart(field);
+        character.cur_moves += (field.battleMain.turn / (int)Value);
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = 5 - level;
+    }
+};
+
+public class PassiveSalty2 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Ломка";
+        Description = $"Каждый ход повышает коэффицент урона на {Value} и получает {Value*500} физического урона";
+    }
+
+    public override void OnTurnStart(GridField field)
+    {
+        base.OnTurnStart(field);
+        character.cur_dmg_k += Value;
+        character.GetDamage(new Damage((int)(Value * 500), Element.None, character));
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = 0.02f + 0.01f * level;
+    }
+};
+
+public class PassiveSalty3 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Предвкушение дозы";
+        Description = $"При убийстве врага восстанавливает {Value} энергии и здоровья";
+    }
+
+    public override void OnKill(GridField field_data, CharacterBase target)
+    {
+        character.Heal((int)Value, character);
+        character.GetEnergy((int)Value);
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = 20 + level * 5;
+    }
+};

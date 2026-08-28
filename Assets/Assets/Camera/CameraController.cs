@@ -95,7 +95,10 @@ public class CameraController : MonoBehaviour
     }
     void CameraReposition()
     {
-        if (Target == null) Target = field_.transform;
+        if (Target == null) 
+        { 
+            Target = field_.transform; 
+        }
         transform.position = Vector3.Lerp(transform.position, Target.position, CameraSpeed * 0.2f);
         DestinationReposition();
         DestinationRepositionY();

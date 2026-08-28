@@ -21,6 +21,7 @@ public static class DataDicts
     {
         { 0, typeof(MainCharacter) },
         { 1, typeof(Shaman) },
+        { 2, typeof(Salty) },
     };
 
     public static Dictionary<int, Type> EnemyTypes = new Dictionary<int, Type>()
@@ -64,6 +65,9 @@ public static class DataDicts
         {8, typeof(PassiveCultist2) },
         {9, typeof(PassiveShaman2) },
         {10, typeof(PassiveShaman3) },
+        {11, typeof(PassiveSalty1) },
+        {12, typeof(PassiveSalty2) },
+        {13, typeof(PassiveSalty3) },
     };
 
     public static Dictionary<int, Type> EffectTypes = new Dictionary<int, Type>()
@@ -71,6 +75,7 @@ public static class DataDicts
         {0, typeof(EffectPoison) },
         {1, typeof(EffectBurn) },
         {2, typeof(EffectHealProcentBySource) },
+        {3, typeof(EffectSteam) },
         {1001, typeof(EffectPowerUp) },
         {1002, typeof(EffectPowerDown) },
         {1003, typeof(EffectAtkUp) },
