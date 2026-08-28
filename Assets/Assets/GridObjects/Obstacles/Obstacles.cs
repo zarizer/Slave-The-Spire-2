@@ -259,3 +259,44 @@ public class Totem : ObstacleBase
 
 
 };
+
+public class Chest1 : ObstacleBase
+{
+    public override CharacterBase Init()
+    {
+        is_showing_passives = false;
+        Destroyable = false;
+        id = 6;
+        hp = 30;
+        def = 0;
+        speed = 0;
+        speed_dif = 0;
+        dmg_k = 0f;
+        moves = 0;
+        energy = 0;
+        name = "сундук";
+        description = "сундук со шмотками, оставшимис€ с врагов";
+        InteractVariants = 1;
+        ModelId = 9;
+        Interactable = true;
+        one_time_use = true;
+        use_count = 100;
+        base.Init();
+        return this;
+    }
+
+    public override void OnInteract1(GridField field_data)
+    {
+        base.OnInteract1(field_data);
+        //field_data.RemoveObject(object_.GetComponent<GriddableObject>().cell_);
+        List<Loot> loot = ResoursesDict.GetClass<LootGenerator>().GenerateLoot(field_data.battleMain, 1);
+        foreach(var l in loot)
+        {
+            Debug.LogWarning(l.item + " " + l.count.ToString());
+            InventoryManager.AddItem(l.item, "", "", l.count);
+        }
+        Debug.Log("opened");
+    }
+
+
+};

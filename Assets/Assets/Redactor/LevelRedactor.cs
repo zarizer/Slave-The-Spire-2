@@ -35,6 +35,7 @@ public class LevelRedactor : MonoBehaviour
 
     public void OpenRedactor()
     {
+        ResoursesDict.GetClass<BattleMain>().IsInBattle = true;
         battle_ui.SetActive(true);
         ui_camera.gameObject.SetActive(false);
         battle_camera.gameObject.SetActive(true);

@@ -39,6 +39,7 @@ public static class DataDicts
         { 3, typeof(Chapter1RandomObstacle) },
         { 4, typeof(BuffAltar) },
         { 5, typeof(Totem) },
+        { 6, typeof(Chest1) },
     };
 
     public static Dictionary<int, Type> BaffTypes = new Dictionary<int, Type>()

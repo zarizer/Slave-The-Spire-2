@@ -46,6 +46,7 @@ public class ResoursesDict : MonoBehaviour
     public GameObject MainMenuManager;
     public GameObject UIController;
     public GameObject inventoryManager;
+    public GameObject lootManager;
 
     public GameObject death_effect;
 
@@ -63,6 +64,7 @@ public class ResoursesDict : MonoBehaviour
     public GameObject ModelDoor;
     public GameObject BaffAltar;
     public GameObject Totem;
+    public GameObject Chest1;
 
     public GameObject ModelCh1R1;
     public GameObject ModelCh1R2;
@@ -105,6 +107,7 @@ public class ResoursesDict : MonoBehaviour
         ObjectSet["IconManager"] = iconManager;
         ObjectSet["LevelRedactor"] = levelRedactor;
         ObjectSet["InventoryManager"] = inventoryManager;
+        ObjectSet["LootManager"] = lootManager;
         ObjectSet["DamageText"] = DamageText;
 
         SoundSet["RestrictSound"] = restricted_sound;
@@ -126,6 +129,7 @@ public class ResoursesDict : MonoBehaviour
         ModelSet.Add(ModelCh1R4);
         ModelSet.Add(BaffAltar);
         ModelSet.Add(Totem);
+        ModelSet.Add(Chest1);
     }
 
 

@@ -30058,6 +30058,50 @@ PrefabInstance:
       addedObject: {fileID: 1468411643}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 49a636a625b003443a45c2015a1a3423, type: 3}
+--- !u!1 &1355329866
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1355329868}
+  - component: {fileID: 1355329867}
+  m_Layer: 0
+  m_Name: LootManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1355329867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1355329866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49b578184afc2234bb116abf3d464064, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1355329868
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1355329866}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.1831758, y: 0.24681652, z: -0.66650486}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1358143244
 GameObject:
   m_ObjectHideFlags: 0
@@ -42131,6 +42175,7 @@ MonoBehaviour:
   MainMenuManager: {fileID: 1820434717}
   UIController: {fileID: 1650208288}
   inventoryManager: {fileID: 773672786}
+  lootManager: {fileID: 1355329866}
   death_effect: {fileID: 2551207662819732602, guid: ec5d53a31db2bc3498ed55ff3e9e5354, type: 3}
   restricted_sound: {fileID: 8300000, guid: 229ef479b0ec7cb41b42702dcc11130d, type: 3}
   accept_sound: {fileID: 8300000, guid: e431bdd75e20c7c4286be6299261feda, type: 3}
@@ -42144,6 +42189,7 @@ MonoBehaviour:
   ModelDoor: {fileID: 3889070508958027890, guid: f2f57db47cbd0474395bb29ce2bbb451, type: 3}
   BaffAltar: {fileID: 3889070508958027890, guid: 464f1244fddfd9f428c71e845b34971b, type: 3}
   Totem: {fileID: 4727958134895937849, guid: 7ea12ad4afbaef141b68aef6a8a1729b, type: 3}
+  Chest1: {fileID: 919132149155446097, guid: 1dea818a69a3c9547813cb1bdf657a12, type: 3}
   ModelCh1R1: {fileID: 3889070508958027890, guid: 4894a5ecdb065e647a0fa685fbb3dbd5, type: 3}
   ModelCh1R2: {fileID: 3889070508958027890, guid: 685a8c093898a414f97c3a38de3d609d, type: 3}
   ModelCh1R3: {fileID: 3889070508958027890, guid: 5bce77a5e5282a44aaef7da2fe9bfd31, type: 3}
@@ -44568,3 +44614,4 @@ SceneRoots:
   - {fileID: 515258465}
   - {fileID: 1008563962}
   - {fileID: 1040845224}
+  - {fileID: 1355329868}

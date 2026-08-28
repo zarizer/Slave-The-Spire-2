@@ -46,7 +46,7 @@ public class GridField : MonoBehaviour
     public GriddableObject current_object = null;
     public bool is_redactor = false;
 
-    private BattleMain battleMain;
+    public BattleMain battleMain;
     void Awake()
     {
         cameraController = Camera.main.transform.parent.GetComponent<CameraController>(); 
