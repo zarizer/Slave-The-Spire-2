@@ -480,4 +480,6 @@ public enum Item
     mat1,
     mat2,
     mat3,
+    character_event,
+    character,
 }

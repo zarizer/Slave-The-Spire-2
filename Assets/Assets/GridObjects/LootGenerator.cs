@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using static InventoryManager;
-using static UnityEditor.Progress;
+
 
 public class LootGenerator : MonoBehaviour
 {
@@ -35,7 +35,27 @@ public class LootGenerator : MonoBehaviour
         return loot;
     }
 
-    
+    public List<Loot> GenerateGachaLoot(int count)
+    {
+        if (Pools == null)
+        {
+            Init();
+        }
+        List<Loot> loot = new List<Loot>();
+
+
+        int k = count;
+
+        for (int i = 0; i < k; i++)
+        {
+            loot.Add(Pools[-3].GetLoot());
+        }
+
+
+        return loot;
+    }
+
+
 
     public void Init()
     {
@@ -59,6 +79,8 @@ public class LootGenerator : MonoBehaviour
             {1024, tables.Kach4 },
             {1025, tables.Kach5 },
 
+            {-3, tables.GachaBaseChances },
+
         };
 
     }
@@ -70,6 +92,7 @@ public class Loot
 {
     public Item item;
     public int count;
+    public CharacterBase character = null;
 
     public Loot(Loot other)
     {
@@ -397,6 +420,48 @@ new Dictionary<Loot, int>
         { new Loot(Item.mat3, 3), 2 },
 }
 );
+    public Pool GachaBaseChances = new Pool(
+        new Dictionary<Loot, int>
+{
+
+        { new Loot(Item.character, 1), 4 },
+
+        { new Loot(Item.mat1, 1), 3 },
+        { new Loot(Item.mat2, 1), 3 },
+        { new Loot(Item.mat3, 1), 3 },
+        { new Loot(Item.mat1, 2), 2 },
+        { new Loot(Item.mat2, 2), 2 },
+        { new Loot(Item.mat3, 2), 2 },
+        { new Loot(Item.mat1, 3), 1 },
+        { new Loot(Item.mat2, 3), 1 },
+        { new Loot(Item.mat3, 3), 1 },
+
+        { new Loot(Item.asphalt1, 1), 3 },
+        { new Loot(Item.asphalt2, 1), 3 },
+        { new Loot(Item.asphalt3, 1), 3 },
+        { new Loot(Item.asphalt1, 2), 2 },
+        { new Loot(Item.asphalt2, 2), 2 },
+        { new Loot(Item.asphalt3, 2), 2 },
+        { new Loot(Item.asphalt1, 3), 1 },
+        { new Loot(Item.asphalt2, 3), 1 },
+        { new Loot(Item.asphalt3, 3), 1 },
+
+        { new Loot(Item.stick1, 1), 3 },
+        { new Loot(Item.stick2, 1), 3 },
+        { new Loot(Item.stick3, 1), 3 },
+        { new Loot(Item.stick1, 2), 2 },
+        { new Loot(Item.stick2, 2), 2 },
+        { new Loot(Item.stick3, 2), 2 },
+        { new Loot(Item.stick1, 3), 1 },
+        { new Loot(Item.stick2, 3), 1 },
+        { new Loot(Item.stick3, 3), 1 },
+
+        { new Loot(Item.xp_ticket, 1), 7 },
+        { new Loot(Item.xp_ticket, 2), 7 },
+        { new Loot(Item.xp_ticket, 3), 7 },
+        { new Loot(Item.xp_ticket, 4), 7 },
+        { new Loot(Item.xp_ticket, 5), 6 },
+});
 
     public LootTables()
     {

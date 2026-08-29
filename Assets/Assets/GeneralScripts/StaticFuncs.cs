@@ -23,7 +23,7 @@ class StaticFuncs : MonoBehaviour
     public static void DestroySingle(Transform obj)
     {
         obj.gameObject.SetActive(false);
-        obj.parent = ResoursesDict.GetClass<TrashManager>().transform;
+        obj.SetParent(ResoursesDict.GetClass<TrashManager>().transform);
     }
     public static void DestroyChildren(GameObject obj)
     {
