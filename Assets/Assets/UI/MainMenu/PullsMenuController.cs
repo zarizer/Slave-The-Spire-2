@@ -200,7 +200,7 @@ public class PullsMenuController : MonoBehaviour
 
     List<Loot> SortLoot(List<Loot> loots)
     {
-        List<Loot> res = loots.OrderBy(loot => item_weights[loot.item]).ToList();
+        List<Loot> res = loots.OrderBy(loot => item_weights[loot.item]*loot.count).ToList();
 
         return res;
     }

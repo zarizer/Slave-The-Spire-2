@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+п»їusing System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Newtonsoft.Json;
@@ -28,6 +28,8 @@ public class InventoryManager : MonoBehaviour
         InitializePaths();
         InitialiveItems();
     }
+
+
     void Awake()
     {
         InitializePaths();
@@ -55,32 +57,91 @@ public class InventoryManager : MonoBehaviour
         AssignValueItems();
     }
 
-    void InitialiveItems()
+    private void InitialiveItems()
     {
-        foreach (var item in allItems)
+        if (allItems == null)
         {
-            if (!itemDatabase.ContainsKey(item.itemType))
-            {
-                itemDatabase[item.itemType] = item;
-            }
+            Debug.LogError("[InventoryManager] allItems == NULL!");
+            return;
         }
+
+        Debug.Log($"[InventoryManager] Initializing {allItems.Count} items");
+
+        itemDatabase.Clear();
+
+        for (int i = 0; i < allItems.Count; i++)
+        {
+            ItemSO item = allItems[i];
+
+            if (item == null)
+            {
+                Debug.LogError(
+                    $"[InventoryManager] allItems[{i}] == NULL!"
+                );
+                continue;
+            }
+
+            Debug.Log(
+                $"[InventoryManager] Registering: {item.itemType} / {item.itemName}"
+            );
+
+            if (itemDatabase.ContainsKey(item.itemType))
+            {
+                Debug.LogWarning(
+                    $"[InventoryManager] Duplicate ItemType: {item.itemType}"
+                );
+                continue;
+            }
+
+            itemDatabase.Add(item.itemType, item);
+        }
+
+        Debug.Log(
+            $"[InventoryManager] Database initialized. Count = {itemDatabase.Count}"
+        );
     }
+
 
     void AssignValueItems()
     {
         int i = 0;
+
         foreach (var item in inventory)
         {
             if (i < ItemUIs.Count)
             {
                 var obj = ItemUIs[i].GetComponent<ItemUIScript>();
+
                 if (obj != null)
                 {
                     obj.SetName(item.Value.name);
                     obj.SetCount(item.Value.count);
-                    obj.SetTexture(itemDatabase[item.Key].icon);
                     obj.item = item.Key;
+
+                    if (itemDatabase.TryGetValue(item.Key, out ItemSO itemSO))
+                    {
+                        Debug.Log($"ITEM: {item.Key} | ICON: {itemSO.icon}");
+
+                        if (itemSO.icon != null)
+                        {
+                            obj.SetTexture(itemSO.icon);
+                        }
+                        else
+                        {
+                            Debug.LogError($"РЈ ItemSO '{item.Key}' РќР• РЅР°Р·РЅР°С‡РµРЅР° icon!");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError($"ItemSO РґР»СЏ '{item.Key}' РЅРµ РЅР°Р№РґРµРЅ РІ itemDatabase!");
+                    }
+
+                    if (obj.image == null)
+                    {
+                        Debug.LogError($"RawImage 'image' РЅРµ РЅР°Р·РЅР°С‡РµРЅ РІ ItemUIScript РЅР° UI #{i}!");
+                    }
                 }
+
                 i++;
             }
         }
@@ -88,6 +149,7 @@ public class InventoryManager : MonoBehaviour
         itemNameText.text = "";
         itemDescriptionText.text = "";
     }
+
 
     public static GameObject GetItemPrefab(Item itemType)
     {
@@ -123,23 +185,23 @@ public class InventoryManager : MonoBehaviour
 
             if (!File.Exists(SavePath))
             {
-                Debug.LogError($"Файл инвентаря не найден по пути: {SavePath}");
+                Debug.LogError($"Р¤Р°Р№Р» РёРЅРІРµРЅС‚Р°СЂСЏ РЅРµ РЅР°Р№РґРµРЅ РїРѕ РїСѓС‚Рё: {SavePath}");
 
                 if (File.Exists(DefaultPath))
                 {
-                    Debug.Log($"Копирую из StreamingAssets: {DefaultPath}");
+                    Debug.Log($"РљРѕРїРёСЂСѓСЋ РёР· StreamingAssets: {DefaultPath}");
                     File.Copy(DefaultPath, destinationPath, overwrite: true);
-                    Debug.Log($"Файл скопирован из StreamingAssets на рабочий стол: {destinationPath}");
+                    Debug.Log($"Р¤Р°Р№Р» СЃРєРѕРїРёСЂРѕРІР°РЅ РёР· StreamingAssets РЅР° СЂР°Р±РѕС‡РёР№ СЃС‚РѕР»: {destinationPath}");
                 }
                 else
                 {
-                    Debug.LogError("Файл инвентаря не найден ни в AppData, ни в StreamingAssets");
+                    Debug.LogError("Р¤Р°Р№Р» РёРЅРІРµРЅС‚Р°СЂСЏ РЅРµ РЅР°Р№РґРµРЅ РЅРё РІ AppData, РЅРё РІ StreamingAssets");
                 }
                 return;
             }
 
             File.Copy(SavePath, destinationPath, overwrite: true);
-            Debug.Log($"Файл инвентаря успешно скопирован на рабочий стол: {destinationPath}");
+            Debug.Log($"Р¤Р°Р№Р» РёРЅРІРµРЅС‚Р°СЂСЏ СѓСЃРїРµС€РЅРѕ СЃРєРѕРїРёСЂРѕРІР°РЅ РЅР° СЂР°Р±РѕС‡РёР№ СЃС‚РѕР»: {destinationPath}");
 
 #if UNITY_EDITOR
             UnityEditor.EditorUtility.RevealInFinder(destinationPath);
@@ -147,7 +209,7 @@ public class InventoryManager : MonoBehaviour
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"Ошибка при копировании файла на рабочий стол: {e.Message}");
+            Debug.LogError($"РћС€РёР±РєР° РїСЂРё РєРѕРїРёСЂРѕРІР°РЅРёРё С„Р°Р№Р»Р° РЅР° СЂР°Р±РѕС‡РёР№ СЃС‚РѕР»: {e.Message}");
         }
     }
 
@@ -166,7 +228,7 @@ public class InventoryManager : MonoBehaviour
 
             if (!File.Exists(SavePath))
             {
-                Debug.LogError($"Файл инвентаря не найден по пути: {SavePath}");
+                Debug.LogError($"Р¤Р°Р№Р» РёРЅРІРµРЅС‚Р°СЂСЏ РЅРµ РЅР°Р№РґРµРЅ РїРѕ РїСѓС‚Рё: {SavePath}");
                 return;
             }
 
@@ -177,11 +239,11 @@ public class InventoryManager : MonoBehaviour
             }
 
             File.Copy(SavePath, destinationPath, overwrite: true);
-            Debug.Log($"Файл инвентаря сохранен по пути: {destinationPath}");
+            Debug.Log($"Р¤Р°Р№Р» РёРЅРІРµРЅС‚Р°СЂСЏ СЃРѕС…СЂР°РЅРµРЅ РїРѕ РїСѓС‚Рё: {destinationPath}");
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"Ошибка при сохранении файла: {e.Message}");
+            Debug.LogError($"РћС€РёР±РєР° РїСЂРё СЃРѕС…СЂР°РЅРµРЅРёРё С„Р°Р№Р»Р°: {e.Message}");
         }
     }
 
@@ -194,7 +256,7 @@ public class InventoryManager : MonoBehaviour
         if (!Directory.Exists(directory))
         {
             Directory.CreateDirectory(directory);
-            Debug.Log($"Создана папка для инвентаря: {directory}");
+            Debug.Log($"РЎРѕР·РґР°РЅР° РїР°РїРєР° РґР»СЏ РёРЅРІРµРЅС‚Р°СЂСЏ: {directory}");
         }
     }
 
@@ -208,12 +270,12 @@ public class InventoryManager : MonoBehaviour
             {
                 string json = File.ReadAllText(SavePath);
                 LoadFromJson(json);
-                Debug.Log($"Инвентарь загружен из AppData: {SavePath}");
+                Debug.Log($"РРЅРІРµРЅС‚Р°СЂСЊ Р·Р°РіСЂСѓР¶РµРЅ РёР· AppData: {SavePath}");
                 return;
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"Ошибка загрузки из AppData: {e.Message}");
+                Debug.LogError($"РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё РёР· AppData: {e.Message}");
             }
         }
 
@@ -223,17 +285,17 @@ public class InventoryManager : MonoBehaviour
             {
                 string json = File.ReadAllText(DefaultPath);
                 LoadFromJson(json);
-                Debug.Log($"Инвентарь загружен из StreamingAssets: {DefaultPath}");
+                Debug.Log($"РРЅРІРµРЅС‚Р°СЂСЊ Р·Р°РіСЂСѓР¶РµРЅ РёР· StreamingAssets: {DefaultPath}");
                 SaveInventory();
                 return;
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"Ошибка загрузки из StreamingAssets: {e.Message}");
+                Debug.LogError($"РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё РёР· StreamingAssets: {e.Message}");
             }
         }
 
-        Debug.Log("Файл инвентаря не найден. Создаём пустой инвентарь.");
+        Debug.Log("Р¤Р°Р№Р» РёРЅРІРµРЅС‚Р°СЂСЏ РЅРµ РЅР°Р№РґРµРЅ. РЎРѕР·РґР°С‘Рј РїСѓСЃС‚РѕР№ РёРЅРІРµРЅС‚Р°СЂСЊ.");
         SaveInventory();
     }
 
@@ -246,7 +308,7 @@ public class InventoryManager : MonoBehaviour
 
             if (itemsArray == null)
             {
-                Debug.LogWarning("В JSON нет поля 'inventory'");
+                Debug.LogWarning("Р’ JSON РЅРµС‚ РїРѕР»СЏ 'inventory'");
                 return;
             }
 
@@ -275,13 +337,13 @@ public class InventoryManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning($"Неизвестный тип предмета: {itemType}");
+                    Debug.LogWarning($"РќРµРёР·РІРµСЃС‚РЅС‹Р№ С‚РёРї РїСЂРµРґРјРµС‚Р°: {itemType}");
                 }
             }
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"Ошибка парсинга JSON инвентаря: {e.Message}");
+            Debug.LogError($"РћС€РёР±РєР° РїР°СЂСЃРёРЅРіР° JSON РёРЅРІРµРЅС‚Р°СЂСЏ: {e.Message}");
         }
     }
 
@@ -322,11 +384,11 @@ public class InventoryManager : MonoBehaviour
             var wrapper = new { inventory = itemsList };
             string json = JsonConvert.SerializeObject(wrapper, Formatting.Indented);
             File.WriteAllText(SavePath, json);
-            Debug.Log($"Инвентарь сохранён в AppData: {SavePath}");
+            Debug.Log($"РРЅРІРµРЅС‚Р°СЂСЊ СЃРѕС…СЂР°РЅС‘РЅ РІ AppData: {SavePath}");
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"Ошибка сохранения инвентаря: {e.Message}");
+            Debug.LogError($"РћС€РёР±РєР° СЃРѕС…СЂР°РЅРµРЅРёСЏ РёРЅРІРµРЅС‚Р°СЂСЏ: {e.Message}");
         }
     }
 
@@ -353,7 +415,7 @@ public class InventoryManager : MonoBehaviour
     {
         if (!inventory.ContainsKey(itemType))
         {
-            Debug.LogWarning($"Предмет {itemType} не найден");
+            Debug.LogWarning($"РџСЂРµРґРјРµС‚ {itemType} РЅРµ РЅР°Р№РґРµРЅ");
             return false;
         }
 
@@ -447,17 +509,6 @@ public class InventoryManager : MonoBehaviour
         public int count;
     }
 
-    [CreateAssetMenu(fileName = "NewItem", menuName = "Inventory/Item")]
-    public class ItemSO : ScriptableObject
-    {
-        public Item itemType;
-        public string itemName;
-        [TextArea(3, 5)]
-        public string description;
-        public GameObject prefab;
-        public Texture icon;
-        public int maxStack = 99;
-    }
 }
 
 [System.Serializable]

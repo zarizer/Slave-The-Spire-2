@@ -134,6 +134,9 @@ public class Skills
                     if (effect_obj["SummonObjectId"] != null)
                         effect.SummonObjectId = effect_obj["SummonObjectId"].Value<int>();
 
+                    if (effect_obj["CustomId"] != null)
+                        effect.customId = effect_obj["CustomId"].Value<int>();
+
                     // Добавляем эффект
                     roll.effects.Add(effect);
                 }
@@ -210,7 +213,7 @@ public enum EffectType
     //Invulnerability,   // Неуязвимость
     //ReflectDamage,     // Отражение урона
     //Execute,           // Казнь
-    //Custom             // Пользовательское событие (по ID)
+    Custom             // Пользовательское событие (по ID)
 }
 
 /// <summary>
@@ -484,10 +487,10 @@ public class SkillEffect
                     break;
                 case EffectType.Execute:
                     ExecuteTarget(caster, target);
-                    break;
+                    break;*/
                 case EffectType.Custom:
                     ExecuteCustomEffect(caster, target, context);
-                    break;*/
+                    break;
         }
     }
 
@@ -626,9 +629,13 @@ public class SkillEffect
 
     private void ExecuteCustomEffect(CharacterBase caster, CharacterBase target, RollContext context)
     {
-        // Вызов пользовательского эффекта по ID
         Debug.Log($"Executing custom effect {customId} on {target.name}");
-        // Здесь можно вызвать делегат или событие
+        if (customId == 0)
+        {
+            int k = caster.cur_energy / 5;
+            GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[1002], k, 0, target, caster, true);
+            caster.cur_energy = 0;
+        }
     }
 }
 

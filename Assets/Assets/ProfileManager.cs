@@ -30,7 +30,7 @@ public class ProfileManager : MonoBehaviour
 
         if (string.IsNullOrEmpty(path) || !File.Exists(path))
         {
-            Debug.Log($"Путь к изображению не найден или не существует: {path}");
+            //Debug.Log($"Путь к изображению не найден или не существует: {path}");
             profile_picture = DeffaultImage;
             return;
         }
@@ -41,7 +41,7 @@ public class ProfileManager : MonoBehaviour
             Texture2D texture = new Texture2D(2, 2);
             texture.LoadImage(fileData);
             profile_picture = texture;
-            Debug.Log($"Изображение успешно загружено: {path}");
+            //Debug.Log($"Изображение успешно загружено: {path}");
         }
         catch (System.Exception e)
         {

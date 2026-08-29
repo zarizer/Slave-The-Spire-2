@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -355,5 +356,107 @@ public class PassiveSalty3 : Passive
     {
         base.UpdateAccourdingToLevel();
         Value = 20 + level * 5;
+    }
+};
+
+public class PassiveSniper1 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Пополнение запасов";
+        Description = $"В начале хода получает {Value} энергии за каждого снюсоеда на поле";
+    }
+
+    public override void OnTurnStart(GridField field_data)
+    {
+        int k = 0;
+        foreach (var enemy in field_data.GridEnemies)
+        {
+            if (enemy.GetCharacter().id == 5) { k++; }
+        }
+        character.GetEnergy((int)Value * k);
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = 3 * level;
+    }
+};
+
+public class PassiveSniper2 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "обмакнуть патроны";
+        Description = $"При нанесении урона, тратит половину текущей энергии и за каждые 5 потраченной энергии наносит {Value} дополнительных гидро урона";
+    }
+
+    public override void OnDealDamage(GridField field, Damage dmg, CharacterBase target)
+    {
+        base.OnDealDamage(field, dmg, target);
+        int k = character.cur_energy / 2;
+        target.GetDamage(new Damage((int)Value, Element.water, character), true);
+        character.cur_energy -= k;
+    }
+
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = 3 * level;
+    }
+};
+
+public class PassiveSnusoed1 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Прикрытие товарища";
+        Description = $"В начале хода получает {Value} скорости, если на поле есть снайпер";
+    }
+
+    public override void OnTurnStart(GridField field_data)
+    {
+        int k = 0;
+        foreach (var enemy in field_data.GridEnemies)
+        {
+            if (enemy.GetCharacter().id == 4) { k=1; }
+        }
+        character.GetMoves((int)Value * k, character);
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = level;
+    }
+};
+
+public class PassiveSnusoed2 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Раскопать шайбу";
+        Description = $"Если у этого отморозка есть 20 или более энергии, в начале хода он восстанавливает {Value} здоровья, тратя эту энергию";
+    }
+
+    public override void OnTurnStart(GridField field_data)
+    {
+        if (character.cur_energy > 20)
+        {
+            character.cur_energy = 0;
+            character.Heal((int)Value, character);
+        }
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = 20 * level;
     }
 };

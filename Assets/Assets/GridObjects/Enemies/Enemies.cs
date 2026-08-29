@@ -20,9 +20,9 @@ public class TestEnemy : EnemyBase
             new List<PlayerSkill>() { DataDicts.EnemySkillSet[3], DataDicts.EnemySkillSet[4] },
             new List<PlayerSkill>() { DataDicts.EnemySkillSet[2], DataDicts.EnemySkillSet[0] }
         };
-        light_k = 2.5f;
-        darkness_k = 0.1f;
-        fire_k = 1.5f;
+        init_light_k = 2.5f;
+        init_darkness_k = 0.1f;
+        init_fire_k = 1.5f;
         base.Init();
         return this;
     }
@@ -52,9 +52,9 @@ public class EnemyVosh : EnemyBase
             new List<PlayerSkill>() { DataDicts.EnemySkillSet[5], DataDicts.EnemySkillSet[7] },
             new List<PlayerSkill>() { DataDicts.EnemySkillSet[6], DataDicts.EnemySkillSet[7] }
         };
-        none_k = 1.2f;
-        water_k = 0.75f;
-        fire_k = 1.2f;
+        init_none_k = 1.2f;
+        init_water_k = 0.75f;
+        init_fire_k = 1.2f;
         base.Init();
         return this;
     }
@@ -91,10 +91,10 @@ public class EnemyWitch : EnemyBase
             new List<PlayerSkill>() { DataDicts.EnemySkillSet[9], DataDicts.EnemySkillSet[10] },
             new List<PlayerSkill>() { DataDicts.EnemySkillSet[9], DataDicts.EnemySkillSet[11] }
         };
-        none_k = 1.2f;
-        darkness_k = 0.75f;
-        light_k = 1.75f;
-        fire_k = 1.2f;
+        init_none_k = 1.2f;
+        init_darkness_k = 0.75f;
+        init_light_k = 1.75f;
+        init_fire_k = 1.2f;
         base.Init();
         return this;
     }
@@ -130,11 +130,11 @@ public class EnemyCultist : EnemyBase
             new List<PlayerSkill>() { DataDicts.EnemySkillSet[12], DataDicts.EnemySkillSet[13] },
             new List<PlayerSkill>() { DataDicts.EnemySkillSet[12], DataDicts.EnemySkillSet[14] }
         };
-        none_k = 0.9f;
-        darkness_k = 0.75f;
-        light_k = 1.2f;
-        fire_k = 1f;
-        dendro_k = 0.9f;
+        init_none_k = 0.9f;
+        init_darkness_k = 0.75f;
+        init_light_k = 1.2f;
+        init_fire_k = 1f;
+        init_dendro_k = 0.9f;
         base.Init();
         return this;
     }
@@ -144,6 +144,85 @@ public class EnemyCultist : EnemyBase
         passive_ids = new List<int>();
         passive_ids.Add(7);
         passive_ids.Add(8);
+    }
+
+    public override void CreateStatsAccourdingToLevel()
+    {
+        base.CreateStatsAccourdingToLevel();
+    }
+}
+
+public class Sniper : EnemyBase
+{
+    public override CharacterBase Init()
+    {
+        id = 4;
+        hp = 38;
+        def = 0;
+        speed = 2;
+        speed_dif = 2;
+        dmg_k = 2f;
+        moves = 2;
+        energy = 0;
+        name = "Снайпер";
+        description = "Один из австралийских снайперов, которые приехали охотится на снюсоедов, но в итоге выяснили, что они помогают делать отменный банкате. Кооперирование не заставило долго ждать";
+        SkillsPerTurn = new List<List<PlayerSkill>> {
+            new List<PlayerSkill>() { DataDicts.EnemySkillSet[16], DataDicts.EnemySkillSet[16], DataDicts.EnemySkillSet[15] },
+            new List<PlayerSkill>() { DataDicts.EnemySkillSet[16], DataDicts.EnemySkillSet[16], DataDicts.EnemySkillSet[15] },
+            new List<PlayerSkill>() { DataDicts.EnemySkillSet[16], DataDicts.EnemySkillSet[16], DataDicts.EnemySkillSet[17] }
+        };
+        init_none_k = 1.3f;
+        init_darkness_k = 0.75f;
+        init_light_k = 0.75f;
+        base.Init();
+        return this;
+    }
+
+    public Sniper()
+    {
+        passive_ids = new List<int>();
+        passive_ids.Add(14);
+        passive_ids.Add(15);
+    }
+
+    public override void CreateStatsAccourdingToLevel()
+    {
+        base.CreateStatsAccourdingToLevel();
+    }
+}
+
+public class Snusoed : EnemyBase
+{
+    public override CharacterBase Init()
+    {
+        id = 5;
+        hp = 64;
+        def = 0;
+        speed = 2;
+        speed_dif = 2;
+        dmg_k = 1.2f;
+        moves = 2;
+        energy = 0;
+        name = "Снюсоед";
+        description = "Уникальный представитель фауны колтушского леса, питается найденными в земле закладками";
+        SkillsPerTurn = new List<List<PlayerSkill>> {
+            new List<PlayerSkill>() { DataDicts.EnemySkillSet[19], DataDicts.EnemySkillSet[18], DataDicts.EnemySkillSet[18] },
+            new List<PlayerSkill>() { DataDicts.EnemySkillSet[18], DataDicts.EnemySkillSet[19], DataDicts.EnemySkillSet[18] },
+            new List<PlayerSkill>() { DataDicts.EnemySkillSet[18], DataDicts.EnemySkillSet[18] }
+        };
+        init_none_k = 0.8f;
+        init_darkness_k = 0.7f;
+        init_light_k = 1.4f;
+        init_water_k = 1.4f;
+        base.Init();
+        return this;
+    }
+
+    public Snusoed()
+    {
+        passive_ids = new List<int>();
+        passive_ids.Add(16);
+        passive_ids.Add(17);
     }
 
     public override void CreateStatsAccourdingToLevel()

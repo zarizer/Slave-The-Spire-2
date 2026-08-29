@@ -131,7 +131,7 @@ public class Pool
         weighted_loot = new List<Loot>();
         foreach(Loot l in pool.Keys)
         {
-            for (int i = 0; i < l.count; i++)
+            for (int i = 0; i < pool[l]; i++)
             {
                 weighted_loot.Add(new Loot(l));
             }
@@ -424,7 +424,7 @@ new Dictionary<Loot, int>
         new Dictionary<Loot, int>
 {
 
-        { new Loot(Item.character, 1), 4 },
+        { new Loot(Item.character, 1), 3 },
 
         { new Loot(Item.mat1, 1), 3 },
         { new Loot(Item.mat2, 1), 3 },

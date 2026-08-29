@@ -30,6 +30,8 @@ public static class DataDicts
         {  1, typeof(EnemyVosh) },
         {  2, typeof(EnemyWitch) },
         {  3, typeof(EnemyCultist) },
+        {  4, typeof(Sniper) },
+        {  5, typeof(Snusoed) },
     };
 
     public static Dictionary<int, Type> ObstacleTypes = new Dictionary<int, Type>()
@@ -68,6 +70,10 @@ public static class DataDicts
         {11, typeof(PassiveSalty1) },
         {12, typeof(PassiveSalty2) },
         {13, typeof(PassiveSalty3) },
+        {14, typeof(PassiveSniper1) },
+        {15, typeof(PassiveSniper2) },
+        {16, typeof(PassiveSnusoed1) },
+        {17, typeof(PassiveSnusoed2) },
     };
 
     public static Dictionary<int, Type> EffectTypes = new Dictionary<int, Type>()
