@@ -37,10 +37,12 @@ public class GridField : MonoBehaviour
     public List<GridEnemy> GridEnemies;
     public List<GridCharacter> GridCharacters;
     public List<GridObstacle> GridObstacles;
+    public List<GridCellSurface> GridSurfaces;
 
     public GridCharacter BaseCharacter;
     public GridEnemy BaseEnemy;
     public GridObstacle BaseObstacle;
+    public GridCellSurface BaseSurface;
 
     public int character_spawn_num = 0;
     public GriddableObject current_object = null;
@@ -55,6 +57,15 @@ public class GridField : MonoBehaviour
     void Update()
     {
 
+    }
+
+    private void FixedUpdate()
+    {
+        if (GridCharacters.Count <= 0)
+        {
+            if (is_redactor) { return; }
+            battleMain.EndGame(false);
+        }
     }
 
     [ContextMenu("Copy Levels File to Desktop")]
@@ -74,6 +85,16 @@ public class GridField : MonoBehaviour
     public void DebugLoadLevelData()
     {
         GetLevelData(DebugLevelSaveId);
+    }
+
+    [ContextMenu("DebugKillCharacters")]
+    public void DebugKillCharacters()
+    {
+        for (int i = GridCharacters.Count - 1; i >= 0; i--) 
+        {
+            GridCharacters[i].Death();
+        }
+
     }
     public void GetLevelData(int levelId)
     {
@@ -103,9 +124,14 @@ public class GridField : MonoBehaviour
                 cur_obj = CreateGridObject(GriddableObject.GriddableObjectType.Enemy, obj.id, cords.Item1, cords.Item2, obj, level);
                 var enemy = (EnemyBase)cur_obj.GetComponent<GridEnemy>().GetCharacter();
                 BattleMain.UseBaffs(enemy);
-               
             }
-            
+            else if (obj.type == "Surface")
+            {
+                cur_obj = CreateGridObject(GriddableObject.GriddableObjectType.Surface, obj.id, cords.Item1, cords.Item2, obj, level);
+                var surface = cur_obj.GetComponent<GridCellSurface>().surface_;
+
+            }
+
 
         }
         var objs = new List<GriddableObject>();
@@ -170,6 +196,19 @@ public class GridField : MonoBehaviour
                 obj.level = obstacle.CustomLevel;
             }
             data.Objects[(obstacle.cell_.x_, obstacle.cell_.y_)] = obj;
+        }
+        foreach (GridCellSurface surface in GridSurfaces)
+        {
+            LevelObject obj = new LevelObject();
+            obj.type = "Surface";
+            obj.id = surface.GetCharacter().id;
+            obj.specialValue = surface.specialValue;
+            if (surface.IsCustomLevel)
+            {
+                obj.isCustomLevel = true;
+                obj.level = surface.CustomLevel;
+            }
+            data.Objects[(surface.cell_.x_, surface.cell_.y_)] = obj;
         }
         LevelData.SaveLevel(data);
     }
@@ -241,8 +280,15 @@ public class GridField : MonoBehaviour
             cur_object = obj.GetComponent<GriddableObject>();
             GridObstacles.Add(cur_object.GetComponent<GridObstacle>());
         }
+        else if (type == GriddableObject.GriddableObjectType.Surface)
+        {
+            var obj = Instantiate(BaseSurface, transform);
+            cur_object = obj.GetComponent<GriddableObject>();
+            GridSurfaces.Add(cur_object.GetComponent<GridCellSurface>());
+        }
         cur_object.ReplaceObject(ID);
         cur_object.name = cur_object.GetCharacter().name;
+
         cur_object.GetCharacter().object_ = cur_object.gameObject;
         //Debug.Log(cur_object.gameObject);
         if (cur_object.GType_ == GriddableObject.GriddableObjectType.Enemy)
@@ -294,7 +340,7 @@ public class GridField : MonoBehaviour
     }
 
 
-    GriddableObject GetGridObject(int x, int y)
+    public GriddableObject GetGridObject(int x, int y)
     {
         if (x < 0 || y < 0 || x >= SizeX_ || y >= SizeY_)
         {
@@ -305,7 +351,7 @@ public class GridField : MonoBehaviour
         return obj;
     }
 
-    GridCell GetGridCell(int x, int y)
+    public GridCell GetGridCell(int x, int y)
     {
         if (x < 0 || y < 0 || x >= SizeX_ || y >= SizeY_)
         {
@@ -338,13 +384,13 @@ public class GridField : MonoBehaviour
         {
             GridCell cell = queue.Dequeue();
             var up = GetGridCell(cell.x_, cell.y_ + 1);
-            if (up != null) up.moves = cell.moves + 1;
+            if (up != null) up.moves = cell.moves + cell.GetSpeedCost();
             var down = GetGridCell(cell.x_, cell.y_ - 1);
-            if (down != null) down.moves = cell.moves + 1;
+            if (down != null) down.moves = cell.moves + cell.GetSpeedCost(); ;
             var left = GetGridCell(cell.x_ - 1, cell.y_);
-            if (left != null) left.moves = cell.moves + 1;
+            if (left != null) left.moves = cell.moves + cell.GetSpeedCost(); ;
             var right = GetGridCell(cell.x_ + 1, cell.y_);
-            if (right != null) right.moves = cell.moves + 1;
+            if (right != null) right.moves = cell.moves + cell.GetSpeedCost(); ;
             if (up != null && !up.visited && up.IsMovable() && up.moves < moves)
             {
                 if (up.IsStoppable())
@@ -588,7 +634,9 @@ public class GridField : MonoBehaviour
         }
         obj.cell_ = GetGridCell(x, y);
         obj.field_ = this;
-        Cells_[x][y].object_ = obj;
+        if (obj.GType_ != GriddableObject.GriddableObjectType.Surface) { Cells_[x][y].object_ = obj; }
+        else { Cells_[x][y].surface_ = (GridCellSurface)obj; }
+
         Cells_[x][y].SnapObject();
         GridObjects.Add(obj);
         obj.GetCharacter().object_ = obj.gameObject;
@@ -728,55 +776,122 @@ public class GridField : MonoBehaviour
 
         bool hasAttackRolls = enemy.enemy_.CurrentRolls.Any(r => r.rollType == RollType.Atk);
 
+
         if (!hasAttackRolls)
         {
             GridCell playerCell = FindPlayerCell();
             if (playerCell != null)
             {
-                return allAvailableCells.OrderBy(c => GetDistance(c, playerCell)).FirstOrDefault() ?? start_cell;
+                if (((EnemyBase)enemy.GetCharacter()).MovingTowardsPlayer)
+                {
+                    return allAvailableCells.OrderBy(c => GetDistance(c, playerCell)).FirstOrDefault() ?? start_cell;
+                }
+                else
+                {
+                    return allAvailableCells.OrderByDescending(c => GetDistance(c, playerCell)).FirstOrDefault() ?? start_cell;
+                }
             }
             return start_cell;
         }
-
         List<GridCell> playerCells = FindAllPlayerCells();
-
-        GridCell bestCell = null;
-        int maxTargets = -1;
+        List<GridCell> attackCells = new List<GridCell>();
+        List<GridCell> nonAttackCells = new List<GridCell>();
 
         foreach (var cell in allAvailableCells)
         {
             int targetsCount = CountReachablePlayers(cell, enemy);
-
-            //Debug.Log($"Cell ({cell.x_}, {cell.y_}) moves: {cell.moves}, targets: {targetsCount}");
-
-            if (targetsCount > maxTargets)
+            if (targetsCount > 0)
             {
-                maxTargets = targetsCount;
-                bestCell = cell;
+                attackCells.Add(cell);
             }
-            else if (targetsCount == maxTargets && bestCell != null)
+            else
             {
-                float currentMinDistance = GetMinDistanceToAnyPlayer(cell, playerCells);
-                float bestMinDistance = GetMinDistanceToAnyPlayer(bestCell, playerCells);
+                nonAttackCells.Add(cell);
+            }
+        }
 
-                if (currentMinDistance < bestMinDistance)
+        GridCell bestCell = null;
+        int maxTargets = -1;
+
+        if (attackCells.Count > 0)
+        {
+            foreach (var cell in attackCells)
+            {
+                int targetsCount = CountReachablePlayers(cell, enemy);
+
+                if (targetsCount > maxTargets)
                 {
+                    maxTargets = targetsCount;
                     bestCell = cell;
                 }
-                else if (Mathf.Approximately(currentMinDistance, bestMinDistance) && cell.moves < bestCell.moves)
+                else if (targetsCount == maxTargets && bestCell != null)
                 {
-                    bestCell = cell;
+                    float currentDistance;
+                    float bestDistance;
+
+                    if (((EnemyBase)enemy.GetCharacter()).MovingTowardsPlayer)
+                    {
+                        currentDistance = GetMinDistanceToAnyPlayer(cell, playerCells, false);
+                        bestDistance = GetMinDistanceToAnyPlayer(bestCell, playerCells, false);
+
+                        if (currentDistance < bestDistance)
+                        {
+                            bestCell = cell;
+                        }
+                        else if (Mathf.Approximately(currentDistance, bestDistance) && cell.moves < bestCell.moves)
+                        {
+                            bestCell = cell;
+                        }
+                    }
+                    else
+                    {
+                        currentDistance = GetMinDistanceToAnyPlayer(cell, playerCells, true);
+                        bestDistance = GetMinDistanceToAnyPlayer(bestCell, playerCells, true);
+
+                        if (currentDistance > bestDistance)
+                        {
+                            bestCell = cell;
+                        }
+                        else if (Mathf.Approximately(currentDistance, bestDistance) && cell.moves < bestCell.moves)
+                        {
+                            bestCell = cell;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (nonAttackCells.Count > 0)
+            {
+                GridCell playerCell = FindPlayerCell();
+                if (playerCell != null)
+                {
+                    if (((EnemyBase)enemy.GetCharacter()).MovingTowardsPlayer)
+                    {
+                        bestCell = nonAttackCells.OrderBy(c => GetDistance(c, playerCell)).FirstOrDefault();
+                    }
+                    else
+                    {
+                        bestCell = nonAttackCells.OrderByDescending(c => GetDistance(c, playerCell)).FirstOrDefault();
+                    }
+                }
+                else
+                {
+                    bestCell = nonAttackCells.FirstOrDefault();
                 }
             }
         }
 
-        if (bestCell != null && IsCellOccupiedByPlayer(bestCell))
+        if (bestCell == null)
+            return start_cell;
+
+        if (IsCellOccupiedByPlayer(bestCell))
         {
             bestCell = allAvailableCells.FirstOrDefault(c => !IsCellOccupiedByPlayer(c)) ?? start_cell;
         }
 
-        //Debug.Log($"Best cell: ({bestCell?.x_}, {bestCell?.y_}) with moves: {bestCell?.moves}, targets: {maxTargets}");
-        return bestCell ?? start_cell;
+        return bestCell;
     }
 
     private List<GridCell> FindAllPlayerCells()
@@ -797,23 +912,30 @@ public class GridField : MonoBehaviour
 
         return playerCells;
     }
-    private float GetMinDistanceToAnyPlayer(GridCell fromCell, List<GridCell> playerCells)
+    private float GetMinDistanceToAnyPlayer(GridCell fromCell, List<GridCell> playerCells, bool findFarthest = false)
     {
         if (playerCells == null || playerCells.Count == 0)
             return float.MaxValue;
 
-        float minDistance = float.MaxValue;
+        float resultDistance = findFarthest ? float.MinValue : float.MaxValue;
 
         foreach (var playerCell in playerCells)
         {
             float distance = GetDistance(fromCell, playerCell);
-            if (distance < minDistance)
+
+            if (findFarthest)
             {
-                minDistance = distance;
+                if (distance > resultDistance)
+                    resultDistance = distance;
+            }
+            else
+            {
+                if (distance < resultDistance)
+                    resultDistance = distance;
             }
         }
 
-        return minDistance;
+        return resultDistance;
     }
 
     private void CheckAndAddCell(GridCell neighbor, GridCell current, int maxMoves,
@@ -891,9 +1013,6 @@ public class GridField : MonoBehaviour
 
         foreach (var roll in enemy.enemy_.CurrentRolls)
         {
-            if (roll.rollType == RollType.Def)
-                continue;
-
             if (roll.rollType != RollType.Atk)
                 continue;
 
@@ -909,19 +1028,33 @@ public class GridField : MonoBehaviour
 
                     foreach (var damageCell in damageCells)
                     {
-                        if (damageCell != null && IsCellOccupiedByPlayer(damageCell))
+                        if (roll.IsBuff == false)
                         {
-                            GridCharacter player = damageCell.object_.GetComponent<GridCharacter>();
-                            if (player != null && player != enemy)
+                            if (damageCell != null && IsCellOccupiedByPlayer(damageCell))
                             {
-                                reachablePlayers.Add(player);
+                                GridCharacter player = damageCell.object_.GetComponent<GridCharacter>();
+                                if (player != null && player != enemy)
+                                {
+                                    reachablePlayers.Add(player);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (damageCell != null && IsCellOccupiedByEnemy(damageCell))
+                            {
+                                GridEnemy player = damageCell.object_.GetComponent<GridEnemy>();
+                                if (player != null && player != enemy)
+                                {
+                                    reachablePlayers.Add(null);
+                                }
                             }
                         }
                     }
                 }
             }
         }
-
+        
         return reachablePlayers.Count;
     }
 
@@ -1474,11 +1607,12 @@ public class GridField : MonoBehaviour
         if (temp.GType_ == GriddableObject.GriddableObjectType.Enemy) GridEnemies.Remove((GridEnemy)temp);
         if (temp.GType_ == GriddableObject.GriddableObjectType.Character) GridCharacters.Remove((GridCharacter)temp);
         if (temp.GType_ == GriddableObject.GriddableObjectType.Obstacle) GridObstacles.Remove((GridObstacle)temp);
+        if (temp.GType_ == GriddableObject.GriddableObjectType.Surface) GridSurfaces.Remove((GridCellSurface)temp);
         temp.GetCharacter().OnRemove(this);
         Destroy(temp.gameObject);
     }
 
-    List<GridCell> GetAllCells()
+    public List<GridCell> GetAllCells()
     {
         var result = new List<GridCell>();
         foreach (var row in Cells_)
@@ -1489,6 +1623,21 @@ public class GridField : MonoBehaviour
             }
         }
         return result;
+    }
+
+    public List<GriddableObject> GetAllObjects()
+    {
+        List<GriddableObject> objects = new List<GriddableObject>();
+
+        foreach (var c in GridCharacters)
+        {
+            objects.Add(c);
+        }
+        foreach (var c in GridEnemies)
+        {
+            objects.Add(c);
+        }
+        return objects;
     }
 
 }

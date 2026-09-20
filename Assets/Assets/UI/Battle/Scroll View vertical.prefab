@@ -144,7 +144,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3367672362362910841, guid: d1c9fbf903001d3438fe0184fbf207b1, type: 3}
       propertyPath: m_Name
-      value: Scroll View Variant
+      value: Scroll View vertical
       objectReference: {fileID: 0}
     - target: {fileID: 4064697537300706339, guid: d1c9fbf903001d3438fe0184fbf207b1, type: 3}
       propertyPath: m_Vertical
@@ -164,7 +164,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6320533234615493708, guid: d1c9fbf903001d3438fe0184fbf207b1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -286.5
+      value: -279
       objectReference: {fileID: 0}
     - target: {fileID: 6320533234615493708, guid: d1c9fbf903001d3438fe0184fbf207b1, type: 3}
       propertyPath: m_AnchoredPosition.y

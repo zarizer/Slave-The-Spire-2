@@ -475,6 +475,136 @@
 		}
 	  ]
 	},
+	{
+	  "id": 14,
+	  "name": "милашка",
+	  "rollDist": "Radius",
+	  "dist": 2,
+	  "energy": -14,
+	  "maxUseCount": 1,
+	  "rolls": [
+		{
+		  "minRoll": 3,
+		  "maxRoll": 6,
+		  "rollType": "Atk",
+		  "rollRadius": "PlayerRadius",
+		  "radius": 2,
+		  "selfDamage": 0,
+		  "element": "Light",
+		  "description": "При использовании, врага в зоне поражения теряют половину защиты",
+		  "specialEffects": [
+			{
+			  "effectType": "Custom",
+			  "target": "Target",
+			  "trigger": "OnTarget",
+			  "value": 1,
+			  "duration": 0,
+			  "chance": 100,
+			  "CustomId": 1,
+			}]
+		  
+		}
+	  ]
+	},
+	{
+	  "id": 15,
+	  "name": "сфоткать",
+	  "rollDist": "Radius",
+	  "dist": 3,
+	  "energy": 5,
+	  "maxUseCount": 1,
+	  "rolls": [
+		{
+		  "minRoll": 5,
+		  "maxRoll": 9,
+		  "rollType": "Atk",
+		  "rollRadius": "Single",
+		  "radius": 1,
+		  "element": "Light",
+		  "description": "При нанесении урона, цель получает слабость силы 1 длительности 1",
+		  "specialEffects": [
+			{
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnTarget",
+			  "value": 1,
+			  "duration": 1,
+			  "chance": 100,
+			  "statusId": 1002
+			}]
+		  
+		}
+	  ]
+	},
+	{
+	  "id": 16,
+	  "name": "Фотошоп как способ искажения реальности",
+	  "rollDist": "StLine",
+	  "dist": 4,
+	  "energy": 100,
+	  "maxUseCount": 1,
+	  "rolls": [
+		{
+		  "minRoll": 0,
+		  "maxRoll": 0,
+		  "rollType": "Atk",
+		  "rollRadius": "Single",
+		  "radius": 1,
+		  "element": "Light",
+		  "description": "Заменяет цель атаки на случайного противника/персонажа",
+		  "specialEffects": [
+			{
+			  "effectType": "Custom",
+			  "target": "Target",
+			  "trigger": "OnTarget",
+			  "value": 1,
+			  "duration": 0,
+			  "chance": 100,
+			  "CustomId": 2,
+			}]
+		  
+		}
+	  ]
+	},
+	{
+	  "id": 17,
+	  "name": "давайте вместе!",
+	  "rollDist": "Radius",
+	  "dist": 2,
+	  "energy": 0,
+	  "maxUseCount": 1,
+	  "rolls": [
+		{
+		  "minRoll": 0,
+		  "maxRoll": 0,
+		  "rollType": "Atk",
+		  "rollRadius": "PlayerRadius",
+		  "radius": 1,
+		  "element": "Light",
+		  "description": "Выбранные отморозки получают силу силы 2, скорость силы 1",
+		  "specialEffects": [
+			{
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnTarget",
+			  "value": 2,
+			  "duration": 0,
+			  "chance": 100,
+			  "statusId": 1001
+			},
+			{
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnTarget",
+			  "value": 1,
+			  "duration": 0,
+			  "chance": 100,
+			  "statusId": 1005
+			}]
+		  
+		}
+	  ]
+	},
 	
   ]
 }

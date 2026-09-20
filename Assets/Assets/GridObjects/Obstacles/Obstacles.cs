@@ -308,3 +308,99 @@ public class Chest1 : ObstacleBase
 
 
 };
+
+public class InvisibleWall : ObstacleBase
+{
+    public override CharacterBase Init()
+    {
+        is_showing_passives = false;
+        Destroyable = false;
+        id = 7;
+        hp = 0;
+        def = 0;
+        speed = 0;
+        speed_dif = 0;
+        dmg_k = 0f;
+        moves = 0;
+        energy = 0;
+        name = "Невидимая стена";
+        description = "";
+        ModelId = 10;
+        Interactable = false;
+        Destroyable = false;
+        use_count = 1;
+        base.Init();
+        return this;
+    }
+};
+
+public class Shop : ObstacleBase
+{
+    public override CharacterBase Init()
+    {
+        is_showing_passives = false;
+        Destroyable = true;
+        id = 8;
+        hp = 100;
+        def = 0;
+        speed = 0;
+        speed_dif = 0;
+        dmg_k = 0f;
+        moves = 0;
+        energy = 0;
+        name = "Магазин";
+        description = "Лавка 'Медведя', где можно купить пассивки и улучшения";
+        InteractVariants = 1;
+        ModelId = 11;
+        Interactable = true;
+        one_time_use = false;
+        use_count = 99;
+        base.Init();
+        return this;
+    }
+
+    public override void OnInteract1(GridField field_data)
+    {
+        base.OnInteract1(field_data);
+    }
+
+
+};
+
+public class Campfire : ObstacleBase
+{
+    public override CharacterBase Init()
+    {
+        is_showing_passives = false;
+        Destroyable = true;
+        id = 9;
+        hp = 100;
+        def = 0;
+        speed = 0;
+        speed_dif = 0;
+        dmg_k = 0f;
+        moves = 0;
+        energy = 0;
+        name = "Костёр";
+        description = "На самом деле 'Медведь' просто поджок бочку, чтобы согреться\n\nИспользуйте, чтобы все отморозки восстановили 65% здоровья";
+        InteractVariants = 1;
+        ModelId = 12;
+        Interactable = true;
+        one_time_use = true;
+        use_count = 1;
+        base.Init();
+        return this;
+    }
+
+    public override void OnInteract1(GridField field_data)
+    {
+        base.OnInteract1(field_data);
+
+        foreach (var c in field_data.GridCharacters)
+        {
+            c.GetCharacter().Heal((int)(c.GetCharacter().start_hp / 3f * 2), c.GetCharacter());
+        }
+    }
+
+
+};

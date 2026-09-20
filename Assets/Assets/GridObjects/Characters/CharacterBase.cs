@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UIElements;
 
-public class CharacterBase
+public class CharacterBase : ObjectBase
 {
     public float init_time;
     public int id;
@@ -62,7 +62,7 @@ public class CharacterBase
     public List<int> passive_ids = new List<int>();
     public List<int> passive_levels = new List<int>();
     public List<Roll> CurrentRolls = new List<Roll>();
-    public GameObject object_;
+
     public bool is_custom_secondary_stats = false;
 
     public List<GridCell> TargetedCells;
@@ -114,11 +114,20 @@ public class CharacterBase
         cur_def = def;
         cur_speed = speed;
         cur_speed_dif = speed_dif;
-        cur_moves = moves;
+        cur_moves = 0;
         cur_dmg_k = dmg_k;
         cur_energy = energy;
         CreateStatsAccourdingToLevel();
         start_hp = cur_hp;
+    }
+
+    public bool HasPassive(string name)
+    {
+        foreach (var pas in passives)
+        {
+            if (pas.Name == name) return true;
+        }
+        return false;
     }
 
     public CharacterBase()
@@ -242,6 +251,7 @@ public class CharacterBase
     }
     public virtual void GetDamage(Damage damage, bool silent = true)
     {
+        int pre_hp = cur_hp;
         if (object_ == null) return;
         Debug.Log(object_);
         int dmg = GetRealDamage(damage);
@@ -268,15 +278,16 @@ public class CharacterBase
             object_.GetComponent<GriddableObject>().CreateDamageText(damage, (float)dmg / start_hp, false);
         }
         if (!silent) OnGetDamage(ResoursesDict.GetClass<BattleMain>().current_field, damage);
-        if (cur_hp <= 0)
+        if (cur_hp <= 0 && pre_hp > 0)
         {
             Death(damage);
         }
     } 
 
-    public void GetEnergy(int value)
+    public void GetEnergy(int value, bool silent = false)
     {
         cur_energy += value;
+        if (silent) { return; }
         OnGetEnergy(ResoursesDict.GetClass<BattleMain>().current_field, value);
     }
 
@@ -305,6 +316,11 @@ public class CharacterBase
     {
         cur_def += value;
     }
+
+    public virtual void LoseDefence(int value, CharacterBase source)
+    {
+        cur_def -= value;
+    }
     public virtual void GetMoves(int value, CharacterBase source)
     {
         cur_moves += value;
@@ -316,6 +332,7 @@ public class CharacterBase
         Skill2.cur_use_count = 0;
         Skill3.cur_use_count = 0;
         Skill4.cur_use_count = 0;
+        cur_moves = 0;
         GetMoves(moves, this);
     }
 
@@ -457,6 +474,28 @@ public class CharacterBase
     public virtual int GetXpTicketAmountToUpgrade()
     {
         return level / 20 + 1;
+    }
+
+    public void GetExtraRoll(bool is_enemy, int id)
+    {
+        if (is_enemy)
+        {
+            foreach (Roll roll in DataDicts.EnemySkillSet[id].rolls)
+            {
+                CurrentRolls.Add(roll);
+            }
+        }
+        else
+        {
+            foreach (Roll roll in DataDicts.PlayerSkillSet[id].rolls)
+            {
+                CurrentRolls.Add(roll);
+            }
+        }
+        if (object_ != null)
+        {
+            object_.GetComponent<GriddableObject>().UpdateRollsUI();
+        }
     }
 }
 

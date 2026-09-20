@@ -36,7 +36,7 @@ public class GridObstacle : GriddableObject
         return result;
     }
 
-    public override Roll GetFirstRoll()
+    public override Roll GetFirstRoll(bool targetable = true)
     {
         return null;
     }

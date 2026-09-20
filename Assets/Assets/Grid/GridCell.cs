@@ -7,6 +7,7 @@ public class GridCell : MonoBehaviour
     public int x_;
     public int y_;
     public GriddableObject object_;
+    public GridCellSurface surface_;
     public GridField field_;
     public List<GameObject> coloring_objects;
     public List<GameObject> coloring_objects_trans;
@@ -30,20 +31,40 @@ public class GridCell : MonoBehaviour
         
     }
 
+    public int GetSpeedCost()
+    {
+        if (surface_ == null) { return 1; }
+        else { return surface_.surface_.speed_cost; }
+    }
+    public void SetObject(GriddableObject obj)
+    {
+        object_ = obj;
+    }
+
+    public void SetSurface(GridCellSurface obj)
+    {
+        surface_ = obj;
+    }
     public void SnapObject()
-    { 
-        if (object_ == null) return;
-        if (object_.GType_ == GriddableObject.GriddableObjectType.Obstacle)
+    {
+        if (object_ != null)
         {
-            object_.transform.position = transform.position + Vector3.up * 0.45f;
+            if (object_.GType_ == GriddableObject.GriddableObjectType.Obstacle)
+            {
+                object_.transform.position = transform.position + Vector3.up * 0.45f;
+            }
+            if (object_.GType_ == GriddableObject.GriddableObjectType.Character)
+            {
+                object_.GetComponent<GridCharacter>().DestinationPosition = transform.position - Vector3.up * 0.5f;
+            }
+            if (object_.GType_ == GriddableObject.GriddableObjectType.Enemy)
+            {
+                object_.GetComponent<GridEnemy>().DestinationPosition = transform.position - Vector3.up * 0.5f;
+            }
         }
-        if (object_.GType_ == GriddableObject.GriddableObjectType.Character)
+        if (surface_ != null)
         {
-            object_.GetComponent<GridCharacter>().DestinationPosition = transform.position - Vector3.up * 0.5f;
-        }
-        if (object_.GType_ == GriddableObject.GriddableObjectType.Enemy)
-        {
-            object_.GetComponent<GridEnemy>().DestinationPosition = transform.position - Vector3.up * 0.5f;
+            surface_.GetComponent<GridCellSurface>().DestinationPosition = transform.position + Vector3.up * 1.05f;
         }
     }
 

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 using static UnityEngine.GraphicsBuffer;
@@ -12,6 +13,7 @@ public class BattleMain : MonoBehaviour
     [SerializeField] private Camera ui_camera;
     [SerializeField] private GameObject battle_ui;
     [SerializeField] private GameObject ui_ui;
+    [SerializeField] private EndGameMenu EndGameMenu;
     public bool IsInBattle = false;
     public bool PlayerCanAttack = false;
     public int turn = 0;
@@ -24,6 +26,8 @@ public class BattleMain : MonoBehaviour
     public int compaign_num;
     public int chapter_num;
     public int difficulty;
+    public static int Swagapoints;
+    public bool is_custom_level;
 
     List<LevelId> variants = new List<LevelId>();
     List<LevelId> variants_normal = new List<LevelId>();
@@ -86,6 +90,17 @@ public class BattleMain : MonoBehaviour
         }
         
     }
+    void GetSavePlayCharacters()
+    {
+        for (int i = 0; i < ProfileManager.profile.save_character_ids.Count && i < 4; i++)
+        {
+            //CharacterCard c_card;
+            //var c = GridCharacter.GetCharacterByID(ProfileManager.profile.save_character_ids[i], c_card.character);
+
+            //play_characters.Add(c);
+        }
+
+    }
 
     public void StartGame()
     {
@@ -94,13 +109,35 @@ public class BattleMain : MonoBehaviour
         GetPlayCharacters();
         StartBattle();
     }
+    public void StartFromSave()
+    {
+        IsInBattle = true;
+        play_characters.Clear();
+        GetPlayCharacters();
+        compaign_num = ProfileManager.profile.compaign_num;
+        chapter_num = ProfileManager.profile.chapter_num;
+        level_num = ProfileManager.profile.level_num;
+        CurrentLevelId = ProfileManager.profile.level_id;
+        difficulty = ProfileManager.profile.difficulty;
+        StartBattle();
+    }
 
     [ContextMenu("StartBattle")]
     public void StartBattle(bool start_battle = true)
     {
-
+        
         ResoursesDict.GetClass<CameraController>().lock_navigation = false;
+        LoadProfileData();
         UpdateCharacters();
+        ProfileManager.profile.compaign_num = compaign_num;
+        ProfileManager.profile.chapter_num = chapter_num;
+        ProfileManager.profile.level_num = level_num;
+        ProfileManager.profile.level_id = CurrentLevelId;
+        ProfileManager.profile.difficulty = difficulty;
+        ProfileManager.profile.is_in_game = true;
+        ProfileManager.SaveProfile();
+
+        Swagapoints = 120;
         battle_ui.SetActive(true);
         ui_camera.gameObject.SetActive(false);
         battle_camera.gameObject.SetActive(true);
@@ -111,6 +148,7 @@ public class BattleMain : MonoBehaviour
         if (start_battle)
         {
             current_field.StartField(this);
+            
             current_cycle = cycles[0];
             turn = 0;
             
@@ -119,6 +157,24 @@ public class BattleMain : MonoBehaviour
                 character.GetCharacter().OnBattleStart(current_field);
             }
             StartCoroutine(NextCycle(0));
+        }
+        
+    }
+
+    void LoadProfileData()
+    {
+        for (int i = 0; i < ProfileManager.profile.baffs_id.Count; i++)
+        {
+            foreach(CharacterBase c in play_characters)
+            {
+                if (c.buffs.Count == 0)
+                {
+                    BattleBuff buff = BattleBuff.GetBaffInstance(DataDicts.BaffTypes[ProfileManager.profile.baffs_id[i]]);
+                    buff.Value = ProfileManager.profile.baffs_counters[i];
+                    c.buffs.Add(buff);
+                }
+
+            }
         }
     }
 
@@ -132,6 +188,25 @@ public class BattleMain : MonoBehaviour
     public void StopCode()
     {
         
+    }
+
+    public void EndGame(bool Isvictory)
+    {
+        ProfileManager.profile.baffs_id.Clear();
+        ProfileManager.profile.baffs_counters.Clear();
+        ProfileManager.profile.is_in_game = false;
+        ProfileManager.SaveProfile();
+        ResoursesDict.GetClass<UIController>().CloseAllObjectTabs();
+        ResoursesDict.GetClass<UIController>().CloseTabs();
+        SetLevel("None");
+        battle_camera.gameObject.SetActive(false);
+        ui_camera.gameObject.SetActive(true);
+        ResoursesDict.GetClass<MainMenuManager>().SetMenu(EndGameMenu.gameObject);
+        int budgets = (int)(4 * ProfileManager.profile.levels_counter);
+        if (Isvictory) { budgets += 50; }
+        budgets = (int)(budgets * GetAverageSwagaK());
+        EndGameMenu.CreateStats(Isvictory, budgets);
+        ProfileManager.profile.budget += budgets;
     }
 
     public void NextTurn()
@@ -167,7 +242,11 @@ public class BattleMain : MonoBehaviour
             }
             else if (current_cycle == BattleCycle.PlayerTurn)
             {
-                
+                if (current_field.GridCharacters.Count <= 0)
+                {
+                    EndGame(false);
+                }
+                Swagapoints -= 25;
                 CharacterTabSwitch(false, false, true);
                 PlayerCanAttack = true;
             }
@@ -246,6 +325,12 @@ public class BattleMain : MonoBehaviour
         return counter;
     }
 
+    int GetLevelBonus(CharacterBase attacker, CharacterBase target, Roll roll)
+    {
+        if (roll.IsScaling) { return 0; }
+        return (attacker.level - target.level) / 4;
+    }
+
     private IEnumerator MakeFightInternal(GriddableObject attacker, Roll roll, List<GriddableObject> Targets, bool isEnemyAttacker)
     {
         ProcessOnUseEffects(roll.skill, attacker.GetCharacter(), null);
@@ -297,6 +382,10 @@ public class BattleMain : MonoBehaviour
             var target_roll = target.GetFirstRoll();
             result.targetRoll = target_roll;
             result.attackerRoll = roll;
+
+            // === —ќ’–јЌя≈ћ »Ќƒ≈ —џ ===
+            result.attackerRollIndex = GetRollUIIndex(attacker, roll);
+            result.targetRollIndex = GetRollUIIndex(target, target_roll);
 
             if (target_roll != null)
                 result.hasTargetRoll = true;
@@ -401,7 +490,7 @@ public class BattleMain : MonoBehaviour
             {
                 int target_power = target_roll.GetRoll();
 
-                int levelBonus = (attacker.GetCharacter().level - maxTargetLevel) / 4;
+                int levelBonus = GetLevelBonus(attacker.GetCharacter(), target.GetCharacter(), roll);
                 int finalAttackerPower = attackerRollValue + levelBonus;
 
                 result.charPower = finalAttackerPower;
@@ -412,12 +501,24 @@ public class BattleMain : MonoBehaviour
                     result.isHit = true;
                     result.isMiss = false;
                     result.shouldRemoveTargetRoll = true;
+                    if (isEnemyAttacker == false)
+                    {
+                        Swagapoints += 2;
+                    }
                 }
                 else
                 {
                     result.isHit = false;
                     result.isMiss = true;
                     result.shouldRemoveTargetRoll = false;
+                    if (isEnemyAttacker == true)
+                    {
+                        Swagapoints += 4;
+                    }
+                    if (isEnemyAttacker == false)
+                    {
+                        Swagapoints -= 2;
+                    }
                 }
             }
 
@@ -440,12 +541,15 @@ public class BattleMain : MonoBehaviour
                 {
                     if (result.targetRoll != null && result.targetRoll.rollType == RollType.Def)
                     {
-                        attacker.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.charPower);
+                        // јтакующий ролл Ч по сохранЄнному индексу
+                        GetRollScript(attacker, result.attackerRollIndex)?.ShowResult(result.charPower);
                         if (!result.shouldRemoveTargetRoll)
                         {
                             var enemy = attacker.GetComponent<GridEnemy>();
                             if (enemy != null)
                             {
+                                // ÷ель Ч self, но UI у enemy: показываем по targetRollIndex
+                                int idx = result.targetRollIndex >= 0 ? result.targetRollIndex : 0;
                                 for (int k = 0; k < enemy.RollsUI.childCount; k++)
                                 {
                                     enemy.RollsUI.GetChild(k).GetComponent<RollScript>().ShowResult(result.targetRollValue);
@@ -455,44 +559,47 @@ public class BattleMain : MonoBehaviour
                     }
                     else
                     {
-                        attacker.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.targetRollValue);
+                        GetRollScript(attacker, result.attackerRollIndex)?.ShowResult(result.targetRollValue);
                     }
                 }
                 else if (isEnemyAttacker)
                 {
                     if (result.targetRoll == null)
                     {
-                        attacker.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.targetRollValue);
+                        GetRollScript(attacker, result.attackerRollIndex)?.ShowResult(result.targetRollValue);
                     }
                     else if (result.targetRoll.rollType == RollType.Def)
                     {
-                        attacker.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.targetRollValue);
+                        GetRollScript(attacker, result.attackerRollIndex)?.ShowResult(result.targetRollValue);
                     }
                     else
                     {
                         var enemy = attacker.GetComponent<GridEnemy>();
-                        enemy.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.targetRollValue);
+                        int idx = result.attackerRollIndex >= 0 ? result.attackerRollIndex : 0;
+                        if (enemy != null && enemy.RollsUI.childCount > idx)
+                            enemy.RollsUI.GetChild(idx).GetComponent<RollScript>().ShowResult(result.targetRollValue);
                     }
                 }
                 else
                 {
                     if (result.targetRoll == null)
                     {
-                        attacker.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.charPower);
+                        GetRollScript(attacker, result.attackerRollIndex)?.ShowResult(result.charPower);
                     }
                     else if (result.targetRoll.rollType == RollType.Def)
                     {
-                        attacker.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.charPower);
+                        GetRollScript(attacker, result.attackerRollIndex)?.ShowResult(result.charPower);
 
                         if (!result.shouldRemoveTargetRoll)
                         {
                             if (target.GType_ == GriddableObject.GriddableObjectType.Enemy)
                             {
                                 var enemy = target.GetComponent<GridEnemy>();
-                                for (int k = 0; k < enemy.RollsUI.childCount; k++)
+                                int idx = result.targetRollIndex >= 0 ? result.targetRollIndex : 0;
+                                if (enemy != null && enemy.RollsUI.childCount > idx)
                                 {
-                                    enemy.RollsUI.GetChild(k).GetComponent<RollScript>().MinMaxText.text =
-                                        enemy.RollsUI.GetChild(k).GetComponent<RollScript>().roll.maxRoll.ToString();
+                                    var rs = enemy.RollsUI.GetChild(idx).GetComponent<RollScript>();
+                                    rs.MinMaxText.text = rs.roll.maxRoll.ToString();
                                 }
                             }
                         }
@@ -500,8 +607,11 @@ public class BattleMain : MonoBehaviour
                     else
                     {
                         var enemy = target.GetComponent<GridEnemy>();
-                        enemy.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.targetPower);
-                        attacker.RollsUI.GetChild(0).GetComponent<RollScript>().ShowResult(result.charPower);
+                        int idx = result.targetRollIndex >= 0 ? result.targetRollIndex : 0;
+                        if (enemy != null && enemy.RollsUI.childCount > idx)
+                            enemy.RollsUI.GetChild(idx).GetComponent<RollScript>().ShowResult(result.targetPower);
+
+                        GetRollScript(attacker, result.attackerRollIndex)?.ShowResult(result.charPower);
                     }
                 }
             }
@@ -524,9 +634,10 @@ public class BattleMain : MonoBehaviour
                         if (target.GType_ == GriddableObject.GriddableObjectType.Enemy)
                         {
                             var enemy = target.GetComponent<GridEnemy>();
-                            for (int k = 0; k < enemy.RollsUI.childCount; k++)
+                            int idx = result.targetRollIndex >= 0 ? result.targetRollIndex : 0;
+                            if (enemy != null && enemy.RollsUI.childCount > idx)
                             {
-                                enemy.RollsUI.GetChild(k).GetComponent<RollScript>().Fade(0f, 0.3f, 0, true);
+                                enemy.RollsUI.GetChild(idx).GetComponent<RollScript>().Fade(0f, 0.3f, 0, true);
                             }
                             LeanTween.delayedCall(0.4f, () => { EnemyUpdateRolls(enemy); });
                         }
@@ -541,9 +652,10 @@ public class BattleMain : MonoBehaviour
                     {
                         if (target == null) { continue; }
                         var enemy = target.GetComponent<GridEnemy>();
-                        for (int k = 0; k < enemy.RollsUI.childCount; k++)
+                        int idx = result.targetRollIndex >= 0 ? result.targetRollIndex : 0;
+                        if (enemy != null && enemy.RollsUI.childCount > idx)
                         {
-                            enemy.RollsUI.GetChild(k).GetComponent<RollScript>().Fade(0f, 0.3f, 0, true);
+                            enemy.RollsUI.GetChild(idx).GetComponent<RollScript>().Fade(0f, 0.3f, 0, true);
                         }
                         LeanTween.delayedCall(0.4f, () => { EnemyUpdateRolls(enemy); });
                     }
@@ -561,9 +673,12 @@ public class BattleMain : MonoBehaviour
 
                 if (attacker.RollsUI != null && attacker.RollsUI.childCount > 0)
                 {
-                    var attackerRollScript = attacker.RollsUI.GetChild(0).GetComponent<RollScript>();
-                    attackerRollScript.is_showing_result = false;
-                    attackerRollScript.ShowStats(null);
+                    var attackerRollScript = GetRollScript(attacker, result.attackerRollIndex);
+                    if (attackerRollScript != null)
+                    {
+                        attackerRollScript.is_showing_result = false;
+                        attackerRollScript.ShowStats(null);
+                    }
                 }
 
                 if (result.targetRoll != null && result.isHit == false)
@@ -573,18 +688,24 @@ public class BattleMain : MonoBehaviour
                         var enemy = target.GetComponent<GridEnemy>();
                         if (enemy != null && enemy.RollsUI != null && enemy.RollsUI.childCount > 0)
                         {
-                            var targetRollScript = enemy.RollsUI.GetChild(0).GetComponent<RollScript>();
-                            targetRollScript.is_showing_result = false;
-                            targetRollScript.ShowStats(null);
+                            var targetRollScript = GetRollScript(target, result.targetRollIndex);
+                            if (targetRollScript != null)
+                            {
+                                targetRollScript.is_showing_result = false;
+                                targetRollScript.ShowStats(null);
+                            }
                         }
                     }
                     else if (target.GType_ == GriddableObject.GriddableObjectType.Character)
                     {
                         if (target.RollsUI != null && target.RollsUI.childCount > 0)
                         {
-                            var targetRollScript = target.RollsUI.GetChild(0).GetComponent<RollScript>();
-                            targetRollScript.is_showing_result = false;
-                            targetRollScript.ShowStats(null);
+                            var targetRollScript = GetRollScript(target, result.targetRollIndex);
+                            if (targetRollScript != null)
+                            {
+                                targetRollScript.is_showing_result = false;
+                                targetRollScript.ShowStats(null);
+                            }
                         }
                     }
                 }
@@ -603,12 +724,15 @@ public class BattleMain : MonoBehaviour
             {
                 hasAnyHit = true;
                 int damageRollValue = roll.GetDamage();
-                int levelBonus = (attacker.GetCharacter().level - maxTargetLevel) / 4;
+                int levelBonus = GetLevelBonus(attacker.GetCharacter(), target.GetCharacter(), roll);
                 result.damageRollValue = damageRollValue + levelBonus;
 
-                var roll_ui = attacker.RollsUI.GetChild(0).GetComponent<RollScript>();
-                roll_ui.roll_result = result.damageRollValue;
-                roll_ui.is_showing_result = true;
+                var roll_ui = GetRollScript(attacker, result.attackerRollIndex);
+                if (roll_ui != null)
+                {
+                    roll_ui.roll_result = result.damageRollValue;
+                    roll_ui.is_showing_result = true;
+                }
 
                 result.damage = new Damage(damageRollValue, roll.element, attacker.GetCharacter());
             }
@@ -637,7 +761,9 @@ public class BattleMain : MonoBehaviour
                     if (target.GType_ == GriddableObject.GriddableObjectType.Enemy)
                     {
                         var enemy = target.GetComponent<GridEnemy>();
-                        enemy.RollsUI.GetChild(0).GetComponent<RollScript>().ShowStats(null);
+                        int idx = result.targetRollIndex >= 0 ? result.targetRollIndex : 0;
+                        if (enemy != null && enemy.RollsUI.childCount > idx)
+                            enemy.RollsUI.GetChild(idx).GetComponent<RollScript>().ShowStats(null);
                     }
                 }
             }
@@ -645,7 +771,29 @@ public class BattleMain : MonoBehaviour
             roll.ProcessEffects(attacker.GetCharacter(), target.GetCharacter(), result.context);
         }
     }
+    private int GetRollUIIndex(GriddableObject obj, Roll roll)
+    {
+        if (obj == null || roll == null || obj.RollsUI == null) return -1;
 
+        for (int i = 0; i < obj.RollsUI.childCount; i++)
+        {
+            var rs = obj.RollsUI.GetChild(i).GetComponent<RollScript>();
+            if (rs != null && rs.roll == roll)
+                return i;
+        }
+        return -1;
+    }
+
+    private RollScript GetRollScript(GriddableObject obj, int index)
+    {
+        if (obj == null || obj.RollsUI == null) return null;
+        if (index < 0 || index >= obj.RollsUI.childCount) return null;
+        return obj.RollsUI.GetChild(index).GetComponent<RollScript>();
+    }
+    public static void GainSwaga(int value)
+    {
+        Swagapoints += value;
+    }
     private class FightResult
     {
         public GriddableObject target;
@@ -663,6 +811,8 @@ public class BattleMain : MonoBehaviour
         public bool shouldRemoveTargetRoll;
         public bool isSelfAttack;
         public bool hasTargetRoll;
+        public int targetRollIndex; 
+        public int attackerRollIndex;
     }
 
     public IEnumerator MakeFight(GridCharacter character, List<GriddableObject> Targets)
@@ -799,9 +949,15 @@ public class BattleMain : MonoBehaviour
 
     void SetLevel(string name)
     {
-
-        if (CurrentLevel != null) Destroy(CurrentLevel);
-        CurrentLevel = Instantiate(ResoursesDict.ObjectSet[name]);
+        
+        if (CurrentLevel != null) { StaticFuncs.DestroySingle(CurrentLevel.transform); }
+        if (name == "None") { StaticFuncs.DestroySingle(current_field.transform);
+            IsInBattle = false; ;
+        }
+        else
+        {
+            CurrentLevel = Instantiate(ResoursesDict.ObjectSet[name]);
+        }
     }
 
     public void SetBackGroundAccourdingToLevelId(int levelId)
@@ -810,6 +966,11 @@ public class BattleMain : MonoBehaviour
         if (levelId == 0)
         {
             SetLevel("Level0");
+            return;
+        }
+        if (levelId == 8)
+        {
+            SetLevel("LevelCamp");
             return;
         }
         if (level.compaign == 1)
@@ -866,7 +1027,14 @@ public class BattleMain : MonoBehaviour
 
     public void NextLevel()
     {
+       
         CurrentLevelId = GetNextLevelId(CurrentLevelId);
+        if (CurrentLevelId > 10)
+        {
+            ProfileManager.profile.levels_counter++;
+            ProfileManager.profile.swaga_k = (ProfileManager.profile.swaga_k * ProfileManager.profile.levels_counter + Swagapoints) / ProfileManager.profile.levels_counter;
+            
+        }
         UpdateCharacters();
         StartBattle();
     }
@@ -954,6 +1122,27 @@ public class BattleMain : MonoBehaviour
         StaticFuncs.DestroySingle(CurrentLevel.transform);
         turn = 0;
         CurrentLevelId = 0;
+    }
+
+    public static float GetSwagaK()
+    {
+        if (BattleMain.Swagapoints < 50) { return 0.6f; }
+        if (BattleMain.Swagapoints < 100) { return 0.8f; }
+        if (BattleMain.Swagapoints < 150) { return 1f; }
+        if (BattleMain.Swagapoints < 200) { return 0.2f; }
+        if (BattleMain.Swagapoints < 250) { return 1.4f; }
+        if (BattleMain.Swagapoints < 300) { return 1.6f; }
+        return 1.8f;
+    }
+    public static float GetAverageSwagaK()
+    {
+        if (ProfileManager.profile.swaga_k < 50) { return 0.6f; }
+        if (ProfileManager.profile.swaga_k < 100) { return 0.8f; }
+        if (ProfileManager.profile.swaga_k < 150) { return 1f; }
+        if (ProfileManager.profile.swaga_k < 200) { return 0.2f; }
+        if (ProfileManager.profile.swaga_k < 250) { return 1.4f; }
+        if (ProfileManager.profile.swaga_k < 300) { return 1.6f; }
+        return 1.8f;
     }
 }
 

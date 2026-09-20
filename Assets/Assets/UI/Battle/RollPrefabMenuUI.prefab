@@ -271,8 +271,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rollMenuUI: {fileID: 0}
+  selfDamage: 1
   MinMaxText: {fileID: 2842861749491030447}
   RollImage: {fileID: 8617591014552911163}
+  is_showing_result: 0
+  roll_result: 0
+  RollTargetable: {fileID: 2800000, guid: a517c694ed171c0458650210b3221ca7, type: 3}
+  RollUntargetable: {fileID: 2800000, guid: d1ba2ffcf475e2a40b6480d556d0ae78, type: 3}
 --- !u!225 &1117631834487770371
 CanvasGroup:
   m_ObjectHideFlags: 0

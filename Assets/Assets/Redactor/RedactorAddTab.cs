@@ -49,6 +49,13 @@ public class RedactorAddTab : TabController
                 list.Add(new TypePair(DataDicts.CharacterTypes[i].Name, i));
             }
         }
+        if (TypeListNum == 3)
+        {
+            for (int i = 0; i < DataDicts.SurafaceTypes.Count; i++)
+            {
+                list.Add(new TypePair(DataDicts.SurafaceTypes[i].Name, i));
+            }
+        }
 
         while (TypeCatalogue.transform.GetChild(0).GetChild(0).childCount > 1)
         {
@@ -74,6 +81,10 @@ public class RedactorAddTab : TabController
         {
             ResoursesDict.GetClass<CameraController>().field_.RemoveObject(camera.Target.GetComponent<GridCell>().object_, true);
         }
+        if (camera.Target.GetComponent<GridCell>().surface_ != null && TypeListNum == 3)
+        {
+            ResoursesDict.GetClass<CameraController>().field_.RemoveObject(camera.Target.GetComponent<GridCell>().object_, true);
+        }
 
         if (TypeListNum == 0)
         {
@@ -88,6 +99,11 @@ public class RedactorAddTab : TabController
         if (TypeListNum == 2)
         {
             field.CreateGridObject(GriddableObject.GriddableObjectType.Character, int.Parse(button.name),
+                camera.Target.GetComponent<GridCell>().x_, camera.Target.GetComponent<GridCell>().y_, obj, data, false);
+        }
+        if (TypeListNum == 3)
+        {
+            field.CreateGridObject(GriddableObject.GriddableObjectType.Surface, int.Parse(button.name),
                 camera.Target.GetComponent<GridCell>().x_, camera.Target.GetComponent<GridCell>().y_, obj, data, false);
         }
 

@@ -150,11 +150,12 @@ public class EffectSpeedUp : BattleEffect
     public override void OnTurnStart(GridField field)
     {
         base.OnTurnStart(field);
+        if (character.HasPassive("Громадный")) { return; }
         character.cur_moves += power;
     }
 };
 
-public class EffectSpeedSown : BattleEffect
+public class EffectSpeedDown : BattleEffect
 {
     public override void Init()
     {
@@ -162,9 +163,14 @@ public class EffectSpeedSown : BattleEffect
         base.Init();
         name = "медлительность";
         description = $"В начале хода отморозок теряет {power} скорости";
+        
+    }
+    public override void OnTurnStart(GridField field)
+    {
+        base.OnTurnStart(field);
+        if (character.HasPassive("Громадный")) { return; }
         character.cur_moves -= power;
     }
-
 };
 
 public class EffectSteam : BattleEffect

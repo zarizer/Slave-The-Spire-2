@@ -12,7 +12,7 @@ public class MainCharacter : CharacterBase
         id = 0;
         hp = 100;
         def = 7;
-        speed = 10;
+        speed = 6;
         level = 1;
         speed_dif = 2;
         dmg_k = 1f;
@@ -42,7 +42,6 @@ public class MainCharacter : CharacterBase
         character.TexturePlane.GetComponent<RawImage>().texture = ProfileManager.profile_picture;
         character.name = ProfileManager.profile.name;
         character.GetCharacter().name = ProfileManager.profile.name;
-        moves = 5;
     }
     public int GetMoves() { return moves; }
 
@@ -147,6 +146,52 @@ public class Salty : CharacterBase
         passive_ids.Add(11);
         passive_ids.Add(12);
         passive_ids.Add(13);
+    }
+
+    public override void CreateStatsAccourdingToLevel()
+    {
+        base.CreateStatsAccourdingToLevel();
+    }
+}
+
+public class DisignCutie : CharacterBase
+{
+
+    public override CharacterBase Init()
+    {
+        id = 3;
+        hp = 1;
+        def = 0;
+        speed = 5;
+        level = 1;
+        speed_dif = 2;
+        dmg_k = 0.9f;
+        moves = 5;
+        energy = 25;
+        name = "Милашка с дизайна";
+        description = "Приехала с факультета дизайна университета ИТМО, чтобы пофотографировать уникальный архитектурный стиль Колтушей";
+        skill_id1 = 14;
+        skill_id2 = 15;
+        skill_id3 = 16;
+        skill_id4 = 17;
+        none_k = 1.8f;
+        fire_k = 1.2f;
+        water_k = 0.6f;
+        dendro_k = 0.9f;
+        light_k = 0.5f;
+        darkness_k = 0.5f;
+        base.Init();
+        return this;
+    }
+
+
+    public DisignCutie()
+    {
+        base.Init();
+        passive_ids = new List<int>();
+        passive_ids.Add(20);
+        passive_ids.Add(21);
+        passive_ids.Add(22);
     }
 
     public override void CreateStatsAccourdingToLevel()

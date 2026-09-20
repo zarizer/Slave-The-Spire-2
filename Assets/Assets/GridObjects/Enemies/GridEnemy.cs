@@ -52,7 +52,7 @@ public class GridEnemy : GriddableObject
     {
         enemy_ = GetEnemyByID(id);
     }
-    EnemyBase GetEnemyByID(int id)
+    public EnemyBase GetEnemyByID(int id)
     {
         Type type = DataDicts.EnemyTypes[id];
         EnemyBase result = (EnemyBase)Activator.CreateInstance(type);
@@ -109,13 +109,31 @@ public class GridEnemy : GriddableObject
         return rolls_list;
     }
 
-    public override Roll GetFirstRoll()
+    public override Roll GetFirstRoll(bool targetable = true)
     {
         if (enemy_.CurrentRolls.Count == 0) { return null; }
+        if (targetable)
+        {
+            for (int i = 0; i < enemy_.CurrentRolls.Count; i++) 
+            { 
+                if (enemy_.CurrentRolls[i].targetable) { return enemy_.CurrentRolls[i]; }
+            }
+
+        }
+        
         return enemy_.CurrentRolls[0];
     }
 
-    public override void RemoveFirstRoll(float offset = 0f) {   
+    public override void RemoveFirstRoll(float offset = 0f, bool targetable = true) {
+        if (enemy_.CurrentRolls.Count == 0) { return; }
+        if (targetable)
+        {
+            for (int i = 0; i < enemy_.CurrentRolls.Count; i++)
+            {
+                if (enemy_.CurrentRolls[i].targetable) { enemy_.CurrentRolls.RemoveAt(i); return; }
+            }
+
+        }
         enemy_.CurrentRolls.RemoveAt(0);
     }
 
@@ -124,6 +142,17 @@ public class GridEnemy : GriddableObject
     public override void GetDamage(Damage damage) 
     {
         enemy_.GetDamage(damage);
+        if (damage.damage > 0)
+        {
+            BattleMain.GainSwaga(4); ;
+            if (damage.element == Element.None && GetCharacter().none_k > 1f) { BattleMain.GainSwaga(1); }
+            if (damage.element == Element.fire && GetCharacter().fire_k > 1f) { BattleMain.GainSwaga(1); ; }
+            if (damage.element == Element.water && GetCharacter().water_k > 1f) { BattleMain.GainSwaga(1); }
+            if (damage.element == Element.dendro && GetCharacter().dendro_k > 1f) { BattleMain.GainSwaga(1); }
+            if (damage.element == Element.light && GetCharacter().light_k > 1f) { BattleMain.GainSwaga(1); }
+            if (damage.element == Element.darkness && GetCharacter().darkness_k > 1f) { BattleMain.GainSwaga(1); }
+            
+        }
     }
 
     public void RemoveRoll(Roll roll) 
@@ -168,5 +197,18 @@ public class GridEnemy : GriddableObject
             effect.UpdateData();
 
         }
+    }
+
+    public override void ChangeCharacterBase(int id)
+    {
+        base.ChangeCharacterBase(id);
+        int level = enemy_.level;
+        int hp = enemy_.hp;
+        int energy = enemy_.energy;
+        enemy_ = GetEnemyByID(id);
+        enemy_.level = level;
+        enemy_.CreateStatsAccourdingToLevel();
+        enemy_.hp = hp;
+        enemy_.energy = energy;
     }
 }

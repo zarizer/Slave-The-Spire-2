@@ -14,6 +14,8 @@ public class RollScript : MonoBehaviour
     public RawImage RollImage;
     public bool is_showing_result = false;
     public int roll_result;
+    public Texture RollTargetable;
+    public Texture RollUntargetable;
     void Start()
     {
         rollMenuUI = gameObject;
@@ -56,7 +58,8 @@ public class RollScript : MonoBehaviour
         }
         RollImage.color = GetImageColor();
         MinMaxText.color = Color.black;
-        
+        if (roll.targetable) { RollImage.texture = RollTargetable; }
+        else if (!roll.targetable) { RollImage.texture = RollUntargetable; }
     }
 
     void ShowRollResult(int result)

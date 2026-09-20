@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 
 class StaticFuncs : MonoBehaviour
 {
@@ -66,4 +68,49 @@ class StaticFuncs : MonoBehaviour
     {
         return UnityEngine.Random.Range(min, max + 1);
     }
+
+    public static Texture2D GenerateTextureByNoise(int type, int width, int height, float xOrg, float yOrg, float scale = 1f)
+    {
+        Texture2D noiseTex;
+        Color[] pix;
+        noiseTex = new Texture2D(width, height);
+        pix = new Color[noiseTex.width * noiseTex.height];
+        switch (type)
+        {
+            case 0:
+
+                float y = 0.0F;
+                while (y < noiseTex.height)
+                {
+                    float x = 0.0F;
+                    while (x < noiseTex.width)
+                    {
+                        float xCoord = xOrg + x / noiseTex.width * scale;
+                        float yCoord = yOrg + y / noiseTex.height * scale;
+                        float sample = Mathf.PerlinNoise(xCoord, yCoord);
+                        Color use_color = Color.white;
+                        if (((sample * 4) % 1) < 0.03f) { use_color = Color.black; }
+                        else if (sample < 0.25f) { use_color = new Color(0.05f, 0.3f, 0.03f); }
+                        else if (sample < 0.5f) { use_color = new Color(0.1f, 0.35f, 0.08f); }
+                        else if (sample < 0.75f) { use_color = new Color(0.15f, 0.4f, 0.13f); }
+                        else if (sample < 1) { use_color = new Color(0.2f, 0.45f, 0.18f); }
+
+                        pix[(int)(y * noiseTex.width + x)] = use_color;
+                        x++;
+                    }
+                    y++;
+                }
+                noiseTex.SetPixels(pix);
+                noiseTex.Apply();
+                return noiseTex;
+        }
+
+        noiseTex.SetPixels(pix);
+        noiseTex.Apply();
+        return noiseTex;
+    }
+
 }
+
+
+

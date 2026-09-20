@@ -127,17 +127,21 @@ public class GridCharacter : GriddableObject
         return false;
     }
 
-    public override Roll GetFirstRoll() 
+    public override Roll GetFirstRoll(bool targetable = true) 
     { 
         if (DefenceRolls.Count == 0) return null;
         return DefenceRolls[0];
     }
 
-    public override void RemoveFirstRoll(float offset = 0f) { DefenceRolls.RemoveAt(0); }
+    public override void RemoveFirstRoll(float offset = 0f, bool targetable = true) { DefenceRolls.RemoveAt(0); }
 
     public override void GetDamage(Damage damage)
     {
         character_.GetDamage(damage);
+        if (damage.damage > 0)
+        {
+            BattleMain.GainSwaga(8);
+        }
     }
 
     public override int GetLevel()
@@ -235,6 +239,19 @@ public class GridCharacter : GriddableObject
             }
         }
         return rolls_list;
+    }
+
+    public override void ChangeCharacterBase(int id)
+    {
+        base.ChangeCharacterBase(id);
+        int level = character_.level;
+        int hp = character_.hp;
+        int energy = character_.energy;
+        character_ = GridCharacter.GetCharacterByID(id);
+        character_.level = level;
+        character_.CreateStatsAccourdingToLevel();
+        character_.hp = hp;
+        character_.energy = energy;
     }
 }
 

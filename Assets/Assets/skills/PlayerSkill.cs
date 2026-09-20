@@ -130,6 +130,7 @@ public class PlayerSkill
 
 public class Roll
 {
+    public bool targetable = true;
     public PlayerSkill skill;
     public string Description;
     public int radius;
@@ -141,6 +142,8 @@ public class Roll
     public List<(int, int)> DamagePositions = new List<(int, int)>();
     public List<SkillEffect> effects = new List<SkillEffect>();
     public Element element;
+    public bool IsBuff = true;
+    public bool IsScaling = true;
 
     public int GetRoll()
     {
@@ -222,6 +225,8 @@ public class Roll
         skill = other.skill;
         Description = other.Description;
         selfDamage = other.selfDamage;
+        targetable = other.targetable;
+        IsBuff = other.IsBuff;
         foreach (var effect in other.effects)
         {
             effects.Add(effect);

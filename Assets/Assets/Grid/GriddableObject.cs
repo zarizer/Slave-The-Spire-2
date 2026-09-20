@@ -69,6 +69,10 @@ public class GriddableObject : MonoBehaviour
 
     }
 
+    public virtual void ChangeCharacterBase(int id)
+    {
+
+    }
     List<GridCell> GetWay(GridCell start_cell, GridCell finish_cell)
     {
         List<GridCell> way = new List<GridCell>();
@@ -89,6 +93,12 @@ public class GriddableObject : MonoBehaviour
         GridCell cur_cell = way[cur_index];
         DestinationPosition = GetDestinationByCell(cur_cell);
         LeanTween.delayedCall(timing, () => { MoveByWay(way, timing, cur_index + 1); });
+        if (GType_ == GriddableObjectType.Character)
+        {
+            if (GetCharacter().cur_moves > 0) {
+                BattleMain.GainSwaga(5);
+            }
+        }
     }
 
     Vector3 GetDestinationByCell(GridCell cell)
@@ -102,11 +112,13 @@ public class GriddableObject : MonoBehaviour
         if (GType_ == GriddableObjectType.Character) { field_.GridCharacters.Remove((GridCharacter)this); }
         if (GType_ == GriddableObjectType.Obstacle) { field_.GridObstacles.Remove((GridObstacle)this); }
         Destroy(gameObject);
+        if (GType_ == GriddableObjectType.Character) { BattleMain.GainSwaga(-18); }
+        if (GType_ == GriddableObjectType.Enemy) { BattleMain.GainSwaga(8); }
     }
 
-    public virtual Roll GetFirstRoll() { return null; }
+    public virtual Roll GetFirstRoll(bool targetable = true) { return null; }
 
-    public virtual void RemoveFirstRoll(float offset = 0f) { }
+    public virtual void RemoveFirstRoll(float offset = 0f, bool targetable = true) { }
 
     public virtual int GetLevel() { return 1; }
 
@@ -137,6 +149,7 @@ public class GriddableObject : MonoBehaviour
         Enemy,
         Character,
         Obstacle,
+        Surface,
         Breakable
     }
 

@@ -48,7 +48,13 @@ public class CameraController : MonoBehaviour
     public bool lock_navigation = false;
     public bool freecam_mode = false;
 
+    public RawImage test_img;
 
+    [ContextMenu("Perlin")]
+    public void Perlin()
+    {
+        test_img.texture = StaticFuncs.GenerateTextureByNoise(0, 100, 100, Time.time%98344, Time.time%824378, 6);
+    }
     void Start()
     {
         battleMain = ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>();
@@ -56,6 +62,7 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
+        //Perlin();
         if (!ResoursesDict.GetClass<BattleMain>().IsInBattle) return;
         field_ = battleMain.current_field;
         CheckHotKeys();

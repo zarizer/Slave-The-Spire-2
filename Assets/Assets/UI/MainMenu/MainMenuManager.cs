@@ -97,7 +97,26 @@ public class MainMenuManager : MonoBehaviour
         ResoursesDict.GetClass<SoundMain>().Accept();
         SetMenu(battleMain.gameObject);
         battleMain.CurrentLevelId = prepareBattleScrit.LevelId;
+        if (prepareBattleScrit.LevelId == 0) { ProfileManager.profile.is_custom_level = false; }
+        ProfileManager.profile.levels_counter = 0;
         battleMain.StartGame();
+        
+    }
+
+    public void OnApplicationQuit()
+    {
+        ProfileManager.SaveProfile();
+    }
+
+    public void StartFromSaveBattle()
+    {
+        if (ProfileManager.profile.is_in_game == false) { ResoursesDict.GetClass<SoundMain>().Restrict(); return; }
+        if (CharacterMenuController.selected_characters.Count <= 0) { ResoursesDict.GetClass<SoundMain>().Restrict(); return; }
+        ResoursesDict.GetClass<SoundMain>().Accept();
+        SetMenu(battleMain.gameObject);
+        //battleMain.CurrentLevelId = prepareBattleScrit.LevelId;
+        //if (prepareBattleScrit.LevelId == 0) { ProfileManager.profile.is_custom_level = false; }
+        battleMain.StartFromSave();
     }
 
     public void GiveUp()

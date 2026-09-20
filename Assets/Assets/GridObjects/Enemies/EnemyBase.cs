@@ -13,6 +13,8 @@ public class EnemyBase : CharacterBase
 
     public int DebugTurn;
 
+    public bool MovingTowardsPlayer = true;
+
     public override CharacterBase Init()
     {
         InitCurStats();
@@ -88,6 +90,7 @@ public class EnemyBase : CharacterBase
         base.CreateStatsAccourdingToLevel();
         //Debug.Log("Level:" + level.ToString() + "  k:" + (1 + ((float)level) / 12).ToString());
         cur_hp = (int)(cur_hp * (1 + ((float)level) / 12));
+        start_hp = (int)(start_hp * (1 + ((float)level) / 12));
         cur_def = (int)(cur_def * (1 + ((float)level) / 12));
         float baff_k = (1 - (float)level / 500);
         cur_dmg_k += (float)Math.Round((level / 4) / 10f, 2);

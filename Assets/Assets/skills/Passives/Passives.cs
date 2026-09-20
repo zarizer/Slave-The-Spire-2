@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class PassiveMain1 : Passive
 {
@@ -458,5 +459,270 @@ public class PassiveSnusoed2 : Passive
     {
         base.UpdateAccourdingToLevel();
         Value = 20 * level;
+    }
+};
+
+public class PassiveUnmovable : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Громадный";
+        Description = $"На этого отморозка не влияют эффекты скорости или замедления";
+    }
+
+
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = level;
+    }
+};
+
+public class PassiveElephant2 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Испуг";
+        Description = $"При получении урона, по возможности отходит на соседнюю клетку";
+    }
+
+    public override void OnGetDamage(GridField field, Damage dmg)
+    {
+        base.OnGetDamage(field, dmg);
+        List<GridCell> cells = new List<GridCell>();
+        GridCell cur_cell = character.object_.GetComponent<GriddableObject>().cell_;
+        cells.Add(field.GetGridCell(cur_cell.x_ + 1, cur_cell.y_));
+        cells.Add(field.GetGridCell(cur_cell.x_ - 1, cur_cell.y_));
+        cells.Add(field.GetGridCell(cur_cell.x_, cur_cell.y_ - 1));
+        cells.Add(field.GetGridCell(cur_cell.x_, cur_cell.y_ + 1));
+        foreach (var c in cells)
+        {
+            if (c != null)
+            {
+                if (c.object_ == null)
+                {
+                    character.object_.GetComponent<GriddableObject>().MoveToCell(c);
+                }
+            }
+        }
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = level;
+    }
+};
+
+public class PassiveDisignCutie1 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "я поделюсь!";
+        Description = $"Когда этот отморозок получает энергию, все остальные отморозки получают {Value} энергии";
+    }
+
+    public override void OnGetEnergy(GridField field, int value)
+    {
+        base.OnGetEnergy(field, value);
+
+        foreach (var c in field.GridCharacters) 
+        {
+            c.GetCharacter().GetEnergy(value, true);
+        }
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = level;
+    }
+};
+
+public class PassiveDisignCutie2 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "ну не надо...";
+        Description = $"Когда этому отморозку наносит урон противник, нанёсший получает тупой эффект тупой клинок силы {Value} длительности 1";
+    }
+
+    public override void OnGetDamage(GridField field, Damage dmg)
+    {
+        base.OnGetDamage(field, dmg);
+        if (dmg.from != null && dmg.from.object_.GetComponent<GriddableObject>().GType_ != GriddableObject.GriddableObjectType.Character)
+        {
+            if (dmg.damage > 0)
+            {
+                GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[1004], (int)Value, 1, dmg.from, character);
+            }
+        }
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = level;
+    }
+};
+
+public class PassiveDisignCutie3 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Что мы наделали...";
+        Description = $"Если этот отморозок погибает, ВСЕ на поле получают медлительность силы {Value}, слабость силы {Value} длительностью 2, топой клинок силы {Value} длительностью 2, а также 20 урона тьмой";
+    }
+
+    public override void OnDeath(GridField field, Damage dmg)
+    {
+        base.OnDeath(field, dmg);
+        foreach (var g in field.GetAllObjects())
+        {
+            
+            GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[1004], (int)Value, 2, dmg.from, character);
+            GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[1002], (int)Value, 2, dmg.from, character);
+            GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[1006], (int)Value, 0, dmg.from, character);
+            g.GetCharacter().GetDamage(new Damage(20, Element.darkness, character));
+        }
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = level;
+    }
+};
+
+public class PassiveDrevo1 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Тактические указания";
+        Description = $"В начале хода все дружественные отморозки получают 1 скорость";
+    }
+
+    public override void OnTurnStart(GridField field)
+    {
+        if (character.object_.GetComponent<GriddableObject>().player_)
+        {
+            foreach (var c in field.GridCharacters)
+            {
+                c.GetCharacter().cur_moves++;
+            }
+        }
+        else
+        {
+            foreach (var c in field.GridEnemies)
+            {
+                c.GetCharacter().cur_moves++;
+            }
+        }
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = level;
+    }
+};
+
+public class PassiveVenomous : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Ядовитый";
+        Description = $"При нанесении урона, накладывает яд силы {Value} длительности 1";
+    }
+
+    public override void OnDealDamage(GridField field, Damage dmg, CharacterBase target)
+    {
+        base.OnDealDamage(field, dmg, target);
+        if (dmg.damage > 0)
+        {
+            GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[0], (int)Value, 1, target, character);
+        }
+    }
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = level;
+    }
+};
+
+public class PassivePython1 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Использовать запасы";
+        Description = $"Если у этого отморозка в начале хода 75+ энергии, он получает специальный дополнительный сильный кубик атаки и сбрасывает всю энергию";
+    }
+
+    public override void OnTurnStart(GridField field)
+    {
+        base.OnTurnStart(field);
+        if (character.cur_energy >= 75) 
+        {
+            character.cur_energy = 0;
+            character.GetExtraRoll(true, 27);
+        }
+    }
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = level;
+    }
+};
+
+public class PassivePunishingBird1 : Passive
+{
+    public bool agressive;
+    public override void Init()
+    {
+        base.Init();
+        Name = "Кара";
+        Description = $"Запись недоступна";
+    }
+
+    public override void OnBattleStart(GridField field)
+    {
+        base.OnBattleStart(field);
+        character.hp = 666;
+        character.dmg_k = 6.66f;
+        character.init_none_k = 0.66f;
+        character.init_darkness_k = 0.66f;
+        character.init_light_k = 0.66f;
+        character.init_water_k = 0.66f;
+        character.init_fire_k = 0.66f;
+        character.init_dendro_k = 0.66f;
+    }
+    public override void OnGetDamage(GridField field, Damage dmg)
+    {
+        base.OnGetDamage(field, dmg);
+        if (dmg.damage > 0) { agressive = true; }
+    }
+
+    public override void OnTurnStart(GridField field)
+    {
+        base.OnTurnStart(field);
+        if (agressive)
+        {
+            character.GetExtraRoll(true, 30);
+        }
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = level;
     }
 };

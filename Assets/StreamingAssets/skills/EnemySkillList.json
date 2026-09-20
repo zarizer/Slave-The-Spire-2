@@ -439,6 +439,7 @@
       "dist": 1,
       "rolls": [
         {
+			
           "minRoll": 2,
           "maxRoll": 6,
           "rollType": "Atk",
@@ -481,6 +482,286 @@
 			  "chance": 100,
 			  "statusId": 1001
 			}]
+        }
+      ]
+    },
+	{
+      "id": 20,
+      "name": "Топот",
+      "rollDist": "StLine",
+      "dist": 1,
+      "rolls": [
+        {
+          "minRoll": 8,
+          "maxRoll": 12,
+          "rollType": "Atk",
+          "rollRadius": "Single",
+          "radius": 1,
+          "element": "None",
+		  "description": "При попадании с вероятностью 50% накладывает замедление силы 1",
+          "specialEffects": [
+		  {
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnHit",
+			  "value": 1,
+			  "duration": 0,
+			  "chance": 50,
+			  "statusId": 1006
+			}]
+        }
+      ]
+    },
+	{
+      "id": 21,
+      "name": "Ошпарить водой",
+      "rollDist": "StLine",
+      "dist": 2,
+      "rolls": [
+        {
+          "minRoll": 6,
+          "maxRoll": 10,
+          "rollType": "Atk",
+          "rollRadius": "StLine",
+          "radius": 2,
+          "element": "Water",
+		  "description": "При попадании накладывает дым силы 7 длительности 2",
+          "specialEffects": [
+		  {
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnHit",
+			  "value": 7,
+			  "duration": 2,
+			  "chance": 100,
+			  "statusId": 3
+			}]
+        }
+      ]
+    },
+	{
+      "id": 22,
+      "name": "Обороняться",
+      "rollDist": "StLine",
+      "dist": 2,
+      "rolls": [
+        {
+		  "description": "",
+          "minRoll": 15,
+          "maxRoll": 25,
+          "rollType": "Def",
+          "rollRadius": "StLine",
+          "radius": 2,
+          "element": "Water",
+		  
+        }
+      ]
+    },
+	{
+      "id": 23,
+      "name": "Оглушающий рёв",
+      "rollDist": "Any",
+      "dist": 1,
+      "rolls": [
+        {
+          "minRoll": 1,
+          "maxRoll": 2,
+          "rollType": "Atk",
+          "rollRadius": "Field",
+          "radius": 1,
+          "element": "Light",
+		  "description": "При использовании ВСЕ получают медлительность сила 2 длительностью 2",
+          "specialEffects": [
+		  {
+			  "effectType": "ApplyStatus",
+			  "target": "All",
+			  "trigger": "OnUSe",
+			  "value": 2,
+			  "duration": 2,
+			  "chance": 100,
+			  "statusId": 1006
+			}]
+        }
+      ]
+    },
+	{
+      "id": 25,
+      "name": "Природная регенирация",
+      "rollDist": "Radius",
+      "dist": 3,
+      "rolls": [
+        {
+		  "IsScaling": 0,
+		  "IsBaff": 1,
+		  "targetable": 0,
+          "minRoll": 0,
+          "maxRoll": 0,
+          "rollType": "Atk",
+          "rollRadius": "Radius",
+          "radius": 3,
+          "element": "Dendro",
+		  "description": "Все отморозки в радиусе восстанавливают 5% от здоровья этого отморозка",
+          "specialEffects": [
+		  {
+			  "effectType": "HealPercent",
+			  "target": "Target",
+			  "trigger": "OnTarget",
+			  "value": 5,
+			}]
+        }
+      ]
+    },
+	{
+      "id": 25,
+      "name": "Природная регенирация",
+      "rollDist": "Radius",
+      "dist": 3,
+      "rolls": [
+        {
+		  "IsScaling": 0,
+		  "targetable": 0,
+		  "IsBaff": 1,
+          "minRoll": 0,
+          "maxRoll": 0,
+          "rollType": "Atk",
+          "rollRadius": "PlayerRadius",
+          "radius": 3,
+          "element": "Dendro",
+		  "description": "Все отморозки в радиусе восстанавливают 5% от здоровья этого отморозка",
+          "specialEffects": [
+		  {
+			  "effectType": "HealPercent",
+			  "target": "Target",
+			  "trigger": "OnTarget",
+			  "value": 5,
+			}]
+        }
+      ]
+    },
+	{
+      "id": 26,
+      "name": "Корни",
+      "rollDist": "Radius",
+      "dist": 4,
+      "rolls": [
+        {
+          "minRoll": 3,
+          "maxRoll": 10,
+          "rollType": "Atk",
+          "rollRadius": "Single",
+          "radius": 4,
+          "element": "Dendro",
+		  "description": "При попадании цель получает медлительность силы 1",
+          "specialEffects": [
+		  {
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnHit",
+			  "value": 1,
+			  "duration": 0,
+			  "chance": 100,
+			  "statusId": 1006
+			}]
+        }
+      ]
+    },
+	{
+      "id": 27,
+      "name": "Специальная атака питона",
+      "rollDist": "Any",
+      "dist": 4,
+      "rolls": [
+        {
+          "minRoll": 0,
+          "maxRoll": 0,
+		  "IsScaling": 0,
+		  "targetable": 0,
+          "rollType": "Atk",
+          "rollRadius": "Field",
+          "radius": 4,
+          "element": "Darkness",
+		  "description": "Все противники теряют всю энергию",
+          "specialEffects": [
+			{
+			  "effectType": "Custom",
+			  "target": "AllEnemies",
+			  "trigger": "OnTarget",
+			  "value": 1,
+			  "duration": 0,
+			  "chance": 100,
+			  "CustomId": 3,
+			}]
+        }
+      ]
+    },
+	{
+      "id": 28,
+      "name": "резкий укус",
+      "rollDist": "StLine",
+      "dist": 1,
+      "rolls": [
+        {
+          "minRoll": 1,
+          "maxRoll": 3,
+		  "targetable": 0,
+          "rollType": "Atk",
+          "rollRadius": "Single",
+          "radius": 1,
+          "element": "Dendro",
+		  "description": "",
+        }
+      ]
+    },
+	{
+      "id": 29,
+      "name": "Обвить",
+      "rollDist": "StLine",
+      "dist": 1,
+      "rolls": [
+        {
+          "minRoll": 7,
+          "maxRoll": 9,
+          "rollType": "Atk",
+          "rollRadius": "Single",
+          "radius": 1,
+          "element": "None",
+		  "description": "При нанесении урона, получает 25 энергии и накладывает медлительность силы 1 длительности 2",
+		  "specialEffects": [
+		  {
+			  "effectType": "ApplyStatus",
+			  "target": "Target",
+			  "trigger": "OnHit",
+			  "value": 1,
+			  "duration": 2,
+			  "chance": 100,
+			  "statusId": 1006
+			},
+			{
+			  "effectType": "Energy",
+			  "target": "Self",
+			  "trigger": "OnHit",
+			  "value": 25,
+			}]
+        }
+      ]
+    },
+	{
+      "id": 30,
+      "name": "Кара",
+      "rollDist": "StLine",
+      "dist": 1,
+      "rolls": [
+        {
+          "minRoll": 666,
+          "maxRoll": 666,
+          "rollType": "Atk",
+          "rollRadius": "Single",
+          "radius": 1,
+		  "IsScaling": 0,
+		  "targetable":0,
+          "element": "None",
+		  "description": "",
+		 
         }
       ]
     },

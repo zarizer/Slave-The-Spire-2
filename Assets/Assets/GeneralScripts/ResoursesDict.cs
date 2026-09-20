@@ -10,6 +10,7 @@ public class ResoursesDict : MonoBehaviour
     public static Dictionary<string, GameObject> ObjectSet = new Dictionary<string, GameObject>();
     public static Dictionary<string, AudioClip> SoundSet = new Dictionary<string, AudioClip>();
     public static List<GameObject> ModelSet = new List<GameObject>();
+    public static List<GameObject> SurfaceSet = new List<GameObject>();
 
     public Texture none_element;
     public Texture fire_element;
@@ -56,6 +57,7 @@ public class ResoursesDict : MonoBehaviour
 
     public GameObject battleField;
     public GameObject DamageText;
+    public GameObject levelCamp;
     public GameObject level1_1;
     public GameObject level0;
 
@@ -65,11 +67,16 @@ public class ResoursesDict : MonoBehaviour
     public GameObject BaffAltar;
     public GameObject Totem;
     public GameObject Chest1;
+    public GameObject ModelNothing;
+    public GameObject ModelShop;
+    public GameObject ModelCampFire;
 
     public GameObject ModelCh1R1;
     public GameObject ModelCh1R2;
     public GameObject ModelCh1R3;
     public GameObject ModelCh1R4;
+
+    public GameObject SurfaceSwamp;
     public void Awake()
     {
         TextureSet["atk_icon"] = atk_icon;
@@ -115,6 +122,7 @@ public class ResoursesDict : MonoBehaviour
         SoundSet["Egg1"] = easter_egg_sound1;
 
         ObjectSet["Field"] = battleField;
+        ObjectSet["LevelCamp"] = levelCamp;
         ObjectSet["Level1.1"] = level1_1;
         ObjectSet["Level0"] = level0;
 
@@ -130,6 +138,11 @@ public class ResoursesDict : MonoBehaviour
         ModelSet.Add(BaffAltar);
         ModelSet.Add(Totem);
         ModelSet.Add(Chest1);
+        ModelSet.Add(ModelNothing);
+        ModelSet.Add(ModelShop);
+        ModelSet.Add(ModelCampFire);
+
+        SurfaceSet.Add(SurfaceSwamp);
     }
 
 

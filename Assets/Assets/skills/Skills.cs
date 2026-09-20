@@ -81,20 +81,41 @@ public class Skills
             {
                 roll.selfDamage = false;
             }
+            if (roll_obj["IsScaling"] == null || roll_obj["IsScaling"].Value<int>() == 1)
+            {
+                roll.IsScaling = true;
+            }
+            else
+            {
+                roll.IsScaling = false;
+            }
+            if (roll_obj["IsBaff"] == null || roll_obj["IsBaff"].Value<int>() == 0)
+            {
+                roll.IsBuff = false;
+            }
+            else
+            {
+                roll.IsBuff = true;
+            }
             roll.Description = roll_obj["description"].Value<string>();
             roll.radius = roll_obj["radius"].Value<int>();
             roll.rollRadius = GetRadius(roll_obj["rollRadius"].Value<string>());
             roll.rollType = GetType(roll_obj["rollType"].Value<string>());
             roll.element = GetElement(roll_obj["element"].Value<string>());
-
-            // Новая система SpecialEffects
+            if (roll_obj["targetable"] == null || roll_obj["targetable"].Value<int>() == 1)
+            {
+                roll.targetable = true;
+            }
+            else
+            {
+                roll.targetable = false;
+            }
             if (roll_obj["specialEffects"] != null)
             {
                 foreach (JToken effect_obj in roll_obj["specialEffects"] as JArray)
                 {
                     SkillEffect effect = new SkillEffect();
 
-                    // Базовые параметры эффекта
                     effect.roll = roll;
                     effect.id = effect_obj["id"]?.Value<int>() ?? 0;
                     effect.effectType = GetEffectType(effect_obj["effectType"]?.Value<string>() ?? "ApplyStatus");
@@ -105,8 +126,6 @@ public class Skills
                     effect.chance = effect_obj["chance"]?.Value<float>() ?? 100f;
                     effect.element = GetElement( effect_obj["element"]?.Value<string>() ?? "None");
 
-
-                    // Дополнительные параметры для разных типов эффектов
                     if (effect_obj["statusId"] != null)
                         effect.statusId = effect_obj["statusId"].Value<int>();
 
@@ -137,7 +156,6 @@ public class Skills
                     if (effect_obj["CustomId"] != null)
                         effect.customId = effect_obj["CustomId"].Value<int>();
 
-                    // Добавляем эффект
                     roll.effects.Add(effect);
                 }
             }
@@ -149,7 +167,6 @@ public class Skills
         return skill;
     }
 
-    // Новые методы для парсинга
     static EffectType GetEffectType(string effectType)
     {
         return Enum.TryParse(effectType, true, out EffectType result) ? result : EffectType.ApplyStatus;
@@ -186,11 +203,6 @@ public class Skills
     }
 }
 
-// ===== НОВЫЕ КЛАССЫ ДЛЯ СИСТЕМЫ ЭФФЕКТОВ =====
-
-/// <summary>
-/// Тип эффекта
-/// </summary>
 public enum EffectType
 {
     ApplyStatus,        
@@ -216,9 +228,7 @@ public enum EffectType
     Custom             // Пользовательское событие (по ID)
 }
 
-/// <summary>
-/// Тип цели эффекта
-/// </summary>
+
 public enum TargetType
 {
     Self,              
@@ -229,7 +239,7 @@ public enum TargetType
     RandomAlly,        
     All,       
     Cells,
-    Custom             // Пользовательский (по ID)
+    Custom
 }
 
 public enum TriggerType
@@ -239,12 +249,10 @@ public enum TriggerType
     OnTarget,
     OnUse,
     OnEmptyCell,
-    Custom             // Пользовательский (по ID)
+    Custom 
 }
 
-/// <summary>
-/// Класс эффекта навыка
-/// </summary>
+
 [System.Serializable]
 public class SkillEffect
 {
@@ -257,7 +265,6 @@ public class SkillEffect
     public int duration;                // Длительность (в ходах)
     public float chance;               // Шанс срабатывания (0-100)
 
-    // Дополнительные параметры для разных типов эффектов
     public int statusId;               // ID статуса для ApplyStatus/RemoveStatus
     public int skillId;                // ID навыка для ModifyCooldown или Summon
     public string modifierType;        // Тип модификации для ModifyStat (health, damage, defense, speed)
@@ -270,20 +277,15 @@ public class SkillEffect
     public int SummonObjectId; // ID для призыва объекта
     public Element element;
 
-    // Вызов эффекта
     public void Execute(CharacterBase caster, CharacterBase target, RollContext context)
     {
-        // Проверка шанса
         if (UnityEngine.Random.Range(0f, 100f) > chance)
             return;
 
-        // Проверка триггера
         if (!CheckTrigger(context))
             return;
 
-        // Определяем цель
         List<CharacterBase> targets = GetTargets(caster, target, context);
-        // Применяем эффект к каждой цели
         foreach (var t in targets)
         {
             ApplyEffect(caster, t, context);
@@ -292,7 +294,6 @@ public class SkillEffect
 
     private bool CheckTrigger(RollContext context)
     {
-        // Если контекст null, пропускаем
         if (context == null) return false;
 
         switch (triggerType)
@@ -312,7 +313,6 @@ public class SkillEffect
                 return true; // OnUse всегда срабатывает при использовании
 
             case TriggerType.Custom:
-                // Для пользовательских триггеров проверяем по ID
                 return CheckCustomTrigger(context);
 
             default:
@@ -320,14 +320,12 @@ public class SkillEffect
         }
     }
 
-    // Дополнительный метод для пользовательских триггеров
     private bool CheckCustomTrigger(RollContext context)
     {
-        // Если есть кастомные данные в контексте
         if (context.CustomData != null && context.CustomData.ContainsKey("customTriggerId"))
         {
             int customId = (int)context.CustomData["customTriggerId"];
-            return customId == this.customId; // Сравниваем с ID эффекта
+            return customId == this.customId;
         }
         return false;
     }
@@ -494,22 +492,19 @@ public class SkillEffect
         }
     }
 
-    // Реализация различных эффектов
+
 
     private void ApplyEnergy(CharacterBase target)
     {
-        // Применяем статус по ID
         target.GetEnergy(value);
     }
     private void ApplyStatus(CharacterBase target, CharacterBase caster)
     {
-        // Применяем статус по ID
         GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[statusId], value, duration, target, caster);
     }
 
     private void RemoveStatus(CharacterBase target)
     {
-        // Снимаем статус по ID
         Debug.Log($"Removing status {statusId} from {target.name}");
     }
 
@@ -636,12 +631,32 @@ public class SkillEffect
             GridCharacter.ApplyBattleEffect(DataDicts.EffectTypes[1002], k, 0, target, caster, true);
             caster.cur_energy = 0;
         }
+
+        if (customId == 1)
+        {
+            target.LoseDefence(target.cur_def / 2, caster);
+        }
+
+        if (customId == 2)
+        {
+            GriddableObject obj = target.object_.GetComponent<GriddableObject>();
+            if (obj.GType_ == GriddableObject.GriddableObjectType.Character)
+            {
+                obj.ChangeCharacterBase(StaticFuncs.RandomRangeInclusive(0,DataDicts.CharacterTypes.Count - 1));
+            }
+            if (obj.GType_ == GriddableObject.GriddableObjectType.Enemy)
+            {
+                obj.ChangeCharacterBase(StaticFuncs.RandomRangeInclusive(0, DataDicts.EnemyTypes.Count - 1));
+            }
+        }
+
+        if (customId == 3)
+        {
+            target.cur_energy = 0;
+        }
     }
 }
 
-/// <summary>
-/// Контекст для роллов
-/// </summary>
 public class RollContext
 {
     public bool IsHit { get; set; }

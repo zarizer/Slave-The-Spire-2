@@ -62,8 +62,12 @@ MonoBehaviour:
   GridEnemies: []
   GridCharacters: []
   GridObstacles: []
+  GridSurfaces: []
   BaseCharacter: {fileID: 4718569247299793797, guid: 3c53ee1864acb3046a62177e846003de, type: 3}
   BaseEnemy: {fileID: -8007137783566499895, guid: e2268ce31e36a6441b27f9e40a14e29b, type: 3}
   BaseObstacle: {fileID: 92458452228894397, guid: 043c6b5b74e63bd40968a7ff4ff49a91, type: 3}
+  BaseSurface: {fileID: 6925730245840257201, guid: c45a30cf9cf658a44ac9f5d3c7e41f17, type: 3}
   character_spawn_num: 0
   current_object: {fileID: 0}
+  is_redactor: 0
+  battleMain: {fileID: 0}

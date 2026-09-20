@@ -218,8 +218,16 @@ public class Profile
     public int level_num;
     public int compaign_num;
     public int chapter_num;
+    public int difficulty;
     public bool is_in_game;
-
+    public List<int> baffs_id;
+    public List<int> baffs_counters;
+    public int level_id;
+    public bool is_custom_level;
+    public bool should_load;
+    public List<int> save_character_ids;
+    public int levels_counter;
+    public float swaga_k;
     public Profile()
     {
         name = "Player";
@@ -238,7 +246,16 @@ public class Profile
         compaign_num = 0;
         chapter_num = 0;
         is_in_game = false;
-    }
+        baffs_id = new List<int>();
+        baffs_counters = new List<int>();
+        level_id = 0;
+        is_custom_level = true;
+        should_load = false;
+        difficulty = 0;
+        save_character_ids = new List<int>();
+        levels_counter = 0;
+        swaga_k = 0f;
+}
 
 
 }
