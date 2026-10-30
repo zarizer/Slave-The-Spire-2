@@ -47,14 +47,11 @@ public class CameraController : MonoBehaviour
     public GameObject SubSettingMenu;
     public bool lock_navigation = false;
     public bool freecam_mode = false;
-
     public RawImage test_img;
 
-    [ContextMenu("Perlin")]
-    public void Perlin()
-    {
-        test_img.texture = StaticFuncs.GenerateTextureByNoise(0, 100, 100, Time.time%98344, Time.time%824378, 6);
-    }
+    IMovementController CurrentMovement = new MainControl();
+
+    
     void Start()
     {
         battleMain = ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>();
@@ -62,29 +59,10 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        if (!ResoursesDict.GetClass<BattleMain>().IsInBattle) return;
+        if (!ResoursesDict.GetClass<BattleMain>().IsInBattle || lock_navigation) return;
         field_ = battleMain.current_field;
         CheckHotKeys();
-
-        if (lock_navigation) return;
-        if (!freecam_mode)
-        {
-            XMovement = Input.GetAxis("Horizontal") * CameraSensativity * Time.deltaTime;
-            YMovement = Input.GetAxis("Vertical") * CameraSensativityY * Time.deltaTime;
-            ZMovement = Input.GetAxis("Mouse ScrollWheel") * CameraSensativity * Time.deltaTime;
-            CameraReposition();
-        }
-        else
-        {
-            Shift = Input.GetKey(KeyCode.LeftShift);
-            FMovement = Input.GetAxis("Vertical") * Time.deltaTime;
-            SMovement = Input.GetAxis("Horizontal") * Time.deltaTime;
-            MXMovement = Input.GetAxis("Mouse Y") * MXMovement_speed * Time.deltaTime;
-            MYMovement = Input.GetAxis("Mouse X") * MYMovement_speed * Time.deltaTime;
-            CameraRotation();
-            CameraMovement();
-        }
-       
+        ParseMovement(CurrentMovement.GetMovement(this));
         GetTarget();
         ShowDamageCells();
     }
@@ -552,4 +530,70 @@ public class CameraController : MonoBehaviour
         }
 
     }
+    struct MovementControl
+    {
+        public bool Shift;
+        public float FMovement;
+        public float SMovement;
+        public float XMovement;
+        public float YMovement;
+        public float ZMovement;
+        public float MXMovement;
+        public float MYMovement;
+    }
+
+    interface IMovementController
+    {
+        MovementControl GetMovement(CameraController controller);
+    }
+
+    class MainControl : IMovementController
+    {
+        MovementControl movement = new MovementControl();
+        public MovementControl GetMovement(CameraController controller)
+        {
+            movement.XMovement = Input.GetAxis("Horizontal") * controller.CameraSensativity * Time.deltaTime;
+            movement.YMovement = Input.GetAxis("Vertical") * controller.CameraSensativityY * Time.deltaTime;
+            movement.ZMovement = Input.GetAxis("Mouse ScrollWheel") * controller.CameraSensativity * Time.deltaTime;
+            return movement;
+        }
+    }
+
+    class FreeControl : IMovementController
+    {
+        MovementControl movement = new MovementControl();
+        public MovementControl GetMovement(CameraController controller)
+        {
+            movement.Shift = Input.GetKey(KeyCode.LeftShift);
+            movement.FMovement = Input.GetAxis("Vertical") * Time.deltaTime;
+            movement.SMovement = Input.GetAxis("Horizontal") * Time.deltaTime;
+            movement.MXMovement = Input.GetAxis("Mouse Y") * controller.MXMovement_speed * Time.deltaTime;
+            movement.MYMovement = Input.GetAxis("Mouse X") * controller.MYMovement_speed * Time.deltaTime;
+            controller.CameraRotation();
+            return movement;
+        }
+    }
+
+    void ParseMovement(MovementControl movement)
+    {
+        if (!freecam_mode)
+        {
+            XMovement = Input.GetAxis("Horizontal") * CameraSensativity * Time.deltaTime;
+            YMovement = Input.GetAxis("Vertical") * CameraSensativityY * Time.deltaTime;
+            ZMovement = Input.GetAxis("Mouse ScrollWheel") * CameraSensativity * Time.deltaTime;
+            CameraReposition();
+        }
+        else
+        {
+            Shift = Input.GetKey(KeyCode.LeftShift);
+            FMovement = Input.GetAxis("Vertical") * Time.deltaTime;
+            SMovement = Input.GetAxis("Horizontal") * Time.deltaTime;
+            MXMovement = Input.GetAxis("Mouse Y") * MXMovement_speed * Time.deltaTime;
+            MYMovement = Input.GetAxis("Mouse X") * MYMovement_speed * Time.deltaTime;
+            CameraRotation();
+            CameraMovement();
+        }
+    }
+
 }
+
