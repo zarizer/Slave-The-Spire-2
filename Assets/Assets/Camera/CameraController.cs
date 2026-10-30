@@ -62,7 +62,6 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        //Perlin();
         if (!ResoursesDict.GetClass<BattleMain>().IsInBattle) return;
         field_ = battleMain.current_field;
         CheckHotKeys();
@@ -88,7 +87,6 @@ public class CameraController : MonoBehaviour
        
         GetTarget();
         ShowDamageCells();
-       
     }
 
     void CameraRotation()
@@ -272,8 +270,6 @@ public class CameraController : MonoBehaviour
                     var obj = Target.GetComponent<GridCharacter>();
                     ResoursesDict.GetClass<BattleMain>().NextTurn();
                 }
-                
-                //ResoursesDict.GetClass<SkillFloatingWindow>().CloseAllWindows();
             }
             else
             {
@@ -284,7 +280,6 @@ public class CameraController : MonoBehaviour
                 if (CheckAttack())
                 {
                     var cell = GetCellByRayCast(Physics.RaycastAll(ray));
-                    //Debug.Log(cell);
                     if (cell.color_type == GridCell.ColorType.Red)
                     {
                         ret_flag = true;
@@ -308,8 +303,6 @@ public class CameraController : MonoBehaviour
                 if (ret_flag) return;
                 if (Physics.Raycast(ray, out RaycastHit hit))
                 {
-                    //Debug.Log("Hitted: " + hit.transform.tag);
-                    //Debug.Log("Hitted: " + hit.transform.name);
 
                     if (hit.transform.GetComponent<GriddableObject>() != null || hit.transform.tag == "target")
                     {
@@ -317,8 +310,6 @@ public class CameraController : MonoBehaviour
                         PrevTarget = Target;
                         Target = obj.transform;
                         obj.OnTarget();
-                        //Debug.Log(obj.GetCharacter().object_);
-                        //Debug.Log("Hitted griddable object");
                         if (Target != PrevTarget)
                         {
                             field_.CellsNullify();
@@ -326,7 +317,6 @@ public class CameraController : MonoBehaviour
                         }
                         if (obj.GType_ == GriddableObject.GriddableObjectType.Character)
                         {
-                            //Debug.Log("Hitted character");
                             UIController.UpdateTabCharacter(true);
 
                         }
@@ -344,7 +334,6 @@ public class CameraController : MonoBehaviour
                             if (obj.GType_ == GriddableObject.GriddableObjectType.Obstacle &&
                                 ((ObstacleBase)(obj.GetComponent<GridObstacle>().GetCharacter())).Interactable)
                             {
-                                //Debug.Log(Target);
                                 UIController.UpdateTabObstacle(true);
                             }
                             else
@@ -414,11 +403,6 @@ public class CameraController : MonoBehaviour
         if (Target.GetComponent<GriddableObject>().GType_ == GriddableObject.GriddableObjectType.Character &&
                                Target.GetComponent<GridCharacter>().TRyingToAttack)
         {
-            /*ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>().MakeFight
-                (
-                    PrevTarget.GetComponent<GridCharacter>(),
-                    Target.GetComponent<GriddableObject>()
-                );*/
             return true;
         }
         return false;
@@ -437,25 +421,6 @@ public class CameraController : MonoBehaviour
                 {
                     if (cell.GetColor() == GridCell.ColorType.Yellow) ProcessCell(cell, character);
                 }
-                /*if (Physics.Raycast(ray, out RaycastHit hit))
-                {
-                    if (hit.collider.gameObject.tag == "cell")
-                    {
-                        var cell = hit.collider.GetComponent<GridCell>();
-                        ProcessCell(cell, character);
-                    }
-                    else if (hit.collider.gameObject.GetComponent<GriddableObject>() != null)
-                    {
-                        var cell = hit.collider.gameObject.GetComponent<GriddableObject>().cell_;
-                        ProcessCell(cell, character);
-                    }
-                    else if (hit.collider.tag == "target")
-                    {
-                        var obj = RecursiveGriddableObjectFind(hit.collider.transform);
-                        var cell = obj.cell_;
-                        ProcessCell(cell, character);
-                    }
-                }*/
             }
         }
 
