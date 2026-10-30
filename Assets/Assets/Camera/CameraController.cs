@@ -21,26 +21,6 @@ public class CameraController : MonoBehaviour
     public UIController UIController;
     BattleMain battleMain;
     public bool IsTargeted;
-    public float XMovement;
-    public float YMovement;
-    public float FMovement;
-    public float SMovement;
-    public float FMovement_speed;
-    public float SMovement_speed;
-    public float MXMovement;
-    public float MYMovement;
-    public float MXMovement_speed;
-    public float MYMovement_speed;
-    public bool Shift;
-    public float ZMovement;
-    public float CameraSpeed = 0.1f;
-    public float CameraSensativity;
-    public float CameraSensativityY;
-    public float CameraSensativityYLerp;
-    public float CameraY;
-    public float MaxDist;
-    public float MinDist;
-    public float CameraXSave;
     int cur_skill;
     public GridCell prev_cell = null;
     public bool is_redactor_moving;
@@ -50,11 +30,13 @@ public class CameraController : MonoBehaviour
     public RawImage test_img;
 
     IMovementController CurrentMovement = new MainControl();
-
+    MovementControl Movement;
+    [SerializeField] Controls CurrentControlData;
     
     void Start()
     {
         battleMain = ResoursesDict.ObjectSet["BattleMain"].GetComponent<BattleMain>();
+        UpdateCameraControl();
     }
 
     void Update()
@@ -62,19 +44,21 @@ public class CameraController : MonoBehaviour
         if (!ResoursesDict.GetClass<BattleMain>().IsInBattle || lock_navigation) return;
         field_ = battleMain.current_field;
         CheckHotKeys();
-        ParseMovement(CurrentMovement.GetMovement(this));
+        Movement = CurrentMovement.GetMovement(this);
+        if (!freecam_mode) { CameraReposition(); }
+        else { CameraRotation(); CameraMovement(); }
         GetTarget();
         ShowDamageCells();
     }
 
     void CameraRotation()
     {
-        Camera.transform.Rotate(new Vector3(MXMovement , MYMovement , 0));
+        Camera.transform.Rotate(new Vector3(Movement.MXMovement , Movement.MYMovement , 0));
     }
     void CameraMovement()
     {
-        Camera.transform.position += FMovement * FMovement_speed * Camera.transform.forward * (Shift ? 3 : 1);
-        Camera.transform.position += SMovement * SMovement_speed * Camera.transform.right * (Shift ? 3 : 1); 
+        Camera.transform.position += Movement.FMovement * CurrentControlData.FMovement_speed * Camera.transform.forward * (Movement.Shift ? 3 : 1);
+        Camera.transform.position += Movement.SMovement * CurrentControlData.SMovement_speed * Camera.transform.right * (Movement.Shift ? 3 : 1); 
     }
     void CameraReposition()
     {
@@ -82,39 +66,39 @@ public class CameraController : MonoBehaviour
         { 
             Target = field_.transform; 
         }
-        transform.position = Vector3.Lerp(transform.position, Target.position, CameraSpeed * 0.2f);
+        transform.position = Vector3.Lerp(transform.position, Target.position, CurrentControlData.CameraSpeed * 0.2f);
         DestinationReposition();
         DestinationRepositionY();
         DestinationRepositionZ();
-        Camera.position = Vector3.Lerp(Camera.position, CameraDestination.position, CameraSpeed);
-        Camera.rotation = Quaternion.Lerp(Camera.rotation, CameraDestination.rotation, CameraSpeed);
+        Camera.position = Vector3.Lerp(Camera.position, CameraDestination.position, CurrentControlData.CameraSpeed);
+        Camera.rotation = Quaternion.Lerp(Camera.rotation, CameraDestination.rotation, CurrentControlData.CameraSpeed);
     }
 
     void DestinationReposition()
     {
-        CameraDestination.RotateAround(Center.position, Vector3.up, XMovement);
-        CameraBack.RotateAround(Center.position, Vector3.up, XMovement);
+        CameraDestination.RotateAround(Center.position, Vector3.up, Movement.XMovement);
+        CameraBack.RotateAround(Center.position, Vector3.up, Movement.XMovement);
         CameraDestination.LookAt(Center);
     }
 
     void DestinationRepositionZ()
     {
-        CameraDestination.transform.position = new Vector3(CameraDestination.transform.position.x, CameraY, CameraDestination.transform.position.z);
-        if (ZMovement < 0 && Vector3.Distance(CameraDestination.position, Center.position) > MinDist)
+        CameraDestination.transform.position = new Vector3(CameraDestination.transform.position.x, CurrentControlData.CameraY, CameraDestination.transform.position.z);
+        if (Movement.ZMovement < 0 && Vector3.Distance(CameraDestination.position, Center.position) > CurrentControlData.MinDist)
         {
-            CameraDestination.position = Vector3.Lerp(CameraDestination.position, Center.position, CameraSpeed * 0.1f);
+            CameraDestination.position = Vector3.Lerp(CameraDestination.position, Center.position, CurrentControlData.CameraSpeed * 0.1f);
         }
-        if (ZMovement > 0)
+        if (Movement.ZMovement > 0)
         {
-            CameraDestination.position = Vector3.Lerp(CameraDestination.position, CameraBack.position, CameraSpeed * 0.1f);
+            CameraDestination.position = Vector3.Lerp(CameraDestination.position, CameraBack.position, CurrentControlData.CameraSpeed * 0.1f);
         }
     }
 
     void DestinationRepositionY()
     {
-        if (YMovement < 0 && CameraY < 1.33f) YMovement = 0;
-        if (YMovement > 0 && CameraY > 20f) YMovement = 0;
-        CameraY = Mathf.Lerp(CameraY, CameraY + YMovement, CameraSensativityYLerp);
+        if (Movement.YMovement < 0 && CurrentControlData.CameraY < 1.33f) Movement.YMovement = 0;
+        if (Movement.YMovement > 0 && CurrentControlData.CameraY > 20f) Movement.YMovement = 0;
+        CurrentControlData.CameraY = Mathf.Lerp(CurrentControlData.CameraY, CurrentControlData.CameraY + Movement.YMovement, CurrentControlData.CameraSensativityYLerp);
     }
 
     void ProcessRedactorMode()
@@ -521,11 +505,11 @@ public class CameraController : MonoBehaviour
             freecam_mode = !freecam_mode;
             if (freecam_mode)
             {
-                CameraXSave = Camera.transform.localRotation.x;
+                CurrentControlData.CameraXSave = Camera.transform.localRotation.x;
             }
             else
             {
-                Camera.transform.localRotation = new Quaternion(CameraXSave, 0, 0, 0);
+                Camera.transform.localRotation = new Quaternion(CurrentControlData.CameraXSave, 0, 0, 0);
             }
         }
 
@@ -552,9 +536,9 @@ public class CameraController : MonoBehaviour
         MovementControl movement = new MovementControl();
         public MovementControl GetMovement(CameraController controller)
         {
-            movement.XMovement = Input.GetAxis("Horizontal") * controller.CameraSensativity * Time.deltaTime;
-            movement.YMovement = Input.GetAxis("Vertical") * controller.CameraSensativityY * Time.deltaTime;
-            movement.ZMovement = Input.GetAxis("Mouse ScrollWheel") * controller.CameraSensativity * Time.deltaTime;
+            movement.XMovement = Input.GetAxis("Horizontal") * controller.CurrentControlData.CameraSensativity * Time.deltaTime;
+            movement.YMovement = Input.GetAxis("Vertical") * controller.CurrentControlData.CameraSensativityY * Time.deltaTime;
+            movement.ZMovement = Input.GetAxis("Mouse ScrollWheel") * controller.CurrentControlData.CameraSensativity * Time.deltaTime;
             return movement;
         }
     }
@@ -567,33 +551,33 @@ public class CameraController : MonoBehaviour
             movement.Shift = Input.GetKey(KeyCode.LeftShift);
             movement.FMovement = Input.GetAxis("Vertical") * Time.deltaTime;
             movement.SMovement = Input.GetAxis("Horizontal") * Time.deltaTime;
-            movement.MXMovement = Input.GetAxis("Mouse Y") * controller.MXMovement_speed * Time.deltaTime;
-            movement.MYMovement = Input.GetAxis("Mouse X") * controller.MYMovement_speed * Time.deltaTime;
+            movement.MXMovement = Input.GetAxis("Mouse Y") * controller.CurrentControlData.MXMovement_speed * Time.deltaTime;
+            movement.MYMovement = Input.GetAxis("Mouse X") * controller.CurrentControlData.MYMovement_speed * Time.deltaTime;
             controller.CameraRotation();
             return movement;
         }
     }
 
-    void ParseMovement(MovementControl movement)
+    public struct Controls
     {
-        if (!freecam_mode)
-        {
-            XMovement = Input.GetAxis("Horizontal") * CameraSensativity * Time.deltaTime;
-            YMovement = Input.GetAxis("Vertical") * CameraSensativityY * Time.deltaTime;
-            ZMovement = Input.GetAxis("Mouse ScrollWheel") * CameraSensativity * Time.deltaTime;
-            CameraReposition();
-        }
-        else
-        {
-            Shift = Input.GetKey(KeyCode.LeftShift);
-            FMovement = Input.GetAxis("Vertical") * Time.deltaTime;
-            SMovement = Input.GetAxis("Horizontal") * Time.deltaTime;
-            MXMovement = Input.GetAxis("Mouse Y") * MXMovement_speed * Time.deltaTime;
-            MYMovement = Input.GetAxis("Mouse X") * MYMovement_speed * Time.deltaTime;
-            CameraRotation();
-            CameraMovement();
-        }
+        public float FMovement_speed;
+        public float SMovement_speed;
+        public float MXMovement_speed;
+        public float MYMovement_speed;
+        public float CameraSpeed;
+        public float CameraSensativity;
+        public float CameraSensativityY;
+        public float CameraSensativityYLerp;
+        public float CameraY;
+        public float MaxDist;
+        public float MinDist;
+        public float CameraXSave;
     }
 
+    [ContextMenu("UpdateCameraControl")]
+    public void UpdateCameraControl()
+    {
+        CurrentControlData = ControlData.GetCameraData();
+    }
 }
 
