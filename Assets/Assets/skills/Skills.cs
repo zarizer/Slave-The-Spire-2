@@ -654,6 +654,38 @@ public class SkillEffect
         {
             target.cur_energy = 0;
         }
+
+        if (customId == 4)
+        {
+            int amount = 0;
+            foreach (var effect in caster.effects)
+            {
+                if (effect is EffectBloodLoss)
+                {
+                    amount = effect.power;
+                }
+            }
+            for (int i = 1; amount >= 100; amount -= 100)
+            {
+                Roll roll = new Roll(context.InitialRoll.minRoll + i * 2,
+                    context.InitialRoll.maxRoll + i * 2,
+                    context.InitialRoll.rollType,
+                    context.InitialRoll.rollRadius,
+                    context.InitialRoll.radius + i,
+                    context.InitialRoll.element,
+                    "",
+                    context.InitialRoll.skill);
+                caster.GetExtraRoll(roll);
+            }
+        }
+
+        if (customId == 5)
+        {
+            decimal amount = (caster.cur_hp * 0.5m);
+            int global_loss_percent = (int)((amount / caster.start_hp) * 100);
+            caster.cur_hp -= (int)amount;
+            GridCharacter.ApplyBattleEffect(typeof(EffectBloodLoss), global_loss_percent, 1, caster, caster);
+        }
     }
 }
 
@@ -670,4 +702,6 @@ public class RollContext
     public bool IsEmptyCell { get; set; }
     public List<GridCell> Cells { get; set; }
     public GridCell TargetCell { get; set; }
+
+    public Roll InitialRoll { get; set; }
 }

@@ -14,4 +14,13 @@ public class ObjectBase
     {
         
     }
+
+    public GridCharacter GetGridCharacer()
+    {
+        if (object_ != null && object_.GetComponent<GridCharacter>() != null)
+        {
+            return object_.GetComponent<GridCharacter>();
+        }
+        return null;
+    }
 }

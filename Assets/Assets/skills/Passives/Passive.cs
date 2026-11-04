@@ -44,4 +44,8 @@ public class Passive
     virtual public void OnGetEnergy(GridField field, int value) { }
 
     virtual public void OnKill(GridField field, CharacterBase target) { }
+
+    virtual public void OnRoll(GridField field, Roll roll) { }
+
+    virtual public bool OnTryToDeath(GridField field, CharacterBase attacker) { return false; }
 }

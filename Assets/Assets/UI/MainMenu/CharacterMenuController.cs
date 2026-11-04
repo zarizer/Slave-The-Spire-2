@@ -87,7 +87,7 @@ public class CharacterMenuController : MonoBehaviour
         for(int i = 0; i<cards.Count; i++)
         {
             var t = cards[i].gameObject.GetComponent<RectTransform>();
-            t.localPosition = new Vector3((150 + ((i) % 4) * 310), (-200 + (i/4)*410), 0);
+            t.localPosition = new Vector3((150 + ((i) % 4) * 310), (-200 - (i/4)*410), 0);
             
         }
     }

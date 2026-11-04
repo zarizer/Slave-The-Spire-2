@@ -191,3 +191,26 @@ public class EffectSteam : BattleEffect
     }
 
 };
+
+public class EffectBloodLoss : BattleEffect
+{
+    public override void Init()
+    {
+        image_name = "blood_loss.png"; //важно чтобы было раньше чем base.Init()
+        base.Init();
+        name = "кровопотеря";
+        description = $"Собранная отморозком кровь. ";
+    }
+
+    public override void OnTurnStart(GridField field)
+    {
+        duration = 6;
+    }
+
+    public override void OnApply(GridField field, BattleEffect effect, int ex_power, int ex_duration, bool is_continue)
+    {
+        base.OnApply(field, effect, ex_power, ex_duration, is_continue);
+        duration = 6;
+    }
+
+};

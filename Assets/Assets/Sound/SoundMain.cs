@@ -6,10 +6,16 @@ public class SoundMain : MonoBehaviour
 {
     [SerializeField]
     private GameObject SoundObject;
+    public static SoundMain instance;
 
     void Start()
     {
         
+    }
+
+    private void Awake()
+    {
+        instance = this;
     }
 
 

@@ -50,6 +50,7 @@ public class ResoursesDict : MonoBehaviour
     public GameObject lootManager;
 
     public GameObject death_effect;
+    public GameObject bloodgot_effect;
 
     public AudioClip restricted_sound;
     public AudioClip accept_sound;
@@ -77,8 +78,11 @@ public class ResoursesDict : MonoBehaviour
     public GameObject ModelCh1R4;
 
     public GameObject SurfaceSwamp;
+
+    public static ResoursesDict instance;
     public void Awake()
     {
+        instance = this;
         TextureSet["atk_icon"] = atk_icon;
         TextureSet["def_icon"] = def_icon;
         TextureSet["evade_icon"] = evade_icon;

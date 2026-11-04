@@ -343,6 +343,13 @@ public class CharacterBase : ObjectBase
     
     public virtual void Death(Damage damage)
     {
+        foreach (var passive in passives)
+        {
+            if (passive.OnTryToDeath(BattleMain.instance.current_field, damage.from))
+            {
+                return;
+            }
+        }
         OnDeath(ResoursesDict.GetClass<BattleMain>().current_field, damage);
         //EffectManager.OneTimeBurst(ResoursesDict.ObjectSet["DeathEffect"], object_.transform);
         object_.GetComponent<GriddableObject>().Death();
@@ -492,6 +499,17 @@ public class CharacterBase : ObjectBase
                 CurrentRolls.Add(roll);
             }
         }
+        if (object_ != null)
+        {
+            object_.GetComponent<GriddableObject>().UpdateRollsUI();
+        }
+    }
+
+    public void GetExtraRoll(Roll roll)
+    {
+
+        CurrentRolls.Add(roll);
+
         if (object_ != null)
         {
             object_.GetComponent<GriddableObject>().UpdateRollsUI();

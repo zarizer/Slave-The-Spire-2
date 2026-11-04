@@ -726,3 +726,112 @@ public class PassivePunishingBird1 : Passive
         Value = level;
     }
 };
+
+public class PassiveBloodGot1 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "СЕЙЧАС ВЕНЫ РЕЗАТЬ БУДУ";
+        Description = $"Этот отморозок может обладать эффектом кроворотеря силой вплоть до {Value}";
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        switch (level)
+        {
+            case 1:
+                {
+                    Value = 100;
+                    break;
+                }
+            case 2:
+                {
+                    Value = 180;
+                    break;
+                }
+            case 3:
+                {
+                    Value = 260;
+                    break;
+                }
+        }
+    }
+}
+
+public class PassiveBloodGot2 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Тёмная магия крови";
+        Description = "Все кубики этого отморозка получают {Кровопотеря / 20} силы";
+    }
+
+    public override void OnRoll(GridField field, Roll roll)
+    {
+        base.OnRoll(field, roll);
+        int additional_strengh = 0;
+        foreach (var effect in character.effects)
+        {
+            if (effect is EffectBloodLoss)
+            {
+                var e = (EffectBloodLoss)effect;
+                additional_strengh += e.power / 20;
+            }
+        }
+        roll.minRoll += additional_strengh;
+        roll.maxRoll += additional_strengh;
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = 0;
+    }
+}
+
+public class PassiveBloodGot3 : Passive
+{
+    public override void Init()
+    {
+        base.Init();
+        Name = "Восстань бренное тело";
+        Description = $"Если кровопотеря этого отморозка максимальна, при смерти он восрешается с {Value}% от максималного здоровья и сбрасывает всю кровопотерю";
+    }
+
+    public override bool OnTryToDeath(GridField field, CharacterBase attacker)
+    {
+        int blood = 0;
+        int max = 9999;
+        foreach (var effect in character.effects)
+        {
+            if (effect is EffectBloodLoss)
+            {
+                var e = (EffectBloodLoss)effect;
+                blood = e.power;
+            }
+        }
+        foreach (var passive in character.passives)
+        {
+            if (passive is PassiveBloodGot1)
+            {
+                var p = (PassiveBloodGot1)passive;
+                max = (int)p.Value;
+            }
+        }
+        if (blood >= max)
+        {
+            character.cur_hp = (int)(character.start_hp * ((decimal)Value / 100));
+            return true;
+        }
+        return false;
+    }
+
+    public override void UpdateAccourdingToLevel()
+    {
+        base.UpdateAccourdingToLevel();
+        Value = 10 + level * 10;
+    }
+}

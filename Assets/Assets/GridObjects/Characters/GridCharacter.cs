@@ -23,6 +23,7 @@ public class GridCharacter : GriddableObject
 
     public List<Roll> CurrentSkillRolls = new List<Roll>();
     public List<Roll> DefenceRolls = new List<Roll>();
+    public List<Roll> AttackRolls = new List<Roll>();
 
     void Start()
     {
@@ -55,6 +56,18 @@ public class GridCharacter : GriddableObject
     void MoveToDestination()
     {
         transform.position = Vector3.Lerp(transform.position, DestinationPosition, 0.1f);
+    }
+
+    public Roll GetfirstAttackRoll()
+    {
+        foreach (Roll roll in character_.CurrentRolls) 
+        {
+            if (roll.rollType == RollType.Atk)
+            {
+                return roll;
+            }
+        }
+        return null;
     }
 
 

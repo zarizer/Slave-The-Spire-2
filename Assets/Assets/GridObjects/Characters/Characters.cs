@@ -199,3 +199,58 @@ public class DisignCutie : CharacterBase
         base.CreateStatsAccourdingToLevel();
     }
 }
+
+public class BloodGot : CharacterBase
+{
+
+    public override CharacterBase Init()
+    {
+        id = 4;
+        hp = 100;
+        def = 0;
+        speed = 3;
+        level = 1;
+        speed_dif = 2;
+        dmg_k = 1.2f;
+        moves = 3;
+        energy = 100;
+        name = "Гот крови";
+        description = "Стильный колтушский гот, который в один момент решил, что в дополнение к своему готоческому образу и, чтобы ещё эффективнее кошмарить бабок у подъезда, можно перед ними резать себе вены. Тогад он и обнаружил в себе талант к управлению кровью.";
+        skill_id1 = 18;
+        skill_id2 = 19;
+        skill_id3 = 20;
+        skill_id4 = 21;
+        none_k = 1.3f;
+        fire_k = 1.4f;
+        water_k = 0.75f;
+        dendro_k = 1;
+        light_k = 1.2f;
+        darkness_k = 0.8f;
+        base.Init();
+        return this;
+    }
+
+    public override void OnSpawn(GridField field_data)
+    {
+        GridCharacter.ApplyBattleEffect(typeof(EffectBloodLoss), 200, 1, this, this);
+        base.OnSpawn(field_data);
+        var effect = GameObject.Instantiate(ResoursesDict.instance.bloodgot_effect, ((GridCharacter)field_data.current_object).transform);
+        effect.transform.localPosition = Vector3.zero;
+        
+    }
+    public int GetMoves() { return moves; }
+
+    public BloodGot()
+    {
+        base.Init();
+        passive_ids = new List<int>();
+        passive_ids.Add(27);
+        passive_ids.Add(28);
+        passive_ids.Add(29);
+    }
+
+    public override void CreateStatsAccourdingToLevel()
+    {
+        base.CreateStatsAccourdingToLevel();
+    }
+}

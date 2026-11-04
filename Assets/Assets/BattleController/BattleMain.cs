@@ -9,6 +9,8 @@ using static UnityEngine.GraphicsBuffer;
 
 public class BattleMain : MonoBehaviour
 {
+    public static BattleMain instance;
+
     [SerializeField] private Camera battle_camera;
     [SerializeField] private Camera ui_camera;
     [SerializeField] private GameObject battle_ui;
@@ -60,7 +62,7 @@ public class BattleMain : MonoBehaviour
 
     private void Awake()
     {
-        
+        instance = this;
         //Debug.Log(Application.companyName + " " + Application.productName + " " + Application.persistentDataPath);
     }
 
@@ -333,6 +335,7 @@ public class BattleMain : MonoBehaviour
 
     private IEnumerator MakeFightInternal(GriddableObject attacker, Roll roll, List<GriddableObject> Targets, bool isEnemyAttacker)
     {
+        ApplyPassivesToRoll(attacker, roll);
         ProcessOnUseEffects(roll.skill, attacker.GetCharacter(), null);
 
         int attackerRollValue = roll.GetRoll();
@@ -375,6 +378,7 @@ public class BattleMain : MonoBehaviour
             result.context.Attacker = attacker.GetCharacter();
             result.context.Defender = target.GetCharacter();
             result.context.RollValue = attackerRollValue;
+            result.context.InitialRoll = new Roll(roll);
             result.isSelfAttack = (target == attacker);
             result.attackerRollValue = attackerRollValue;
             result.hasTargetRoll = false;
@@ -455,6 +459,8 @@ public class BattleMain : MonoBehaviour
             }
             else if (target_roll.rollType == RollType.Def)
             {
+                ApplyPassivesToRoll(target, target_roll);
+
                 int char_power = roll.GetDamage();
                 int target_defense = target_roll.maxRoll;
 
@@ -488,6 +494,8 @@ public class BattleMain : MonoBehaviour
             }
             else
             {
+                ApplyPassivesToRoll(target, target_roll);
+
                 int target_power = target_roll.GetRoll();
 
                 int levelBonus = GetLevelBonus(attacker.GetCharacter(), target.GetCharacter(), roll);
@@ -818,7 +826,6 @@ public class BattleMain : MonoBehaviour
     public IEnumerator MakeFight(GridCharacter character, List<GriddableObject> Targets)
     {
         yield return new WaitForSeconds(1f * ProfileManager.profile.roll_speed);
-
         for (int i = 0; i < character.CurrentSkillRolls.Count; i += 0)
         {
             var char_roll = character.CurrentSkillRolls[0];
@@ -852,6 +859,7 @@ public class BattleMain : MonoBehaviour
             context.IsHit = false;
             context.IsMiss = false;
             context.IsCrit = false;
+            context.InitialRoll = roll;
 
             foreach (var effect in roll.effects)
             {
@@ -1143,6 +1151,17 @@ public class BattleMain : MonoBehaviour
         if (ProfileManager.profile.swaga_k < 250) { return 1.4f; }
         if (ProfileManager.profile.swaga_k < 300) { return 1.6f; }
         return 1.8f;
+    }
+
+    public void ApplyPassivesToRoll(GriddableObject obj, Roll roll)
+    {
+        var character = obj.GetCharacter();
+        if (character == null) { return; }
+        if (roll == null) { return; }
+        foreach (var passive in character.passives)
+        {
+            passive.OnRoll(current_field, roll);
+        }
     }
 }
 
